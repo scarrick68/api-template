@@ -67,3 +67,5 @@ group :test do
   gem "capybara"
   gem "selenium-webdriver"
 end
+
+gem "devise_token_auth", "~> 1.2"
