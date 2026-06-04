@@ -22,3 +22,10 @@ Things you may want to cover:
 * Deployment instructions
 
 * ...
+
+## CORS
+
+This template enables CORS with `rack-cors`.
+
+- Set `CORS_ALLOWED_ORIGINS` to a comma-separated list of allowed origins.
+- Cors are set in env specific config/environments/*.rb files
