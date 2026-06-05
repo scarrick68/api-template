@@ -6,5 +6,5 @@ Devise.setup do |config|
   require "devise/orm/active_record"
 
   # API-only apps should treat JSON as navigational to avoid flash/session assumptions.
-  config.navigational_formats = [:json]
+  config.navigational_formats = [ :json ]
 end

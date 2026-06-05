@@ -29,14 +29,14 @@ class ErrorRenderableTest < ActiveSupport::TestCase
       type: "bad_request",
       message: "invalid request",
       status: :bad_request,
-      details: ["field is required"]
+      details: [ "field is required" ]
     )
 
     assert_equal :bad_request, controller.render_status
     assert_equal(
       {
         success: false,
-        errors: ["invalid request", "field is required"],
+        errors: [ "invalid request", "field is required" ],
         error_type: "bad_request",
         request_id: "req-123"
       },
@@ -56,7 +56,7 @@ class ErrorRenderableTest < ActiveSupport::TestCase
 
     assert_equal :internal_server_error, controller.render_status
     assert_equal false, controller.render_payload[:success]
-    assert_equal ["An unexpected error occurred"], controller.render_payload[:errors]
+    assert_equal [ "An unexpected error occurred" ], controller.render_payload[:errors]
     assert_equal "internal_server_error", controller.render_payload[:error_type]
     assert_equal "req-456", controller.render_payload[:request_id]
   end
@@ -69,7 +69,7 @@ class ErrorRenderableTest < ActiveSupport::TestCase
       type: "unprocessable_entity",
       message: "Validation failed",
       status: :unprocessable_entity,
-      details: ["Email can't be blank", "Password can't be blank"]
+      details: [ "Email can't be blank", "Password can't be blank" ]
     )
 
     errors = controller.render_payload[:errors]

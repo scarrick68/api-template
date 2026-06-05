@@ -1,7 +1,7 @@
 require "test_helper"
 
 class AuthTokensTest < ActionDispatch::IntegrationTest
-  TOKEN_HEADERS = ["access-token", "client", "uid", "expiry", "token-type"].freeze
+  TOKEN_HEADERS = [ "access-token", "client", "uid", "expiry", "token-type" ].freeze
 
   setup do
     ActionMailer::Base.deliveries.clear

@@ -103,6 +103,6 @@ class ApplicationControllerTest < ActiveSupport::TestCase
       capture[:details] = details
     end
 
-    [controller, capture]
+    [ controller, capture ]
   end
 end

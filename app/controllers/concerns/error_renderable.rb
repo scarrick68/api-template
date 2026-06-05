@@ -4,7 +4,7 @@ module ErrorRenderable
   private
 
   def render_api_error(type:, message:, status:, details: nil)
-    errors = [message]
+    errors = [ message ]
     errors.concat(Array(details)) if details.present?
 
     payload = {
