@@ -69,4 +69,4 @@ group :test do
   gem "factory_bot_rails"
 end
 
-gem "devise_token_auth", "~> 1.2"
+gem "devise_token_auth", github: "lynndylanhurley/devise_token_auth", branch: "master"
