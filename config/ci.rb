@@ -8,8 +8,11 @@ CI.run do
   step "Security: Gem audit", "bin/bundler-audit"
   step "Security: Importmap vulnerability audit", "bin/importmap audit"
   step "Security: Brakeman code analysis", "bin/brakeman --quiet --no-pager --exit-on-warn --exit-on-error"
+  step "Tests: Factory Lint", "env RAILS_ENV=test bin/rails runner 'FactoryBot.lint(traits: true)'"
   step "Tests: Rails", "bin/rails test"
-  step "Tests: Seeds", "env RAILS_ENV=test bin/rails db:seed:replant"
+
+  # Optional, but I plan to use FactoryBot, not seeds, for now.
+  # step "Tests: Seeds", "env RAILS_ENV=test bin/rails db:seed:replant"
 
   # Optional: Run system tests
   # step "Tests: System", "bin/rails test:system"

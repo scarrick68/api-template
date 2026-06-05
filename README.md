@@ -59,3 +59,29 @@ Default exception mapping:
 - `StandardError` -> `500 internal_server_error`
 
 This format is aligned with authentication error responses from `devise_token_auth`.
+
+## Local CI (Rails 8.1)
+
+This project includes a local CI runner using Rails 8.1's `ActiveSupport::ContinuousIntegration`.
+
+Run the full local pipeline:
+
+```bash
+bin/ci
+```
+
+The pipeline currently runs:
+
+- Dependency check/install
+- Test database prepare
+- RuboCop
+- Bundler Audit
+- Brakeman
+- FactoryBot lint
+- Test suite
+- Seed validation in test
+
+Prerequisite: PostgreSQL must be running locally and accessible with your configured test DB settings.
+
+Cheeck `config/ci.rb` for the full list of steps and commands run by the pipeline. You can also run individual steps manually.
+
