@@ -39,6 +39,8 @@ class AuthTokensTest < ActionDispatch::IntegrationTest
 
     assert_response :unauthorized
     assert_token_headers_absent
+    assert_equal false, response.parsed_body["success"]
+    assert response.parsed_body["errors"].present?
   end
 
   test "login issues auth token headers for confirmed user" do
