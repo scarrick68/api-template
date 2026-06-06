@@ -85,3 +85,42 @@ Prerequisite: PostgreSQL must be running locally and accessible with your config
 
 Cheeck `config/ci.rb` for the full list of steps and commands run by the pipeline. You can also run individual steps manually.
 
+## Single-DB Deployment (Solid Queue/Cache/Cable)
+
+This template is configured to run all Solid components on the primary PostgreSQL database in production.
+
+- `config/database.yml` uses a single `production` connection via `DATABASE_URL`.
+- `config/environments/production.rb` points Solid Queue to `writing: :primary`.
+- `config/cable.yml` points Solid Cable to `writing: primary`.
+- `config/cache.yml` points Solid Cache to `database: primary`.
+
+### Required environment variables
+
+- `DATABASE_URL` (single managed Postgres database)
+- `RAILS_MASTER_KEY`
+
+### Process model
+
+Use separate process types in production:
+
+- `web`: Puma app server
+- `job`: `bin/jobs` (Solid Queue worker/supervisor)
+
+`SOLID_QUEUE_IN_PUMA` is set to `false` in deploy defaults to keep job execution isolated from web request latency.
+
+### First deploy / release flow
+
+Run standard Rails database tasks against the single database:
+
+```bash
+RAILS_ENV=production bin/rails db:prepare
+RAILS_ENV=production bin/rails db:migrate
+```
+
+### Quick production smoke checks
+
+```bash
+RAILS_ENV=production bin/rails runner "puts Rails.application.config.active_job.queue_adapter"
+RAILS_ENV=production bin/rails runner "Rails.cache.write('smoke','ok'); puts Rails.cache.read('smoke')"
+```
+
