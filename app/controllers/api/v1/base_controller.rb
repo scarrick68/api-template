@@ -6,6 +6,13 @@ module Api
 
       private
 
+      def render_serialized(blueprint, payload, status: :ok)
+        render(
+          json: blueprint.render_as_hash(payload.merge(api_request_context)),
+          status: status
+        )
+      end
+
       def authorize!(record, query = nil)
         action = query || "#{action_name}?"
         allowed = policy_for(record).public_send(action)

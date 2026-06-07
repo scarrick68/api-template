@@ -5,11 +5,14 @@ module Api
         contract = Api::V1::Hello::ShowContract.new(name: params[:name]).validate!
         result = Svc::Api::V1::Hello::Show.call(name: contract.name)
 
-        render json: {
-          success: true,
-          message: result[:message],
-          cached: result[:cached]
-        }
+        render_serialized(
+          Api::V1::HelloResponseBlueprint,
+          {
+            success: true,
+            message: result[:message],
+            cached: result[:cached]
+          }
+        )
       end
     end
   end

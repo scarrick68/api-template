@@ -25,6 +25,7 @@ module Api
         assert_response :success
         assert response.headers["X-Request-Id"].present?
         assert_equal true, response.parsed_body["success"]
+        assert_equal response.headers["X-Request-Id"], response.parsed_body["request_id"]
         assert_equal "Hello, #{name}!", response.parsed_body["message"]
         assert_equal false, response.parsed_body["cached"], "Expected cache miss on first request"
         assert Rails.cache.exist?(cache_key)
@@ -41,6 +42,7 @@ module Api
         assert_response :success
         assert response.headers["X-Request-Id"].present?
         assert_equal true, response.parsed_body["success"]
+        assert_equal response.headers["X-Request-Id"], response.parsed_body["request_id"]
         assert_equal "Hello, #{name}!", response.parsed_body["message"]
         assert_equal true, response.parsed_body["cached"], "Expected cache hit on second request"
       end

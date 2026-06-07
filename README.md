@@ -105,6 +105,18 @@ Pattern:
 - Controllers build and validate API inputes with a contract before calling a service object.
 - Contracts raise `ApplicationContract::Invalid` when invalid, which is handled by normal API error handling flow.
 
+## API Serialization (Blueprinter)
+
+This template uses `blueprinter` as the single approach for API success-response serialization.
+
+- Controller helper: `render_serialized(blueprint, payload, status: :ok)` in `Api::V1::BaseController`
+
+Conventions:
+
+- Controllers should render API success responses through Blueprinter, not ad hoc hashes.
+- Shared response metadata (for example `request_id`) is injected in the base controller before serialization.
+- Endpoint blueprints define only fields that belong to the public API contract.
+
 ## Authorization (Policies)
 
 This template establishes where authorization decisions live, without predefining app-specific rules.
