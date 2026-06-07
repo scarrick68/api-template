@@ -30,6 +30,14 @@ This template enables CORS with `rack-cors`.
 - Set `CORS_ALLOWED_ORIGINS` to a comma-separated list of allowed origins.
 - Cors are set in env specific config/environments/*.rb files
 
+## API Versioning
+
+API endpoints should be added under `/api/v1`.
+
+The `/api/` namespace defaults to JSON responses.
+
+- Canonical hello endpoint: `GET /api/v1/hello`
+
 ## API Error Handling
 
 This template uses a common gem-style JSON error envelope.
