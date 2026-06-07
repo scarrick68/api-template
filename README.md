@@ -38,6 +38,34 @@ The `/api/` namespace defaults to JSON responses.
 
 - Canonical hello endpoint: `GET /api/v1/hello`
 
+## Service Object Layer (SVC)
+
+This template uses a service-object layer under `app/services/svc`.
+
+- Controllers should stay thin and delegate business logic to service objects.
+- Service objects should expose a single entrypoint via `.call`.
+- Place shared behavior in `Svc::Base`.
+- Group services by domain/version (for example `Svc::Api::V1::Hello::Show`).
+- Service objects in this app are Rails-aware by design.
+
+Rails-awareness:
+
+- It is acceptable for service objects to use Rails primitives directly (for example `Rails.cache`, `ActiveRecord`, `ActiveSupport`, models, etc...).
+- Do not pass dependency inject things like `Rails.cache`, request objects, or controller instances into services unless there is a strong reason.
+
+Usage conventions:
+
+- Keep domain behavior, orchestration, and reusable rules in SVC objects.
+- Return plain Ruby hashes/values from services for easy composition and testing.
+- Raise meaningful exceptions from services and let controller-level error handling render API error envelopes.
+- Unit test services directly under `test/services`, and keep integration tests focused on endpoint behavior.
+- Svc naming and namespacing does not necessarily need to mirror controller structure and controller action names, but should be organized in a way that is easy to find and understand.
+
+Example flow:
+
+- Controller: `Api::V1::HelloController#show`
+- Service object: `Svc::Api::V1::Hello::Show`
+
 ## API Error Handling
 
 This template uses a common gem-style JSON error envelope.

@@ -2,21 +2,12 @@ module Api
   module V1
     class HelloController < BaseController
       def show
-        name = params[:name].presence || "world"
-        cache_key = "hello:greeting:#{name}"
-
-        message = Rails.cache.read(cache_key)
-        cached = message.present?
-
-        unless cached
-          message = "Hello, #{name}!"
-          Rails.cache.write(cache_key, message, expires_in: 10.minutes)
-        end
+        result = Svc::Api::V1::Hello::Show.call(name: params[:name])
 
         render json: {
           success: true,
-          message: message,
-          cached: cached
+          message: result[:message],
+          cached: result[:cached]
         }
       end
     end
