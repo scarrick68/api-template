@@ -105,6 +105,20 @@ Pattern:
 - Controllers build and validate API inputes with a contract before calling a service object.
 - Contracts raise `ApplicationContract::Invalid` when invalid, which is handled by normal API error handling flow.
 
+## Authorization (Policies)
+
+This template establishes where authorization decisions live, without predefining app-specific rules.
+
+- Authentication answers: "Who is this?"
+- Authorization answers: "Can they do this?"
+
+Policy classes live in `app/policies`.
+
+Defaults are deny-all to enforce explicit allow rules when real resources are added.
+
+API controllers can call `authorize!(record, query = nil)` from `Api::V1::BaseController`.
+- Authorization failures return a standard JSON error with `403 forbidden` through the normal API error handling flow.
+
 ## Local CI (Rails 8.1)
 
 This project includes a local CI runner using Rails 8.1's `ActiveSupport::ContinuousIntegration`.
