@@ -96,6 +96,15 @@ Default exception mapping:
 
 This format is aligned with authentication error responses from `devise_token_auth`.
 
+## API Input Validation (Contracts)
+
+API input are validated with contract objects under `app/contracts`.
+
+Pattern:
+
+- Controllers build and validate API inputes with a contract before calling a service object.
+- Contracts raise `ApplicationContract::Invalid` when invalid, which is handled by normal API error handling flow.
+
 ## Local CI (Rails 8.1)
 
 This project includes a local CI runner using Rails 8.1's `ActiveSupport::ContinuousIntegration`.

@@ -45,6 +45,18 @@ module Api
         assert_equal true, response.parsed_body["cached"], "Expected cache hit on second request"
       end
 
+      test "invalid input renders standardized validation error payload" do
+        get "/api/v1/hello", params: { name: "a" * 51 }
+
+        assert_response :unprocessable_entity
+        assert response.headers["X-Request-Id"].present?
+        assert_equal false, response.parsed_body["success"]
+        assert_equal "unprocessable_entity", response.parsed_body["error_type"]
+        assert_equal "Validation failed", response.parsed_body["errors"].first
+        assert_includes response.parsed_body["errors"], "Name is too long (maximum is 50 characters)"
+        assert_equal response.headers["X-Request-Id"], response.parsed_body["request_id"]
+      end
+
       test "controller uses api v1 base controller" do
         assert_equal Api::V1::BaseController, Api::V1::HelloController.superclass
       end
