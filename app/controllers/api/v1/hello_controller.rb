@@ -1,6 +1,6 @@
 module Api
   module V1
-    class HelloController < ApplicationController
+    class HelloController < BaseController
       def show
         name = params[:name].presence || "world"
         cache_key = "hello:greeting:#{name}"

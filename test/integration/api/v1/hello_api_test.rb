@@ -23,6 +23,7 @@ module Api
         get "/api/v1/hello", params: { name: name }
 
         assert_response :success
+        assert response.headers["X-Request-Id"].present?
         assert_equal true, response.parsed_body["success"]
         assert_equal "Hello, #{name}!", response.parsed_body["message"]
         assert_equal false, response.parsed_body["cached"], "Expected cache miss on first request"
@@ -38,9 +39,14 @@ module Api
         get "/api/v1/hello", params: { name: name }
 
         assert_response :success
+        assert response.headers["X-Request-Id"].present?
         assert_equal true, response.parsed_body["success"]
         assert_equal "Hello, #{name}!", response.parsed_body["message"]
         assert_equal true, response.parsed_body["cached"], "Expected cache hit on second request"
+      end
+
+      test "controller uses api v1 base controller" do
+        assert_equal Api::V1::BaseController, Api::V1::HelloController.superclass
       end
     end
   end
