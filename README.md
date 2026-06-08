@@ -117,6 +117,15 @@ Conventions:
 - Shared response metadata (for example `request_id`) is injected in the base controller before serialization.
 - Endpoint blueprints define only fields that belong to the public API contract.
 
+## Pagination / Collection Conventions (Pagy)
+
+This template uses `pagy` for consistent collection endpoint pagination.
+
+- See BaseController helpers
+- Query params for collection endpoints:
+	- `page` (default: `1`)
+	- `per_page` (default: `25`, max: `100`)
+
 ## Authorization (Policies)
 
 This template establishes where authorization decisions live, without predefining app-specific rules.

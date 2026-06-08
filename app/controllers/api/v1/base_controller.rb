@@ -1,6 +1,8 @@
 module Api
   module V1
     class BaseController < Api::BaseController
+      include Pagy::Method
+
       rescue_from ApplicationContract::Invalid, with: :render_contract_invalid
       rescue_from ApplicationPolicy::NotAuthorized, with: :render_not_authorized
 
@@ -13,6 +15,14 @@ module Api
         )
       end
 
+      def paginate_scope(scope, page:, per_page:)
+        pagy(scope, page: page, limit: per_page)
+      end
+
+      def pagination_meta(pagy, extras = {})
+        pagy.data_hash.merge(extras)
+      end
+
       def authorize!(record, query = nil)
         action = query || "#{action_name}?"
         allowed = policy_for(record).public_send(action)
@@ -23,7 +33,8 @@ module Api
       end
 
       def policy_for(record)
-        policy_class = "#{record.class.name}Policy".safe_constantize || ApplicationPolicy
+        class_name = record.is_a?(Class) ? record.name : record.class.name
+        policy_class = "#{class_name}Policy".safe_constantize || ApplicationPolicy
         policy_class.new(current_user, record)
       end
 

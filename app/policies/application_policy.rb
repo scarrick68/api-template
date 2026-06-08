@@ -9,6 +9,7 @@ class ApplicationPolicy
   end
 
   def show? = false
+  def index? = false
   def create? = false
   def update? = false
   def destroy? = false

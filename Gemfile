@@ -17,6 +17,7 @@ gem "stimulus-rails"
 # Build JSON APIs with ease [https://github.com/rails/jbuilder]
 gem "jbuilder"
 gem "blueprinter"
+gem "pagy"
 
 # Use Active Model has_secure_password [https://guides.rubyonrails.org/active_model_basics.html#securepassword]
 # gem "bcrypt", "~> 3.1.7"
@@ -68,6 +69,7 @@ group :test do
   gem "capybara"
   gem "selenium-webdriver"
   gem "factory_bot_rails"
+  gem "mocha"
 end
 
 gem "devise_token_auth", github: "lynndylanhurley/devise_token_auth", branch: "master"
