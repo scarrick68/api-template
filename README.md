@@ -30,6 +30,35 @@ This template enables CORS with `rack-cors`.
 - Set `CORS_ALLOWED_ORIGINS` to a comma-separated list of allowed origins.
 - Cors are set in env specific config/environments/*.rb files
 
+## Basic Rate Limiting (Rack::Attack)
+
+This template uses `rack-attack` to throttle sensitive and write-heavy endpoints.
+
+Configured throttles live in `config/initializers/rack_attack.rb`.
+
+Current throttled routes (by request IP):
+
+- `POST /auth/sign_in`
+- `POST /auth`
+- `POST|PUT|PATCH|DELETE /api/v1/users*`
+
+Default limits:
+
+- Auth sign in: `10` requests / `60` seconds
+- Auth sign up: `10` requests / `60` seconds
+- Users write endpoints: `15` requests / `60` seconds
+
+Environment variables:
+
+- `THROTTLE_AUTH_SIGN_IN_LIMIT`
+- `THROTTLE_AUTH_SIGN_IN_PERIOD`
+- `THROTTLE_AUTH_SIGN_UP_LIMIT`
+- `THROTTLE_AUTH_SIGN_UP_PERIOD`
+- `THROTTLE_USERS_WRITE_LIMIT`
+- `THROTTLE_USERS_WRITE_PERIOD`
+
+When a request is throttled, Rack::Attack returns `429 Too Many Requests` using its default response behavior.
+
 ## API Versioning
 
 API endpoints should be added under `/api/v1`.
