@@ -16,6 +16,21 @@ module Svc
           test "returns nil for missing id" do
             assert_nil Show.call(id: 999999)
           end
+
+          test "returns nil for soft deleted user" do
+            user = create(:user, deleted_at: Time.current)
+
+            assert_nil Show.call(id: user.id)
+          end
+
+          test "returns soft deleted user when scope is unscoped" do
+            user = create(:user, deleted_at: Time.current)
+
+            result = Show.call(id: user.id, scope: User.unscoped)
+
+            assert_equal user.id, result.id
+            assert_not_nil result.deleted_at
+          end
         end
       end
     end

@@ -33,7 +33,10 @@ module Api
           params.permit(:id).to_h
         ).validate!
 
-        user_record = Svc::Api::V1::Users::Show.call(id: contract.id)
+        user_record = Svc::Api::V1::Users::Show.call(
+          id: contract.id,
+          scope: user_lookup_scope
+        )
 
         unless user_record
           return render_api_error(
@@ -61,7 +64,10 @@ module Api
           permitted_params
         ).validate!
 
-        user_record = Svc::Api::V1::Users::Show.call(id: contract.id)
+        user_record = Svc::Api::V1::Users::Show.call(
+          id: contract.id,
+          scope: user_lookup_scope
+        )
 
         unless user_record
           return render_api_error(
@@ -85,6 +91,43 @@ module Api
             data: updated_record
           }
         )
+      end
+
+      def destroy
+        contract = Api::V1::Users::DestroyContract.new(
+          params.permit(:id).to_h
+        ).validate!
+
+        user_record = Svc::Api::V1::Users::Show.call(
+          id: contract.id,
+          scope: user_lookup_scope
+        )
+
+        unless user_record
+          return render_api_error(
+            type: "forbidden",
+            message: "You are not authorized to perform this action",
+            status: :forbidden
+          )
+        end
+
+        authorize!(user_record, :destroy?)
+
+        deleted_record = Svc::Api::V1::Users::Destroy.call(user: user_record)
+
+        render_serialized(
+          Api::V1::UsersShowResponseBlueprint,
+          {
+            success: true,
+            data: deleted_record
+          }
+        )
+      end
+
+      private
+
+      def user_lookup_scope
+        current_user.admin? ? User.unscoped : User
       end
     end
   end

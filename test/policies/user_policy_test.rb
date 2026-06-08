@@ -70,4 +70,29 @@ class UserPolicyTest < ActiveSupport::TestCase
 
     assert_equal false, policy.update?
   end
+
+  test "destroy is allowed for admins" do
+    policy = UserPolicy.new(build(:user, :admin), User)
+
+    assert_equal true, policy.destroy?
+  end
+
+  test "destroy is allowed when user is deleting self" do
+    current_user = build(:user)
+    policy = UserPolicy.new(current_user, current_user)
+
+    assert_equal true, policy.destroy?
+  end
+
+  test "destroy is denied for authenticated non-admin users deleting others" do
+    policy = UserPolicy.new(build(:user), build(:user))
+
+    assert_equal false, policy.destroy?
+  end
+
+  test "destroy is denied for guests" do
+    policy = UserPolicy.new(nil, User)
+
+    assert_equal false, policy.destroy?
+  end
 end
