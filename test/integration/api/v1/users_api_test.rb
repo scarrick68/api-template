@@ -3,7 +3,7 @@ require "support/application_dispatch_test"
 
 module Api
   module V1
-    class UsersApiTest < ApplicationDispatchTest
+    class UsersIndexApiTest < ApplicationDispatchTest
       test "index requires authentication" do
         get "/api/v1/users"
 
@@ -55,7 +55,9 @@ module Api
         assert_equal false, response.parsed_body["success"]
         assert_equal "forbidden", response.parsed_body["error_type"]
       end
+    end
 
+    class UsersShowApiTest < ApplicationDispatchTest
       test "show requires authentication" do
         user = create(:user)
 
@@ -99,7 +101,7 @@ module Api
         assert_equal "forbidden", response.parsed_body["error_type"]
       end
 
-      test "show returns not found for missing user" do
+      test "show returns forbidden for missing user" do
         signed_in_user = create(:user, :admin, email: "signed-in6@example.com")
 
         get "/api/v1/users/999999", headers: auth_headers_for(signed_in_user)
@@ -108,7 +110,9 @@ module Api
         assert_equal false, response.parsed_body["success"]
         assert_equal "forbidden", response.parsed_body["error_type"]
       end
+    end
 
+    class UsersUpdateApiTest < ApplicationDispatchTest
       test "update requires authentication" do
         user = create(:user)
 
