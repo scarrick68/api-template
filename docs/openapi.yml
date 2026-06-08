@@ -1,0 +1,151 @@
+openapi: 3.1.0
+info:
+  title: API Template
+  version: 1.0.0
+servers:
+  - url: /
+paths:
+  /api/v1/hello:
+    get:
+      summary: Hello endpoint
+      parameters:
+        - in: query
+          name: name
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Hello response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HelloResponse'
+        '422':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api/v1/users:
+    post:
+      summary: Create user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                password_confirmation:
+                  type: string
+              required:
+                - email
+                - password
+                - password_confirmation
+      responses:
+        '201':
+          description: Created user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserShowResponse'
+        '422':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api/v1/users/me:
+    get:
+      summary: Current authenticated user
+      responses:
+        '200':
+          description: Current user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserShowResponse'
+components:
+  schemas:
+    BaseSuccess:
+      type: object
+      required:
+        - success
+        - request_id
+      properties:
+        success:
+          type: boolean
+          const: true
+        request_id:
+          type: string
+    ErrorResponse:
+      type: object
+      required:
+        - success
+        - errors
+        - error_type
+      properties:
+        success:
+          type: boolean
+          const: false
+        errors:
+          type: array
+          items:
+            type: string
+        error_type:
+          type: string
+        request_id:
+          type: [string, 'null']
+    User:
+      type: object
+      required:
+        - id
+        - email
+        - admin
+        - created_at
+        - updated_at
+      properties:
+        id:
+          type: integer
+        email:
+          type: string
+          format: email
+        name:
+          type: [string, 'null']
+        admin:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+    UserShowResponse:
+      allOf:
+        - $ref: '#/components/schemas/BaseSuccess'
+        - type: object
+          required:
+            - data
+          properties:
+            data:
+              $ref: '#/components/schemas/User'
+    HelloResponse:
+      allOf:
+        - $ref: '#/components/schemas/BaseSuccess'
+        - type: object
+          required:
+            - message
+            - cached
+          properties:
+            message:
+              type: string
+            cached:
+              type: boolean

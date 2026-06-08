@@ -2,6 +2,10 @@ ENV["RAILS_ENV"] ||= "test"
 require_relative "../config/environment"
 require "rails/test_help"
 require "mocha/minitest"
+require "skooma"
+
+path_to_openapi = Rails.root.join("docs", "openapi.yml")
+ActionDispatch::IntegrationTest.include Skooma::Minitest[path_to_openapi, coverage: :report]
 
 module ActiveSupport
   class TestCase

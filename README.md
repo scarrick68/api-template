@@ -67,6 +67,16 @@ The `/api/` namespace defaults to JSON responses.
 
 - Canonical hello endpoint: `GET /api/v1/hello`
 
+## API Docs (ReDoc)
+
+This template includes a lightweight ReDoc UI backed by the OpenAPI document.
+These are unprotected in dev environment for easy access and admin auth'ed in production by default.
+
+- ReDoc UI: `GET /api/docs`
+- OpenAPI YAML: `GET /api/openapi.yml`
+
+The source OpenAPI file lives at `docs/openapi.yml`.
+
 ## Service Object Layer (SVC)
 
 This template uses a service-object layer under `app/services/svc`.

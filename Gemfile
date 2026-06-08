@@ -71,6 +71,7 @@ group :test do
   gem "selenium-webdriver"
   gem "factory_bot_rails"
   gem "mocha"
+  gem "skooma", "~> 0.3.8"
 end
 
 gem "devise_token_auth", github: "lynndylanhurley/devise_token_auth", branch: "master"
