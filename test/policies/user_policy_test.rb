@@ -1,6 +1,24 @@
 require "test_helper"
 
 class UserPolicyTest < ActiveSupport::TestCase
+  test "create is allowed for admins" do
+    policy = UserPolicy.new(build(:user, :admin), User)
+
+    assert_equal true, policy.create?
+  end
+
+  test "create is allowed for authenticated non-admin users" do
+    policy = UserPolicy.new(build(:user), User)
+
+    assert_equal true, policy.create?
+  end
+
+  test "create is allowed for guests" do
+    policy = UserPolicy.new(nil, User)
+
+    assert_equal true, policy.create?
+  end
+
   test "index is allowed for admins" do
     policy = UserPolicy.new(build(:user, :admin), User)
 

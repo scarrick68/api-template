@@ -1,4 +1,8 @@
 class UserPolicy < ApplicationPolicy
+  def create?
+    true
+  end
+
   def index?
     !!user&.admin?
   end

@@ -136,6 +136,68 @@ module Api
       end
     end
 
+    class UsersCreateApiTest < ApplicationDispatchTest
+      test "create allows self-registration without authentication" do
+        post "/api/v1/users", params: {
+          name: "New User",
+          email: "new-user@example.com",
+          password: "password123",
+          password_confirmation: "password123"
+        }
+
+        assert_response :created
+        assert_equal true, response.parsed_body["success"]
+        assert_equal "new-user@example.com", response.parsed_body.dig("data", "email")
+      end
+
+      test "create rejects duplicate email for guests" do
+        create(:user, email: "existing-signup@example.com")
+
+        post "/api/v1/users", params: {
+          name: "New User",
+          email: "existing-signup@example.com",
+          password: "password123",
+          password_confirmation: "password123"
+        }
+
+        assert_response :unprocessable_entity
+        assert_equal false, response.parsed_body["success"]
+        assert_equal "unprocessable_entity", response.parsed_body["error_type"]
+      end
+
+      test "create allows admin to create a user" do
+        signed_in_user = create(:user, :admin, email: "signed-in-create2@example.com")
+
+        post "/api/v1/users",
+             params: {
+               name: "Created User",
+               email: "created-user@example.com",
+               password: "password123",
+               password_confirmation: "password123"
+             },
+             headers: auth_headers_for(signed_in_user)
+
+        assert_response :created
+        assert_equal true, response.parsed_body["success"]
+        assert_equal "created-user@example.com", response.parsed_body.dig("data", "email")
+        assert_not_nil User.find_by(email: "created-user@example.com")
+      end
+
+      test "create returns unprocessable entity for invalid payload (invalid email)" do
+        post "/api/v1/users",
+             params: {
+               name: "Created User",
+               email: "invalid-email",
+               password: "password123",
+               password_confirmation: "password123"
+             }
+
+        assert_response :unprocessable_entity
+        assert_equal false, response.parsed_body["success"]
+        assert_equal "unprocessable_entity", response.parsed_body["error_type"]
+      end
+    end
+
     class UsersUpdateApiTest < ApplicationDispatchTest
       test "update requires authentication" do
         user = create(:user)

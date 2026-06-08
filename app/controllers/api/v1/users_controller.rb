@@ -1,7 +1,35 @@
 module Api
   module V1
     class UsersController < BaseController
-      before_action :authenticate_user!
+      before_action :authenticate_user!, except: [ :create ]
+
+      def create
+        permitted_params = params.permit(:name, :email, :password, :password_confirmation).to_h
+
+        contract = Api::V1::Users::CreateContract.new(
+          permitted_params
+        ).validate!
+
+        authorize!(User, :create?)
+
+        created_record = Svc::Api::V1::Users::Create.call(
+          attributes: {
+            name: contract.name,
+            email: contract.email,
+            password: contract.password,
+            password_confirmation: contract.password_confirmation
+          }
+        )
+
+        render_serialized(
+          Api::V1::UsersShowResponseBlueprint,
+          {
+            success: true,
+            data: created_record
+          },
+          status: :created
+        )
+      end
 
       def index
         authorize!(User, :index?)
@@ -127,7 +155,7 @@ module Api
       private
 
       def user_lookup_scope
-        current_user.admin? ? User.unscoped : User
+        current_user&.admin? ? User.unscoped : User
       end
     end
   end
