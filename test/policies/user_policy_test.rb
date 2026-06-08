@@ -1,6 +1,24 @@
 require "test_helper"
 
 class UserPolicyTest < ActiveSupport::TestCase
+  test "create is allowed for admins" do
+    policy = UserPolicy.new(build(:user, :admin), User)
+
+    assert_equal true, policy.create?
+  end
+
+  test "create is allowed for authenticated non-admin users" do
+    policy = UserPolicy.new(build(:user), User)
+
+    assert_equal true, policy.create?
+  end
+
+  test "create is allowed for guests" do
+    policy = UserPolicy.new(nil, User)
+
+    assert_equal true, policy.create?
+  end
+
   test "index is allowed for admins" do
     policy = UserPolicy.new(build(:user, :admin), User)
 
@@ -19,5 +37,80 @@ class UserPolicyTest < ActiveSupport::TestCase
     policy = UserPolicy.new(nil, User)
 
     assert_equal false, policy.index?
+  end
+
+  test "show is allowed for admins" do
+    policy = UserPolicy.new(build(:user, :admin), User)
+
+    assert_equal true, policy.show?
+  end
+
+  test "show is allowed when user is viewing self" do
+    current_user = build(:user)
+    policy = UserPolicy.new(current_user, current_user)
+
+    assert_equal true, policy.show?
+  end
+
+  test "show is denied for authenticated non-admin users viewing others" do
+    policy = UserPolicy.new(build(:user), build(:user))
+
+    assert_equal false, policy.show?
+  end
+
+  test "show is denied for guests" do
+    policy = UserPolicy.new(nil, User)
+
+    assert_equal false, policy.show?
+  end
+
+  test "update is allowed for admins" do
+    policy = UserPolicy.new(build(:user, :admin), User)
+
+    assert_equal true, policy.update?
+  end
+
+  test "update is allowed when user is updating self" do
+    current_user = build(:user)
+    policy = UserPolicy.new(current_user, current_user)
+
+    assert_equal true, policy.update?
+  end
+
+  test "update is denied for authenticated non-admin users updating others" do
+    policy = UserPolicy.new(build(:user), build(:user))
+
+    assert_equal false, policy.update?
+  end
+
+  test "update is denied for guests" do
+    policy = UserPolicy.new(nil, User)
+
+    assert_equal false, policy.update?
+  end
+
+  test "destroy is allowed for admins" do
+    policy = UserPolicy.new(build(:user, :admin), User)
+
+    assert_equal true, policy.destroy?
+  end
+
+  test "destroy is allowed when user is deleting self" do
+    current_user = build(:user)
+    policy = UserPolicy.new(current_user, current_user)
+
+    assert_equal true, policy.destroy?
+  end
+
+  test "destroy is denied for authenticated non-admin users deleting others" do
+    policy = UserPolicy.new(build(:user), build(:user))
+
+    assert_equal false, policy.destroy?
+  end
+
+  test "destroy is denied for guests" do
+    policy = UserPolicy.new(nil, User)
+
+    assert_equal false, policy.destroy?
   end
 end

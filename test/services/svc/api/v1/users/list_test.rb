@@ -14,6 +14,15 @@ module Svc
 
             assert_equal [ newer.id, older.id ], result.pluck(:id)
           end
+
+          test "excludes soft deleted users" do
+            active_user = create(:user, email: "active@example.com")
+            deleted_user = create(:user, email: "deleted@example.com", deleted_at: Time.current)
+
+            result = List.call(scope: User.where(id: [ active_user.id, deleted_user.id ]))
+
+            assert_equal [ active_user.id ], result.pluck(:id)
+          end
         end
       end
     end

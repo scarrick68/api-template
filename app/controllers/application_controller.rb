@@ -7,12 +7,12 @@ class ApplicationController < ActionController::Base
   include DeviseTokenAuth::Concerns::SetUserByToken
   include ErrorRenderable
 
+  rescue_from StandardError, with: :render_internal_server_error
   rescue_from ActiveRecord::RecordNotFound, with: :render_not_found
   rescue_from ActionController::ParameterMissing, with: :render_bad_request
   rescue_from ActionController::BadRequest, with: :render_bad_request
   rescue_from ActiveRecord::RecordInvalid, with: :render_record_invalid
   rescue_from ActiveRecord::RecordNotSaved, with: :render_record_not_saved
-  rescue_from StandardError, with: :render_internal_server_error
 
   private
 
