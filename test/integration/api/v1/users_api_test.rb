@@ -153,6 +153,15 @@ module Api
         assert_equal signed_in_user.id, response.parsed_body.dig("data", "id")
         assert_equal "signed-in-me@example.com", response.parsed_body.dig("data", "email")
       end
+
+      test "me conforms to OpenAPI 200 schema" do
+        signed_in_user = create(:user, email: "schema-me@example.com")
+
+        get "/api/v1/users/me", headers: auth_headers_for(signed_in_user)
+
+        assert_response :success
+        assert_conform_schema(200)
+      end
     end
 
     class UsersCreateApiTest < ApplicationDispatchTest
@@ -167,6 +176,20 @@ module Api
         assert_response :created
         assert_equal true, response.parsed_body["success"]
         assert_equal "new-user@example.com", response.parsed_body.dig("data", "email")
+      end
+
+      test "create conforms to OpenAPI 201 schema" do
+        email = "schema-#{SecureRandom.hex(6)}@example.com"
+
+        post "/api/v1/users", params: {
+          name: "Schema User",
+          email: email,
+          password: "password123",
+          password_confirmation: "password123"
+        }, as: :json
+
+        assert_response :created
+        assert_conform_schema(201)
       end
 
       test "create rejects duplicate email for guests" do
@@ -214,6 +237,18 @@ module Api
         assert_response :unprocessable_entity
         assert_equal false, response.parsed_body["success"]
         assert_equal "unprocessable_entity", response.parsed_body["error_type"]
+      end
+
+      test "create invalid payload conforms to OpenAPI 422 response schema" do
+        post "/api/v1/users", params: {
+          name: "Schema User",
+          email: "not-an-email",
+          password: "password123",
+          password_confirmation: "password123"
+        }, as: :json
+
+        assert_response :unprocessable_entity
+        assert_conform_response_schema(422)
       end
     end
 
