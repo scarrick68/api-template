@@ -27,6 +27,32 @@ module Api
           }
         )
       end
+
+      def show
+        contract = Api::V1::Users::ShowContract.new(
+          params.permit(:id).to_h
+        ).validate!
+
+        user_record = Svc::Api::V1::Users::Show.call(id: contract.id)
+
+        unless user_record
+          return render_api_error(
+            type: "not_found",
+            message: "User not found",
+            status: :not_found
+          )
+        end
+
+        authorize!(user_record, :show?)
+
+        render_serialized(
+          Api::V1::UsersShowResponseBlueprint,
+          {
+            success: true,
+            data: user_record
+          }
+        )
+      end
     end
   end
 end

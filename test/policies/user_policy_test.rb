@@ -20,4 +20,29 @@ class UserPolicyTest < ActiveSupport::TestCase
 
     assert_equal false, policy.index?
   end
+
+  test "show is allowed for admins" do
+    policy = UserPolicy.new(build(:user, :admin), User)
+
+    assert_equal true, policy.show?
+  end
+
+  test "show is allowed when user is viewing self" do
+    current_user = build(:user)
+    policy = UserPolicy.new(current_user, current_user)
+
+    assert_equal true, policy.show?
+  end
+
+  test "show is denied for authenticated non-admin users viewing others" do
+    policy = UserPolicy.new(build(:user), build(:user))
+
+    assert_equal false, policy.show?
+  end
+
+  test "show is denied for guests" do
+    policy = UserPolicy.new(nil, User)
+
+    assert_equal false, policy.show?
+  end
 end
