@@ -136,6 +136,25 @@ module Api
       end
     end
 
+    class UsersMeApiTest < ApplicationDispatchTest
+      test "me requires authentication" do
+        get "/api/v1/users/me"
+
+        assert_response :unauthorized
+      end
+
+      test "me returns current authenticated user" do
+        signed_in_user = create(:user, email: "signed-in-me@example.com", name: "Me User")
+
+        get "/api/v1/users/me", headers: auth_headers_for(signed_in_user)
+
+        assert_response :success
+        assert_equal true, response.parsed_body["success"]
+        assert_equal signed_in_user.id, response.parsed_body.dig("data", "id")
+        assert_equal "signed-in-me@example.com", response.parsed_body.dig("data", "email")
+      end
+    end
+
     class UsersCreateApiTest < ApplicationDispatchTest
       test "create allows self-registration without authentication" do
         post "/api/v1/users", params: {

@@ -56,6 +56,18 @@ module Api
         )
       end
 
+      def me
+        authorize!(current_user, :show?)
+
+        render_serialized(
+          Api::V1::UsersShowResponseBlueprint,
+          {
+            success: true,
+            data: current_user
+          }
+        )
+      end
+
       def show
         contract = Api::V1::Users::ShowContract.new(
           params.permit(:id).to_h
