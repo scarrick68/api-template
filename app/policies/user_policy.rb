@@ -8,4 +8,10 @@ class UserPolicy < ApplicationPolicy
 
     user.admin? || user == record
   end
+
+  def update?
+    return false unless user
+
+    user.admin? || user == record
+  end
 end

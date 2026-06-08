@@ -104,9 +104,101 @@ module Api
 
         get "/api/v1/users/999999", headers: auth_headers_for(signed_in_user)
 
-        assert_response :not_found
+        assert_response :forbidden
         assert_equal false, response.parsed_body["success"]
-        assert_equal "not_found", response.parsed_body["error_type"]
+        assert_equal "forbidden", response.parsed_body["error_type"]
+      end
+
+      test "update requires authentication" do
+        user = create(:user)
+
+        patch "/api/v1/users/#{user.id}", params: { name: "Updated Name" }
+
+        assert_response :unauthorized
+      end
+
+      test "update allows admin to update another user" do
+        signed_in_user = create(:user, :admin, email: "signed-in7@example.com")
+        user = create(:user, email: "update-target@example.com", name: "Before Name")
+
+        patch "/api/v1/users/#{user.id}",
+              params: { name: "After Name" },
+              headers: auth_headers_for(signed_in_user)
+
+        assert_response :success
+        assert_equal true, response.parsed_body["success"]
+        assert_equal "After Name", response.parsed_body.dig("data", "name")
+        assert_equal "After Name", user.reload.name
+      end
+
+      test "update allows non-admin users to update self" do
+        signed_in_user = create(:user, email: "signed-in8@example.com", name: "Before Name")
+
+        patch "/api/v1/users/#{signed_in_user.id}",
+              params: { name: "After Name" },
+              headers: auth_headers_for(signed_in_user)
+
+        assert_response :success
+        assert_equal true, response.parsed_body["success"]
+        assert_equal "After Name", response.parsed_body.dig("data", "name")
+        assert_equal "After Name", signed_in_user.reload.name
+      end
+
+      test "update is forbidden for non-admin users updating others" do
+        signed_in_user = create(:user, email: "signed-in9@example.com")
+        other_user = create(:user)
+
+        patch "/api/v1/users/#{other_user.id}",
+              params: { name: "Nope" },
+              headers: auth_headers_for(signed_in_user)
+
+        assert_response :forbidden
+        assert_equal false, response.parsed_body["success"]
+        assert_equal "forbidden", response.parsed_body["error_type"]
+      end
+
+      test "update returns forbidden for missing user" do
+        signed_in_user = create(:user, :admin, email: "signed-in10@example.com")
+
+        patch "/api/v1/users/999999",
+              params: { name: "Missing" },
+              headers: auth_headers_for(signed_in_user)
+
+        assert_response :forbidden
+        assert_equal false, response.parsed_body["success"]
+        assert_equal "forbidden", response.parsed_body["error_type"]
+      end
+
+      test "update returns unprocessable entity for invalid email" do
+        signed_in_user = create(:user, email: "signed-in11@example.com")
+
+        patch "/api/v1/users/#{signed_in_user.id}",
+              params: { email: "not-an-email" },
+              headers: auth_headers_for(signed_in_user)
+
+        assert_response :unprocessable_entity
+        assert_equal false, response.parsed_body["success"]
+        assert_equal "unprocessable_entity", response.parsed_body["error_type"]
+      end
+
+      test "update is idempotent for the same payload" do
+        signed_in_user = create(:user, email: "signed-in12@example.com", name: "Stable Name")
+        payload = { name: "Stable Name" }
+
+        patch "/api/v1/users/#{signed_in_user.id}",
+              params: payload,
+              headers: auth_headers_for(signed_in_user)
+
+        assert_response :success
+        assert_equal "Stable Name", response.parsed_body.dig("data", "name")
+
+        patch "/api/v1/users/#{signed_in_user.id}",
+              params: payload,
+              headers: auth_headers_for(signed_in_user)
+
+        assert_response :success
+        assert_equal "Stable Name", response.parsed_body.dig("data", "name")
+        assert_equal "Stable Name", signed_in_user.reload.name
       end
     end
   end
