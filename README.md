@@ -77,6 +77,83 @@ These are unprotected in dev environment for easy access and admin auth'ed in pr
 
 The source OpenAPI file lives at `docs/openapi.yml`.
 
+## Authentication Flows
+
+This app supports two different authentication styles at the same time:
+
+- Token auth for JSON API clients (mobile/SPA) via Devise Token Auth.
+- Cookie session auth for browser-based admin-only routes via Devise sessions.
+
+They intentionally use different URL paths so they do not conflict:
+
+- Token auth endpoints: `/auth/*`
+- Session auth endpoints: `/users/*`
+
+### API token auth flow (`/auth/*`)
+
+Route mount:
+
+- `mount_devise_token_auth_for "User", at: "auth", as: "token_auth_users"`
+
+Main endpoints:
+
+- `POST /auth` (registration)
+- `POST /auth/sign_in` (token login)
+- `DELETE /auth/sign_out` (token logout)
+- `GET /auth/validate_token`
+
+Token login response headers (used on subsequent API requests):
+
+- `access-token`
+- `client`
+- `uid`
+- `expiry`
+- `token-type`
+
+Typical API client flow:
+
+1. `POST /auth/sign_in` with email/password.
+2. Store response token headers on the client.
+3. Send those headers with each protected API call (for example `GET /api/v1/users/me`).
+4. Rotate stored token values from response headers when returned.
+
+### Admin/browser session auth flow (`/users/*`)
+
+Route mount:
+
+- `devise_for :users, only: [ :sessions ]`
+
+Main endpoints:
+
+- `GET /users/sign_in`
+- `POST /users/sign_in`
+- `DELETE /users/sign_out`
+
+Use this flow for browser-only/admin-only routes that rely on cookie sessions.
+
+Recommended pattern for admin routes:
+
+1. Require an authenticated Devise session (`authenticate_user!`).
+2. Require admin role (`current_user.admin?`).
+3. Return `403 forbidden` (or redirect for HTML pages) when non-admin users attempt access.
+
+Minimal controller gate example:
+
+```rb
+before_action :authenticate_user!
+before_action :require_admin!
+
+private
+
+def require_admin!
+	return if current_user&.admin?
+
+	head :forbidden
+end
+```
+
+For route-level constraints, use the same logic (authenticated user + `admin?`) before mounting admin-only endpoints.
+
 ## Service Object Layer (SVC)
 
 This template uses a service-object layer under `app/services/svc`.
@@ -242,4 +319,13 @@ RAILS_ENV=production bin/rails db:migrate
 RAILS_ENV=production bin/rails runner "puts Rails.application.config.active_job.queue_adapter"
 RAILS_ENV=production bin/rails runner "Rails.cache.write('smoke','ok'); puts Rails.cache.read('smoke')"
 ```
+
+## Open Source Template Security
+
+This template is open source. Generated/default secrets must be replaced before deployment.
+
+- Rotate Rails credentials and `secret_key_base`.
+- Set your own `RAILS_MASTER_KEY` in secret management.
+- Update mailer sender/SMTP credentials (`DEVISE_MAILER_SENDER` and provider secrets).
+- Never commit production keys or credentials to version control.
 

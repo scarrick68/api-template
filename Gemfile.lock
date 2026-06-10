@@ -447,6 +447,7 @@ DEPENDENCIES
   bundler-audit
   capybara
   debug
+  devise (~> 5.0)
   devise_token_auth!
   factory_bot_rails
   image_processing (~> 1.2)
