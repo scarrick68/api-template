@@ -5,6 +5,6 @@ Devise.setup do |config|
 
   require "devise/orm/active_record"
 
-  # API-only apps should treat JSON as navigational to avoid flash/session assumptions.
-  config.navigational_formats = [ :json ]
+  # Keep JSON support for API auth while allowing session-based HTML sign-in flows.
+  config.navigational_formats = [ :html, :json ]
 end

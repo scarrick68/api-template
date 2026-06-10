@@ -1,7 +1,8 @@
 Rails.application.routes.draw do
-  mount_devise_token_auth_for "User", at: "auth"
   get "api/docs", to: "docs#show"
   get "api/openapi.yml", to: "docs#openapi"
+  mount_devise_token_auth_for "User", at: "auth", as: "token_auth_users"
+  devise_for :users, only: [ :sessions ]
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
