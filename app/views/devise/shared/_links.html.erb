@@ -1,0 +1,29 @@
+<%#
+  Override Devise shared links to avoid calling path helpers for routes that are
+  intentionally not mounted in this app (sessions-only browser auth).
+%>
+<% if controller_name != "sessions" && respond_to?("new_#{resource_name}_session_path") %>
+  <p><%= link_to "Log in", public_send("new_#{resource_name}_session_path") %></p>
+<% end %>
+
+<% if devise_mapping.registerable? && controller_name != "registrations" && respond_to?("new_#{resource_name}_registration_path") %>
+  <p><%= link_to "Sign up", public_send("new_#{resource_name}_registration_path") %></p>
+<% end %>
+
+<% if devise_mapping.recoverable? && controller_name != "passwords" && controller_name != "registrations" && respond_to?("new_#{resource_name}_password_path") %>
+  <p><%= link_to "Forgot your password?", public_send("new_#{resource_name}_password_path") %></p>
+<% end %>
+
+<% if devise_mapping.confirmable? && controller_name != "confirmations" && respond_to?("new_#{resource_name}_confirmation_path") %>
+  <p><%= link_to "Didn't receive confirmation instructions?", public_send("new_#{resource_name}_confirmation_path") %></p>
+<% end %>
+
+<% if devise_mapping.lockable? && resource_class.unlock_strategy_enabled?(:email) && controller_name != "unlocks" && respond_to?("new_#{resource_name}_unlock_path") %>
+  <p><%= link_to "Didn't receive unlock instructions?", public_send("new_#{resource_name}_unlock_path") %></p>
+<% end %>
+
+<% if devise_mapping.omniauthable? %>
+  <% resource_class.omniauth_providers.each do |provider| %>
+    <p><%= button_to "Sign in with #{OmniAuth::Utils.camelize(provider)}", omniauth_authorize_path(resource_name, provider), data: { turbo: false } %></p>
+  <% end %>
+<% end %>
