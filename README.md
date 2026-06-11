@@ -77,6 +77,21 @@ These are unprotected in dev environment for easy access and admin auth'ed in pr
 
 The source OpenAPI file lives at `docs/openapi.yml`.
 
+## Database Observability (PgHero)
+
+PgHero is mounted for basic query/index visibility at:
+
+- `GET /pghero`
+
+Access behavior:
+
+- `development`: route is available without auth for local debugging.
+- non-development (`test`/`production`): route is mounted only for authenticated admin users via Devise session auth.
+
+To access in non-development, sign in through session auth first:
+
+- `GET /users/sign_in`
+
 ## Authentication Flows
 
 This app supports two different authentication styles at the same time:
