@@ -1,6 +1,15 @@
 Rails.application.routes.draw do
   get "api/docs", to: "docs#show"
   get "api/openapi.yml", to: "docs#openapi"
+
+  if Rails.env.development?
+    mount PgHero::Engine, at: "/pghero"
+  else
+    authenticate :user, ->(user) { user.admin? } do
+      mount PgHero::Engine, at: "/pghero"
+    end
+  end
+
   mount_devise_token_auth_for "User", at: "auth", as: "token_auth_users"
   devise_for :users, only: [ :sessions ]
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
