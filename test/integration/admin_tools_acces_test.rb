@@ -19,6 +19,15 @@ class AdminToolsAccessTest < ActionDispatch::IntegrationTest
     assert_redirected_to "/users/sign_in"
   end
 
+  test "admin users can access pghero" do
+    sign_in create(:user, :admin)
+
+    get "/pghero"
+
+    assert_not_equal "/users/sign_in", response.redirect_url
+    assert_not_equal :not_found, response.status
+  end
+
   test "anonymous users are redirected to sign in when trying to access blazer" do
     get "/blazer"
 
