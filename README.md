@@ -92,6 +92,33 @@ To access in non-development, sign in through session auth first:
 
 - `GET /users/sign_in`
 
+## Analytics Tracking (Ahoy)
+
+This template includes Ahoy for server-side event tracking.
+
+Installed pieces:
+
+- Gem: `ahoy_matey` (see `Gemfile`)
+- Initializer: `config/initializers/ahoy.rb`
+- Database tables: `ahoy_visits` and `ahoy_events`
+- Models: `app/models/ahoy/visit.rb` and `app/models/ahoy/event.rb`
+
+Current Ahoy config (`config/initializers/ahoy.rb`):
+
+- `Ahoy.api = true`
+- `Ahoy.geocode = false`
+- `Ahoy.server_side_visits = :when_needed`
+
+Basic controller usage:
+
+```rb
+ahoy.track "event.name", { key: "value" }
+```
+
+Test coverage:
+
+- `test/integration/ahoy_tracking_test.rb` verifies that an Ahoy event is persisted.
+
 ## Authentication Flows
 
 This app supports two different authentication styles at the same time:
