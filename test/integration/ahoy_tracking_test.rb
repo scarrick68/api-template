@@ -4,17 +4,27 @@ require "support/application_dispatch_test"
 class AhoyTrackingTest < ApplicationDispatchTest
   setup do
     Ahoy.track_bots = true
+
+    Rails.application.routes.draw do
+      get "/ahoy_tracking_test", to: "ahoy_tracking_test#show"
+    end
   end
 
   teardown do
+    Rails.application.reload_routes!
     Ahoy.track_bots = false
   end
 
-  test "/me endpoint tracks an ahoy event" do
-    signed_in_user = create(:user)
-
+  test "request tracking persists an ahoy event" do
     assert_difference "Ahoy::Event.count", 1 do
-      get me_api_v1_users_path, headers: auth_headers_for(signed_in_user)
+      get "/ahoy_tracking_test"
     end
+  end
+end
+
+class AhoyTrackingTestController < ApplicationController
+  def show
+    ahoy.track "test.event"
+    head :ok
   end
 end

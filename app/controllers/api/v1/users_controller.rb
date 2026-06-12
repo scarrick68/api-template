@@ -58,7 +58,6 @@ module Api
 
       def me
         authorize!(current_user, :show?)
-        ahoy.track("users.me.viewed", user_id: current_user.id)
 
         render_serialized(
           Api::V1::UsersShowResponseBlueprint,
