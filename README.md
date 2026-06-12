@@ -59,6 +59,21 @@ Environment variables:
 
 When a request is throttled, Rack::Attack returns `429 Too Many Requests` using its default response behavior.
 
+## N+1 Detection (Bullet Gem)
+
+This template includes the `bullet` gem in the `development, test` group.
+
+For current environment configuration choices see:
+
+- `config/environments/development.rb`:
+- `config/environments/test.rb`:
+
+Summary:
+
+- Bullet is active in both development and test.
+- In development, output is logger-based only (no browser alert/console/footer).
+- In test, Bullet raises on detected N+1/unused eager loading issues.
+
 ## API Versioning
 
 API endpoints should be added under `/api/v1`.

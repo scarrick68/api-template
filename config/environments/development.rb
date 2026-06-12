@@ -81,4 +81,15 @@ Rails.application.configure do
     "http://localhost:3000",
     "http://127.0.0.1:3000"
   ]
+
+  config.after_initialize do
+    Bullet.enable = true
+    Bullet.bullet_logger = true
+    Bullet.rails_logger = true
+
+    # API app: no browser popups/footer needed
+    Bullet.alert = false
+    Bullet.console = false
+    Bullet.add_footer = false
+  end
 end
