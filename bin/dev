@@ -1,2 +1,21 @@
-#!/usr/bin/env ruby
-exec "./bin/rails", "server", *ARGV
+#!/usr/bin/env bash
+set -e
+
+# Verify that Docker is installed and compose command is available.
+if ! command -v docker >/dev/null 2>&1; then
+  echo "Docker is required to run Elasticsearch. Version must support 'docker compose' command."
+  exit 1
+fi
+
+# Verify that the Docker daemon is running.
+if ! docker info >/dev/null 2>&1; then
+  echo "Docker daemon is unavailable."
+  echo "Please start Docker Desktop and wait for it to finish initializing."
+  exit 1
+fi
+
+# Start Elasticsearch
+docker compose up -d elasticsearch
+
+echo "Starting development environment..."
+exec bundle exec foreman start -f Procfile.dev "$@"
