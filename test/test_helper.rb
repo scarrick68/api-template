@@ -12,12 +12,20 @@ module ActiveSupport
     # Run tests in parallel with specified workers
     parallelize(workers: :number_of_processors)
 
+    parallelize_setup do |worker|
+      Searchkick.index_suffix = worker
+
+      # reindex models for parallel tests
+      User.reindex
+    end
+
     # Setup all fixtures in test/fixtures/*.yml for all tests in alphabetical order.
     fixtures :all
 
     # Provide create/build shortcuts in tests (e.g., create(:user)).
     include FactoryBot::Syntax::Methods
 
-    # Add more helper methods to be used by all tests here...
+    # enable in tests where needed
+    Searchkick.disable_callbacks
   end
 end
