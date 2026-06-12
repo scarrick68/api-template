@@ -81,3 +81,5 @@ gem "devise", "~> 5.0"
 gem "pghero", "~> 3.8"
 
 gem "blazer", "~> 3.4"
+
+gem "ahoy_matey", "~> 5.5"
