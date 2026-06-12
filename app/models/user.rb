@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class User < ApplicationRecord
+  searchkick
   default_scope { where(deleted_at: nil) }
 
   before_validation :normalize_email

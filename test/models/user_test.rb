@@ -1,6 +1,15 @@
 require "test_helper"
+require "securerandom"
 
 class UserTest < ActiveSupport::TestCase
+  def setup
+    Searchkick.enable_callbacks
+  end
+
+  def teardown
+    Searchkick.disable_callbacks
+  end
+
   test "normalizes email before validation" do
     user = build(:user, email: "  MixedCase@Example.com  ")
 
@@ -22,5 +31,11 @@ class UserTest < ActiveSupport::TestCase
 
     assert_equal false, user.valid?
     assert_includes user.errors.full_messages, "Email has already been taken"
+  end
+
+  test "searches by name" do
+    user = create(:user, name: "Search User")
+    User.search_index.refresh
+    assert_equal [ user.name ], User.search(user.name).map(&:name)
   end
 end
