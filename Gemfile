@@ -88,3 +88,5 @@ gem "ahoy_matey", "~> 5.5"
 
 gem "searchkick", "~> 6.1"
 gem "elasticsearch", "~> 9.4"
+
+gem "typhoeus", "~> 1.6"
