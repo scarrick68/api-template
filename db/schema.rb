@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_06_11_205638) do
+ActiveRecord::Schema[8.1].define(version: 2026_06_13_161542) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -132,6 +132,28 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_11_205638) do
     t.index ["byte_size"], name: "index_solid_cache_entries_on_byte_size"
     t.index ["key_hash", "byte_size"], name: "index_solid_cache_entries_on_key_hash_and_byte_size"
     t.index ["key_hash"], name: "index_solid_cache_entries_on_key_hash", unique: true
+  end
+
+  create_table "solid_errors", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.text "exception_class", null: false
+    t.string "fingerprint", limit: 64, null: false
+    t.text "message", null: false
+    t.datetime "resolved_at"
+    t.text "severity", null: false
+    t.text "source"
+    t.datetime "updated_at", null: false
+    t.index ["fingerprint"], name: "index_solid_errors_on_fingerprint", unique: true
+    t.index ["resolved_at"], name: "index_solid_errors_on_resolved_at"
+  end
+
+  create_table "solid_errors_occurrences", force: :cascade do |t|
+    t.text "backtrace"
+    t.json "context"
+    t.datetime "created_at", null: false
+    t.integer "error_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["error_id"], name: "index_solid_errors_occurrences_on_error_id"
   end
 
   create_table "solid_queue_blocked_executions", force: :cascade do |t|
@@ -283,6 +305,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_11_205638) do
     t.index ["uid", "provider"], name: "index_users_on_uid_and_provider", unique: true
   end
 
+  add_foreign_key "solid_errors_occurrences", "solid_errors", column: "error_id"
   add_foreign_key "solid_queue_blocked_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
   add_foreign_key "solid_queue_claimed_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
   add_foreign_key "solid_queue_failed_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade

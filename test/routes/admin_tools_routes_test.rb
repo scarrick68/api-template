@@ -18,4 +18,12 @@ class AdminToolsRoutesTest < ActiveSupport::TestCase
 
     assert route, "Expected /jobs to be mounted"
   end
+
+  test "solid errors route is mounted" do
+    route = Rails.application.routes.routes.find do |r|
+      r.path.spec.to_s.start_with?("/solid_errors")
+    end
+
+    assert route, "Expected /solid_errors to be mounted"
+  end
 end
