@@ -73,6 +73,7 @@ group :test do
   gem "factory_bot_rails"
   gem "mocha"
   gem "skooma", "~> 0.3.8"
+  gem "foreman", "~> 0.90.0"
 end
 
 gem "devise_token_auth", github: "lynndylanhurley/devise_token_auth", branch: "master"
@@ -84,3 +85,8 @@ gem "pghero", "~> 3.8"
 gem "blazer", "~> 3.4"
 
 gem "ahoy_matey", "~> 5.5"
+
+gem "searchkick", "~> 6.1"
+gem "elasticsearch", "~> 9.4"
+
+gem "typhoeus", "~> 1.6"

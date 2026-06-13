@@ -23,6 +23,42 @@ Things you may want to cover:
 
 * ...
 
+## Elasticsearch + Searchkick
+
+This app uses Searchkick with Elasticsearch for model search.
+
+Current config:
+
+- Default URL: `http://localhost:9200`
+- URL override: `ELASTICSEARCH_URL`
+
+### Local setup
+
+Elasticsearch is defined in `compose.yml` and can be started with:
+
+```bash
+docker compose up -d elasticsearch
+```
+
+`bin/dev` also starts Elasticsearch before starting the app processes.
+
+### Verify Elasticsearch health
+
+```bash
+rails searchkick:health
+```
+
+You should see cluster status and version info if it's running and healthy.
+
+### Test and CI notes
+
+- See `test/test_helper.rb` for Searchkick test setup and configuration.
+- Callbacks are disabled by default in tests, but can be enabled on a per-test basis when needed.
+
+### Production placeholder
+
+Configure your production env and creds as needed
+
 ## CORS
 
 This template enables CORS with `rack-cors`.
