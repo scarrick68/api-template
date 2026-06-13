@@ -90,3 +90,5 @@ gem "searchkick", "~> 6.1"
 gem "elasticsearch", "~> 9.4"
 
 gem "typhoeus", "~> 1.6"
+
+gem "mission_control-jobs", "~> 1.1"

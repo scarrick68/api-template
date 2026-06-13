@@ -5,10 +5,12 @@ Rails.application.routes.draw do
   if Rails.env.development?
     mount PgHero::Engine, at: "/pghero"
     mount Blazer::Engine, at: "blazer"
+    mount MissionControl::Jobs::Engine, at: "/jobs"
   else
     authenticate :user, ->(user) { user.admin? } do
       mount PgHero::Engine, at: "/pghero"
       mount Blazer::Engine, at: "blazer"
+      mount MissionControl::Jobs::Engine, at: "/jobs"
     end
   end
 
