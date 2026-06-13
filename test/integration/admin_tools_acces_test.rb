@@ -50,4 +50,27 @@ class AdminToolsAccessTest < ActionDispatch::IntegrationTest
     assert_not_equal "/users/sign_in", response.redirect_url
     assert_not_equal :not_found, response.status
   end
+
+  test "anonymous users are redirected to sign in when trying to access mission control jobs" do
+    get "/jobs"
+
+    assert_redirected_to "/users/sign_in"
+  end
+
+  test "non-admin users are redirected to sign in when trying to access mission control jobs" do
+    sign_in create(:user)
+
+    get "/jobs"
+
+    assert_redirected_to "/users/sign_in"
+  end
+
+  test "admin users pass app-level admin gate for mission control jobs" do
+    sign_in create(:user, :admin)
+
+    get "/jobs"
+
+    assert_not_equal "/users/sign_in", response.redirect_url
+    assert_not_equal :not_found, response.status
+  end
 end

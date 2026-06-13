@@ -143,6 +143,29 @@ To access in non-development, sign in through session auth first:
 
 - `GET /users/sign_in`
 
+## Mission Control Jobs
+
+Mission Control Jobs is mounted at:
+
+- `GET /jobs`
+
+Access behavior in this app:
+
+- `development`: route is mounted directly.
+- non-development (`test`/`production`): route is behind admin session auth via route constraints.
+
+Mission Control Jobs also supports HTTP Basic Auth. Ensure environment-specific basic auth credentials are set and rotated per environment. Do not keep placeholder/default credentials in shared configs.
+
+Future extension:
+
+If you want Mission Control Jobs to use your app's admin controller stack directly, set:
+
+```rb
+MissionControl::Jobs.base_controller_class = "AdminController"
+```
+
+That lets Mission Control inherit auth/authorization behavior from your own admin controllers without needing to set basic auth credentials or use separate session auth.
+
 ## Analytics Tracking (Ahoy)
 
 This template includes Ahoy for server-side event tracking.

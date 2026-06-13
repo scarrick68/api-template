@@ -10,4 +10,12 @@ class AdminToolsRoutesTest < ActiveSupport::TestCase
 
     assert route, "Expected /pghero to be mounted"
   end
+
+  test "mission control jobs route is mounted" do
+    route = Rails.application.routes.routes.find do |r|
+      r.path.spec.to_s.start_with?("/jobs")
+    end
+
+    assert route, "Expected /jobs to be mounted"
+  end
 end
