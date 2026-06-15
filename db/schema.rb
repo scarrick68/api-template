@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_06_15_005135) do
+ActiveRecord::Schema[8.1].define(version: 2026_06_15_181146) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -122,6 +122,22 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_15_005135) do
     t.string "variant"
     t.index ["experiment", "created_at"], name: "index_field_test_memberships_on_experiment_and_created_at"
     t.index ["participant_type", "participant_id", "experiment"], name: "index_field_test_memberships_on_participant", unique: true
+  end
+
+  create_table "metrics", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "name", null: false
+    t.datetime "occurred_at", null: false
+    t.jsonb "properties", default: {}, null: false
+    t.string "request_id"
+    t.datetime "updated_at", null: false
+    t.bigint "user_id"
+    t.string "visitor_token"
+    t.index ["name", "occurred_at"], name: "index_metrics_on_name_and_occurred_at"
+    t.index ["name"], name: "index_metrics_on_name"
+    t.index ["occurred_at"], name: "index_metrics_on_occurred_at"
+    t.index ["request_id"], name: "index_metrics_on_request_id"
+    t.index ["user_id"], name: "index_metrics_on_user_id"
   end
 
   create_table "solid_cable_messages", force: :cascade do |t|
