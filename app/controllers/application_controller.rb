@@ -14,6 +14,11 @@ class ApplicationController < ActionController::Base
   rescue_from ActiveRecord::RecordInvalid, with: :render_record_invalid
   rescue_from ActiveRecord::RecordNotSaved, with: :render_record_not_saved
 
+  # Use Ahoy identity for Field Test so experiment assignments line up with Ahoy tracking.
+  def field_test_participant
+    [ ahoy.user, ahoy.visitor_token ]
+  end
+
   private
 
   def render_not_found(exception)

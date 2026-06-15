@@ -1,4 +1,11 @@
 experiments:
+  # These are example experiments for testing and demonstration purposes. You can remove or modify them as needed.
+  # See the field_test documentation for details on how to configure experiments.
+  user_signup_flow:
+    variants:
+      - control
+      - treatment
+
   button_color:
     variants:
       - red
