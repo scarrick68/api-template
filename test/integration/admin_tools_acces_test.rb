@@ -2,7 +2,7 @@
 
 require "test_helper"
 
-class AdminToolsAccessTest < ActionDispatch::IntegrationTest
+class PgheroAccessTest < ActionDispatch::IntegrationTest
   include Devise::Test::IntegrationHelpers
 
   test "anonymous users are redirected to sign in when trying to access pghero" do
@@ -27,6 +27,10 @@ class AdminToolsAccessTest < ActionDispatch::IntegrationTest
     assert_not_equal "/users/sign_in", response.redirect_url
     assert_not_equal :not_found, response.status
   end
+end
+
+class BlazerAccessTest < ActionDispatch::IntegrationTest
+  include Devise::Test::IntegrationHelpers
 
   test "anonymous users are redirected to sign in when trying to access blazer" do
     get "/blazer"
@@ -50,6 +54,10 @@ class AdminToolsAccessTest < ActionDispatch::IntegrationTest
     assert_not_equal "/users/sign_in", response.redirect_url
     assert_not_equal :not_found, response.status
   end
+end
+
+class MissionControlJobsAccessTest < ActionDispatch::IntegrationTest
+  include Devise::Test::IntegrationHelpers
 
   test "anonymous users are redirected to sign in when trying to access mission control jobs" do
     get "/jobs"
@@ -73,6 +81,10 @@ class AdminToolsAccessTest < ActionDispatch::IntegrationTest
     assert_not_equal "/users/sign_in", response.redirect_url
     assert_not_equal :not_found, response.status
   end
+end
+
+class SolidErrorsAccessTest < ActionDispatch::IntegrationTest
+  include Devise::Test::IntegrationHelpers
 
   test "anonymous users are redirected to sign in when trying to access solid errors" do
     get "/solid_errors"
