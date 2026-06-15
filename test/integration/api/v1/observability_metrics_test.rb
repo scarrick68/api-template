@@ -4,10 +4,6 @@ require "support/application_dispatch_test"
 module Api
   module V1
     class UsersMeObservabilityTest < ApplicationDispatchTest
-      setup do
-        Metric.delete_all
-      end
-
       test "/me captures observability api request event (any api route should work)" do
         user = create(:user, email: "observability-me@example.com")
 
