@@ -2,98 +2,139 @@
 
 require "test_helper"
 
-class AdminToolsAccessTest < ActionDispatch::IntegrationTest
-  include Devise::Test::IntegrationHelpers
+module AdminToolsAccessTest
+  class PgheroAccessTest < ActionDispatch::IntegrationTest
+    include Devise::Test::IntegrationHelpers
 
-  test "anonymous users are redirected to sign in when trying to access pghero" do
-    get "/pghero"
+    test "anonymous users are redirected to sign in when trying to access pghero" do
+      get "/pghero"
 
-    assert_redirected_to "/users/sign_in"
+      assert_redirected_to "/users/sign_in"
+    end
+
+    test "non-admin users are redirected to sign in when trying to access pghero" do
+      sign_in create(:user)
+
+      get "/pghero"
+
+      assert_redirected_to "/users/sign_in"
+    end
+
+    test "admin users can access pghero" do
+      sign_in create(:user, :admin)
+
+      get "/pghero"
+
+      assert_not_equal "/users/sign_in", response.redirect_url
+      assert_not_equal :not_found, response.status
+    end
   end
 
-  test "non-admin users are redirected to sign in when trying to access pghero" do
-    sign_in create(:user)
+  class BlazerAccessTest < ActionDispatch::IntegrationTest
+    include Devise::Test::IntegrationHelpers
 
-    get "/pghero"
+    test "anonymous users are redirected to sign in when trying to access blazer" do
+      get "/blazer"
 
-    assert_redirected_to "/users/sign_in"
+      assert_redirected_to "/users/sign_in"
+    end
+
+    test "non-admin users are redirected to sign in when trying to access blazer" do
+      sign_in create(:user)
+
+      get "/blazer"
+
+      assert_redirected_to "/users/sign_in"
+    end
+
+    test "admin users can access blazer" do
+      sign_in create(:user, :admin)
+
+      get "/blazer"
+
+      assert_not_equal "/users/sign_in", response.redirect_url
+      assert_not_equal :not_found, response.status
+    end
   end
 
-  test "admin users can access pghero" do
-    sign_in create(:user, :admin)
+  class MissionControlJobsAccessTest < ActionDispatch::IntegrationTest
+    include Devise::Test::IntegrationHelpers
 
-    get "/pghero"
+    test "anonymous users are redirected to sign in when trying to access mission control jobs" do
+      get "/jobs"
 
-    assert_not_equal "/users/sign_in", response.redirect_url
-    assert_not_equal :not_found, response.status
+      assert_redirected_to "/users/sign_in"
+    end
+
+    test "non-admin users are redirected to sign in when trying to access mission control jobs" do
+      sign_in create(:user)
+
+      get "/jobs"
+
+      assert_redirected_to "/users/sign_in"
+    end
+
+    test "admin users pass app-level admin gate for mission control jobs" do
+      sign_in create(:user, :admin)
+
+      get "/jobs"
+
+      assert_not_equal "/users/sign_in", response.redirect_url
+      assert_not_equal :not_found, response.status
+    end
   end
 
-  test "anonymous users are redirected to sign in when trying to access blazer" do
-    get "/blazer"
+  class SolidErrorsAccessTest < ActionDispatch::IntegrationTest
+    include Devise::Test::IntegrationHelpers
 
-    assert_redirected_to "/users/sign_in"
+    test "anonymous users are redirected to sign in when trying to access solid errors" do
+      get "/solid_errors"
+
+      assert_redirected_to "/users/sign_in"
+    end
+
+    test "non-admin users are redirected to sign in when trying to access solid errors" do
+      sign_in create(:user)
+
+      get "/solid_errors"
+
+      assert_redirected_to "/users/sign_in"
+    end
+
+    test "admin users pass app-level admin gate for solid errors" do
+      sign_in create(:user, :admin)
+
+      get "/solid_errors"
+
+      assert_not_equal "/users/sign_in", response.redirect_url
+      assert_not_equal :not_found, response.status
+    end
   end
 
-  test "non-admin users are redirected to sign in when trying to access blazer" do
-    sign_in create(:user)
+  class FieldTestAccessTest < ActionDispatch::IntegrationTest
+    include Devise::Test::IntegrationHelpers
 
-    get "/blazer"
+    test "anonymous users are redirected to sign in when trying to access field test" do
+      get "/field_test"
 
-    assert_redirected_to "/users/sign_in"
-  end
+      assert_redirected_to "/users/sign_in"
+    end
 
-  test "admin users can access blazer" do
-    sign_in create(:user, :admin)
+    test "non-admin users are redirected to sign in when trying to access field test" do
+      sign_in create(:user)
 
-    get "/blazer"
+      get "/field_test"
 
-    assert_not_equal "/users/sign_in", response.redirect_url
-    assert_not_equal :not_found, response.status
-  end
+      assert_redirected_to "/users/sign_in"
+    end
 
-  test "anonymous users are redirected to sign in when trying to access mission control jobs" do
-    get "/jobs"
+    test "admin users pass app-level admin gate for field test" do
+      sign_in create(:user, :admin)
 
-    assert_redirected_to "/users/sign_in"
-  end
+      get "/field_test"
 
-  test "non-admin users are redirected to sign in when trying to access mission control jobs" do
-    sign_in create(:user)
-
-    get "/jobs"
-
-    assert_redirected_to "/users/sign_in"
-  end
-
-  test "admin users pass app-level admin gate for mission control jobs" do
-    sign_in create(:user, :admin)
-
-    get "/jobs"
-
-    assert_not_equal "/users/sign_in", response.redirect_url
-    assert_not_equal :not_found, response.status
-  end
-
-  test "anonymous users are redirected to sign in when trying to access solid errors" do
-    get "/solid_errors"
-
-    assert_redirected_to "/users/sign_in"
-  end
-
-  test "non-admin users are redirected to sign in when trying to access solid errors" do
-    sign_in create(:user)
-
-    get "/solid_errors"
-
-    assert_redirected_to "/users/sign_in"
-  end
-
-  test "admin users pass app-level admin gate for solid errors" do
-    sign_in create(:user, :admin)
-
-    get "/solid_errors"
-
-    assert_not_equal "/users/sign_in", response.redirect_url
-    assert_not_equal :not_found, response.status
+      assert_not_equal "/users/sign_in", response.redirect_url
+      assert_not_equal :not_found, response.status
+    end
   end
 end

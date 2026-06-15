@@ -3,6 +3,7 @@
 class User < ApplicationRecord
   searchkick
   default_scope { where(deleted_at: nil) }
+  has_many :field_test_memberships, class_name: "FieldTest::Membership", as: :participant
 
   before_validation :normalize_email
   validates :email, presence: true, uniqueness: { case_sensitive: false }

@@ -7,12 +7,14 @@ Rails.application.routes.draw do
     mount Blazer::Engine, at: "blazer"
     mount MissionControl::Jobs::Engine, at: "/jobs"
     mount SolidErrors::Engine, at: "/solid_errors"
+    mount FieldTest::Engine, at: "field_test"
   else
     authenticate :user, ->(user) { user.admin? } do
       mount PgHero::Engine, at: "/pghero"
       mount Blazer::Engine, at: "blazer"
       mount MissionControl::Jobs::Engine, at: "/jobs"
       mount SolidErrors::Engine, at: "/solid_errors"
+      mount FieldTest::Engine, at: "field_test"
     end
   end
 

@@ -26,4 +26,12 @@ class AdminToolsRoutesTest < ActiveSupport::TestCase
 
     assert route, "Expected /solid_errors to be mounted"
   end
+
+  test "field test route is mounted" do
+    route = Rails.application.routes.routes.find do |r|
+      r.path.spec.to_s.start_with?("/field_test")
+    end
+
+    assert route, "Expected /field_test to be mounted"
+  end
 end

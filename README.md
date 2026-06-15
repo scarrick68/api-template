@@ -193,6 +193,38 @@ Test coverage:
 
 - `test/integration/ahoy_tracking_test.rb` verifies that an Ahoy event is persisted.
 
+## A/B Testing (Field Test)
+
+This app includes Field Test scaffolding for experiments and conversion tracking.
+
+Configured experiment definitions live in:
+
+- `config/field_test.yml`
+
+Dashboard route:
+
+- `GET /field_test`
+
+Route protection:
+
+- `development`: mounted directly for local debugging.
+- non-development (`test`/`production`): mounted behind admin session auth in routes.
+
+Ahoy integration:
+
+- `ApplicationController#field_test_participant` returns `[ahoy.user, ahoy.visitor_token]`.
+- This makes Field Test participant identity reuse Ahoy's visitor token.
+
+API status in this template:
+
+- Field Test is installed and admin UI is mounted at `/field_test`.
+- The template does **not** currently ship API endpoints to fetch or set experiment assignments.
+- API contract and endpoint shape are intentionally TBD and should be designed alongside the frontend template.
+
+Model wiring:
+
+- `User` has `field_test_memberships` association via `FieldTest::Membership`.
+
 ## Authentication Flows
 
 This app supports two different authentication styles at the same time:

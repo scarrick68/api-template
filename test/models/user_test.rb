@@ -38,4 +38,16 @@ class UserTest < ActiveSupport::TestCase
     User.search_index.refresh
     assert_equal [ user.name ], User.search(user.name).map(&:name)
   end
+
+  test "has field test memberships association" do
+    user = create(:user)
+    membership = FieldTest::Membership.create!(
+      experiment: "user_signup_flow",
+      variant: "control",
+      participant_type: "User",
+      participant_id: user.id.to_s
+    )
+
+    assert_includes user.field_test_memberships, membership
+  end
 end
