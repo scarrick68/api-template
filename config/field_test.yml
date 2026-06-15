@@ -8,3 +8,5 @@ experiments:
 
 exclude:
   bots: true
+
+cache: true
