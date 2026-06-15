@@ -137,4 +137,31 @@ module AdminToolsAccessTest
       assert_not_equal :not_found, response.status
     end
   end
+
+  class FlipperAccessTest < ActionDispatch::IntegrationTest
+    include Devise::Test::IntegrationHelpers
+
+    test "anonymous users are redirected to sign in when trying to access flipper" do
+      get "/flipper"
+
+      assert_redirected_to "/users/sign_in"
+    end
+
+    test "non-admin users are redirected to sign in when trying to access flipper" do
+      sign_in create(:user)
+
+      get "/flipper"
+
+      assert_redirected_to "/users/sign_in"
+    end
+
+    test "admin users pass app-level admin gate for flipper" do
+      sign_in create(:user, :admin)
+
+      get "/flipper"
+
+      assert_not_equal "/users/sign_in", response.redirect_url
+      assert_not_equal :not_found, response.status
+    end
+  end
 end

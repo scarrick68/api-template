@@ -34,4 +34,12 @@ class AdminToolsRoutesTest < ActiveSupport::TestCase
 
     assert route, "Expected /field_test to be mounted"
   end
+
+  test "flipper route is mounted" do
+    route = Rails.application.routes.routes.find do |r|
+      r.path.spec.to_s.start_with?("/flipper")
+    end
+
+    assert route, "Expected /flipper to be mounted"
+  end
 end
