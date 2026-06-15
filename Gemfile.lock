@@ -109,6 +109,7 @@ GEM
       msgpack (~> 1.2)
     brakeman (8.0.5)
       racc
+    browser (6.2.0)
     builder (3.3.0)
     bullet (8.1.3)
       activesupport (>= 3.0.0)
@@ -179,6 +180,10 @@ GEM
     ffi (1.17.4-arm64-darwin)
     ffi (1.17.4-x86_64-linux-gnu)
     ffi (1.17.4-x86_64-linux-musl)
+    field_test (1.0.0)
+      activerecord (>= 7.2)
+      browser (>= 2)
+      railties (>= 7.2)
     foreman (0.90.0)
       thor (~> 1.4)
     fugit (1.12.2)
@@ -519,6 +524,7 @@ DEPENDENCIES
   devise_token_auth!
   elasticsearch (~> 9.4)
   factory_bot_rails
+  field_test (~> 1.0)
   foreman (~> 0.90.0)
   image_processing (~> 1.2)
   importmap-rails
@@ -574,6 +580,7 @@ CHECKSUMS
   blueprinter (1.3.0) sha256=a89b68d97b8d7157e4657750c17aa1ab9f04af58a68b89257d127f973cf8720c
   bootsnap (1.24.6) sha256=c60bab88c70332290f0a2636a288f675299eb4f804a02a3c085b42eca9da164a
   brakeman (8.0.5) sha256=03735f9690d3fd4b32d66aacbf0a6d15a84266bdd06b32c05c8ecc8f6021d2be
+  browser (6.2.0) sha256=281d5295788825c9396427c292c2d2be0a5c91875c93c390fde6e5d61a5ace2d
   builder (3.3.0) sha256=497918d2f9dca528fdca4b88d84e4ef4387256d984b8154e9d5d3fe5a9c8835f
   bullet (8.1.3) sha256=c8163c527324fe1180775be48719875726891622f0a73784658b2992acf3c7cb
   bundler-audit (0.9.3) sha256=81c8766c71e47d0d28a0f98c7eed028539f21a6ea3cd8f685eb6f42333c9b4e9
@@ -610,6 +617,7 @@ CHECKSUMS
   ffi (1.17.4-arm64-darwin) sha256=19071aaf1419251b0a46852abf960e77330a3b334d13a4ab51d58b31a937001b
   ffi (1.17.4-x86_64-linux-gnu) sha256=9d3db14c2eae074b382fa9c083fe95aec6e0a1451da249eab096c34002bc752d
   ffi (1.17.4-x86_64-linux-musl) sha256=3fdf9888483de005f8ef8d1cf2d3b20d86626af206cbf780f6a6a12439a9c49e
+  field_test (1.0.0) sha256=8a6f10d3791cbb2d48fc3dbda1fe8f8b3f3231ff1c2bd9866ae06204397cf9b6
   foreman (0.90.0) sha256=ff675e2d47b607ac58714a6d4ac3e1ee8f06f41d8db084531c31961e2c3f117c
   fugit (1.12.2) sha256=643f2bf28db263bd400cbf8e0dd8b76b2c9b94bdb130e12d2394de04d9c20e5e
   globalid (1.3.0) sha256=05c639ad6eb4594522a0b07983022f04aa7254626ab69445a0e493aa3786ff11

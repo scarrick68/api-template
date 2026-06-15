@@ -94,3 +94,5 @@ gem "typhoeus", "~> 1.6"
 gem "mission_control-jobs", "~> 1.1"
 
 gem "solid_errors", "~> 0.7.0"
+
+gem "field_test", "~> 1.0"

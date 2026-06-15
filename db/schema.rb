@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_06_13_161542) do
+ActiveRecord::Schema[8.1].define(version: 2026_06_15_005135) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -111,6 +111,17 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_13_161542) do
     t.string "status"
     t.datetime "updated_at", null: false
     t.index ["creator_id"], name: "index_blazer_queries_on_creator_id"
+  end
+
+  create_table "field_test_memberships", force: :cascade do |t|
+    t.boolean "converted", default: false
+    t.datetime "created_at"
+    t.string "experiment"
+    t.string "participant_id"
+    t.string "participant_type"
+    t.string "variant"
+    t.index ["experiment", "created_at"], name: "index_field_test_memberships_on_experiment_and_created_at"
+    t.index ["participant_type", "participant_id", "experiment"], name: "index_field_test_memberships_on_participant", unique: true
   end
 
   create_table "solid_cable_messages", force: :cascade do |t|
