@@ -310,6 +310,36 @@ Model wiring:
 
 - `User` has `field_test_memberships` association via `FieldTest::Membership`.
 
+## Feature Flags (Flipper)
+
+This app uses a standard Flipper setup for feature flags. This is configured to be used first party, backed by the primary app DB. It does not use their cloud service.
+
+Persistence:
+
+- ActiveRecord-backed flag storage via `flipper_features` and `flipper_gates` tables.
+- Tables are created by the Flipper migration in `db/migrate`.
+
+UI route:
+
+- `GET /flipper`
+
+Route protection:
+
+- `development`: mounted directly for local use.
+- non-development (`test`/`production`): mounted behind admin session auth in routes.
+
+Setup checklist:
+
+1. Run migrations:
+
+```bash
+bin/rails db:migrate
+```
+
+2. In production/non-development, sign in as an admin user to access `/flipper`.
+
+3. Installation verified with basic smoke tests
+
 ## Authentication Flows
 
 This app supports two different authentication styles at the same time:
