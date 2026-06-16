@@ -74,6 +74,7 @@ group :test do
   gem "mocha"
   gem "skooma", "~> 0.4.0"
   gem "foreman", "~> 0.90.0"
+  gem "simplecov", require: false
 end
 
 gem "devise_token_auth", github: "lynndylanhurley/devise_token_auth", branch: "master"
