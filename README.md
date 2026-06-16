@@ -544,6 +544,40 @@ Prerequisite: PostgreSQL must be running locally and accessible with your config
 
 Cheeck `config/ci.rb` for the full list of steps and commands run by the pipeline. You can also run individual steps manually.
 
+## Test Coverage
+
+This app uses `SimpleCov` in `test/test_helper.rb` for first-party coverage reporting.
+
+Current coverage settings:
+
+- Line coverage is enabled.
+- Branch coverage is enabled.
+- Coverage output directory: `coverage/`
+- Minimum required coverage (enforced):
+	- line: `80%`
+	- branch: `80%`
+
+If either threshold is below 80%, the test run exits non-zero.
+
+### Generate coverage report locally
+
+```bash
+bundle exec rails test
+
+or
+
+bin/ci
+```
+
+Then open:
+
+- `open coverage/index.html`
+
+### Notes
+
+- Coverage filters exclude `test/`, `config/`, `vendor/`, and `docs/`.
+- In parallel test runs, coverage results are merged via SimpleCov configuration in `test/test_helper.rb`.
+
 ## Single-DB Deployment (Solid Queue/Cache/Cable)
 
 This template is configured to run all Solid components on the primary PostgreSQL database in production.
