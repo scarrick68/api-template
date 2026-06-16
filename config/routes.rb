@@ -8,6 +8,7 @@ Rails.application.routes.draw do
     mount MissionControl::Jobs::Engine, at: "/jobs"
     mount SolidErrors::Engine, at: "/solid_errors"
     mount FieldTest::Engine, at: "field_test"
+    mount Flipper::UI.app(Flipper) => "/flipper"
   else
     authenticate :user, ->(user) { user.admin? } do
       mount PgHero::Engine, at: "/pghero"
@@ -15,6 +16,7 @@ Rails.application.routes.draw do
       mount MissionControl::Jobs::Engine, at: "/jobs"
       mount SolidErrors::Engine, at: "/solid_errors"
       mount FieldTest::Engine, at: "field_test"
+      mount Flipper::UI.app(Flipper) => "/flipper"
     end
   end
 

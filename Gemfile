@@ -96,3 +96,7 @@ gem "mission_control-jobs", "~> 1.1"
 gem "solid_errors", "~> 0.7.0"
 
 gem "field_test", "~> 1.0"
+
+gem "flipper", "~> 1.4"
+gem "flipper-active_record", "~> 1.4"
+gem "flipper-ui", "~> 1.4"
