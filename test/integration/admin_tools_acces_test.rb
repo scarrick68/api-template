@@ -1,10 +1,12 @@
 # test/integration/admin_tools_access_test.rb
 
 require "test_helper"
+require "support/api_auth_helpers"
 
 module AdminToolsAccessTest
   class PgheroAccessTest < ActionDispatch::IntegrationTest
     include Devise::Test::IntegrationHelpers
+    include ApiAuthHelpers
 
     test "anonymous users are redirected to sign in when trying to access pghero" do
       get "/pghero"
@@ -28,10 +30,19 @@ module AdminToolsAccessTest
       assert_not_equal "/users/sign_in", response.redirect_url
       assert_not_equal :not_found, response.status
     end
+
+    test "token-authenticated admin is still redirected for pghero" do
+      admin_user = create(:user, :admin)
+
+      get "/pghero", headers: auth_headers_for(admin_user)
+
+      assert_redirected_to "/users/sign_in"
+    end
   end
 
   class BlazerAccessTest < ActionDispatch::IntegrationTest
     include Devise::Test::IntegrationHelpers
+    include ApiAuthHelpers
 
     test "anonymous users are redirected to sign in when trying to access blazer" do
       get "/blazer"
@@ -55,10 +66,19 @@ module AdminToolsAccessTest
       assert_not_equal "/users/sign_in", response.redirect_url
       assert_not_equal :not_found, response.status
     end
+
+    test "token-authenticated admin is still redirected for blazer" do
+      admin_user = create(:user, :admin)
+
+      get "/blazer", headers: auth_headers_for(admin_user)
+
+      assert_redirected_to "/users/sign_in"
+    end
   end
 
   class MissionControlJobsAccessTest < ActionDispatch::IntegrationTest
     include Devise::Test::IntegrationHelpers
+    include ApiAuthHelpers
 
     test "anonymous users are redirected to sign in when trying to access mission control jobs" do
       get "/jobs"
@@ -82,10 +102,19 @@ module AdminToolsAccessTest
       assert_not_equal "/users/sign_in", response.redirect_url
       assert_not_equal :not_found, response.status
     end
+
+    test "token-authenticated admin is still redirected for mission control jobs" do
+      admin_user = create(:user, :admin)
+
+      get "/jobs", headers: auth_headers_for(admin_user)
+
+      assert_redirected_to "/users/sign_in"
+    end
   end
 
   class SolidErrorsAccessTest < ActionDispatch::IntegrationTest
     include Devise::Test::IntegrationHelpers
+    include ApiAuthHelpers
 
     test "anonymous users are redirected to sign in when trying to access solid errors" do
       get "/solid_errors"
@@ -109,10 +138,19 @@ module AdminToolsAccessTest
       assert_not_equal "/users/sign_in", response.redirect_url
       assert_not_equal :not_found, response.status
     end
+
+    test "token-authenticated admin is still redirected for solid errors" do
+      admin_user = create(:user, :admin)
+
+      get "/solid_errors", headers: auth_headers_for(admin_user)
+
+      assert_redirected_to "/users/sign_in"
+    end
   end
 
   class FieldTestAccessTest < ActionDispatch::IntegrationTest
     include Devise::Test::IntegrationHelpers
+    include ApiAuthHelpers
 
     test "anonymous users are redirected to sign in when trying to access field test" do
       get "/field_test"
@@ -136,10 +174,19 @@ module AdminToolsAccessTest
       assert_not_equal "/users/sign_in", response.redirect_url
       assert_not_equal :not_found, response.status
     end
+
+    test "token-authenticated admin is still redirected for field test" do
+      admin_user = create(:user, :admin)
+
+      get "/field_test", headers: auth_headers_for(admin_user)
+
+      assert_redirected_to "/users/sign_in"
+    end
   end
 
   class FlipperAccessTest < ActionDispatch::IntegrationTest
     include Devise::Test::IntegrationHelpers
+    include ApiAuthHelpers
 
     test "anonymous users are redirected to sign in when trying to access flipper" do
       get "/flipper"
@@ -162,6 +209,14 @@ module AdminToolsAccessTest
 
       assert_not_equal "/users/sign_in", response.redirect_url
       assert_not_equal :not_found, response.status
+    end
+
+    test "token-authenticated admin is still redirected for flipper" do
+      admin_user = create(:user, :admin)
+
+      get "/flipper", headers: auth_headers_for(admin_user)
+
+      assert_redirected_to "/users/sign_in"
     end
   end
 end
