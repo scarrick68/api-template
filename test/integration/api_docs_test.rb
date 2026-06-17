@@ -42,7 +42,7 @@ class ApiDocsTest < ApplicationDispatchTest
 
   test "docs UI route is available outside development for admin users" do
     with_stubbed_production_env do
-      sign_in create(:user, :admin), scope: :user
+      sign_in create(:user, :admin)
 
       get "/docs"
 
@@ -54,7 +54,7 @@ class ApiDocsTest < ApplicationDispatchTest
 
   test "openapi route is available outside development for admin users" do
     with_stubbed_production_env do
-      sign_in create(:user, :admin), scope: :user
+      sign_in create(:user, :admin)
 
       get "/openapi.yml"
 

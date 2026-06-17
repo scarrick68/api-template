@@ -11,7 +11,7 @@ module AdminToolsAccessTest
     test "anonymous users are redirected to sign in when trying to access pghero" do
       get "/pghero"
 
-      assert_redirected_to "/users/sign_in"
+      assert_redirected_to "/admins/sign_in"
     end
 
     test "non-admin users are redirected to sign in when trying to access pghero" do
@@ -19,7 +19,7 @@ module AdminToolsAccessTest
 
       get "/pghero"
 
-      assert_redirected_to "/users/sign_in"
+      assert_redirected_to "/admins/sign_in"
     end
 
     test "admin users can access pghero" do
@@ -27,7 +27,7 @@ module AdminToolsAccessTest
 
       get "/pghero"
 
-      assert_not_equal "/users/sign_in", response.redirect_url
+      assert_not_equal "/admins/sign_in", response.redirect_url
       assert_not_equal :not_found, response.status
     end
 
@@ -36,7 +36,7 @@ module AdminToolsAccessTest
 
       get "/pghero", headers: auth_headers_for(admin_user)
 
-      assert_redirected_to "/users/sign_in"
+      assert_redirected_to "/admins/sign_in"
     end
   end
 
@@ -47,7 +47,7 @@ module AdminToolsAccessTest
     test "anonymous users are redirected to sign in when trying to access blazer" do
       get "/blazer"
 
-      assert_redirected_to "/users/sign_in"
+      assert_redirected_to "/admins/sign_in"
     end
 
     test "non-admin users are redirected to sign in when trying to access blazer" do
@@ -55,7 +55,7 @@ module AdminToolsAccessTest
 
       get "/blazer"
 
-      assert_redirected_to "/users/sign_in"
+      assert_redirected_to "/admins/sign_in"
     end
 
     test "admin users can access blazer" do
@@ -63,7 +63,7 @@ module AdminToolsAccessTest
 
       get "/blazer"
 
-      assert_not_equal "/users/sign_in", response.redirect_url
+      assert_not_equal "/admins/sign_in", response.redirect_url
       assert_not_equal :not_found, response.status
     end
 
@@ -72,7 +72,7 @@ module AdminToolsAccessTest
 
       get "/blazer", headers: auth_headers_for(admin_user)
 
-      assert_redirected_to "/users/sign_in"
+      assert_redirected_to "/admins/sign_in"
     end
   end
 
@@ -83,7 +83,7 @@ module AdminToolsAccessTest
     test "anonymous users are redirected to sign in when trying to access mission control jobs" do
       get "/jobs"
 
-      assert_redirected_to "/users/sign_in"
+      assert_redirected_to "/admins/sign_in"
     end
 
     test "non-admin users are redirected to sign in when trying to access mission control jobs" do
@@ -91,7 +91,7 @@ module AdminToolsAccessTest
 
       get "/jobs"
 
-      assert_redirected_to "/users/sign_in"
+      assert_redirected_to "/admins/sign_in"
     end
 
     test "admin users pass app-level admin gate for mission control jobs" do
@@ -99,7 +99,7 @@ module AdminToolsAccessTest
 
       get "/jobs"
 
-      assert_not_equal "/users/sign_in", response.redirect_url
+      assert_not_equal "/admins/sign_in", response.redirect_url
       assert_not_equal :not_found, response.status
     end
 
@@ -108,7 +108,7 @@ module AdminToolsAccessTest
 
       get "/jobs", headers: auth_headers_for(admin_user)
 
-      assert_redirected_to "/users/sign_in"
+      assert_redirected_to "/admins/sign_in"
     end
   end
 
@@ -119,7 +119,7 @@ module AdminToolsAccessTest
     test "anonymous users are redirected to sign in when trying to access solid errors" do
       get "/solid_errors"
 
-      assert_redirected_to "/users/sign_in"
+      assert_redirected_to "/admins/sign_in"
     end
 
     test "non-admin users are redirected to sign in when trying to access solid errors" do
@@ -127,7 +127,7 @@ module AdminToolsAccessTest
 
       get "/solid_errors"
 
-      assert_redirected_to "/users/sign_in"
+      assert_redirected_to "/admins/sign_in"
     end
 
     test "admin users pass app-level admin gate for solid errors" do
@@ -135,7 +135,7 @@ module AdminToolsAccessTest
 
       get "/solid_errors"
 
-      assert_not_equal "/users/sign_in", response.redirect_url
+      assert_not_equal "/admins/sign_in", response.redirect_url
       assert_not_equal :not_found, response.status
     end
 
@@ -144,7 +144,7 @@ module AdminToolsAccessTest
 
       get "/solid_errors", headers: auth_headers_for(admin_user)
 
-      assert_redirected_to "/users/sign_in"
+      assert_redirected_to "/admins/sign_in"
     end
   end
 
@@ -155,7 +155,7 @@ module AdminToolsAccessTest
     test "anonymous users are redirected to sign in when trying to access field test" do
       get "/field_test"
 
-      assert_redirected_to "/users/sign_in"
+      assert_redirected_to "/admins/sign_in"
     end
 
     test "non-admin users are redirected to sign in when trying to access field test" do
@@ -163,7 +163,7 @@ module AdminToolsAccessTest
 
       get "/field_test"
 
-      assert_redirected_to "/users/sign_in"
+      assert_redirected_to "/admins/sign_in"
     end
 
     test "admin users pass app-level admin gate for field test" do
@@ -171,7 +171,7 @@ module AdminToolsAccessTest
 
       get "/field_test"
 
-      assert_not_equal "/users/sign_in", response.redirect_url
+      assert_not_equal "/admins/sign_in", response.redirect_url
       assert_not_equal :not_found, response.status
     end
 
@@ -180,7 +180,7 @@ module AdminToolsAccessTest
 
       get "/field_test", headers: auth_headers_for(admin_user)
 
-      assert_redirected_to "/users/sign_in"
+      assert_redirected_to "/admins/sign_in"
     end
   end
 
@@ -191,7 +191,7 @@ module AdminToolsAccessTest
     test "anonymous users are redirected to sign in when trying to access flipper" do
       get "/flipper"
 
-      assert_redirected_to "/users/sign_in"
+      assert_redirected_to "/admins/sign_in"
     end
 
     test "non-admin users are redirected to sign in when trying to access flipper" do
@@ -199,7 +199,7 @@ module AdminToolsAccessTest
 
       get "/flipper"
 
-      assert_redirected_to "/users/sign_in"
+      assert_redirected_to "/admins/sign_in"
     end
 
     test "admin users pass app-level admin gate for flipper" do
@@ -207,7 +207,7 @@ module AdminToolsAccessTest
 
       get "/flipper"
 
-      assert_not_equal "/users/sign_in", response.redirect_url
+      assert_not_equal "/admins/sign_in", response.redirect_url
       assert_not_equal :not_found, response.status
     end
 
@@ -216,7 +216,7 @@ module AdminToolsAccessTest
 
       get "/flipper", headers: auth_headers_for(admin_user)
 
-      assert_redirected_to "/users/sign_in"
+      assert_redirected_to "/admins/sign_in"
     end
   end
 end

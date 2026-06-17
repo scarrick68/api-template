@@ -48,7 +48,7 @@ module Subscribers
       test "ignores non api controller requests (does not include Api namespace prefix)" do
         payload = {
           method: "GET",
-          path: "/users/sign_in",
+          path: "/admins/sign_in",
           controller: "Users::SessionsController",
           action: "new",
           status: 200,
