@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  devise_for :admins, only: [ :sessions, :passwords ]
+
   get "docs", to: "docs#show"
   get "openapi.yml", to: "docs#openapi"
 
@@ -10,7 +12,7 @@ Rails.application.routes.draw do
     mount FieldTest::Engine, at: "field_test"
     mount Flipper::UI.app(Flipper) => "/flipper"
   else
-    authenticate :user, ->(user) { user.admin? } do
+    authenticate :admin do
       mount PgHero::Engine, at: "/pghero"
       mount Blazer::Engine, at: "/blazer"
       mount MissionControl::Jobs::Engine, at: "/jobs"
@@ -20,8 +22,7 @@ Rails.application.routes.draw do
     end
   end
 
-  mount_devise_token_auth_for "User", at: "auth", as: "token_auth_users"
-  devise_for :users, only: [ :sessions ]
+  mount_devise_token_auth_for "User", at: "auth"
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
