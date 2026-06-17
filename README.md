@@ -23,6 +23,73 @@ Things you may want to cover:
 
 * ...
 
+## Authentication Architecture And Boundaries
+
+This app intentionally separates API identity from internal operator identity.
+
+- `User` is the app/API identity.
+- `Admin` is the internal/operator identity.
+- `Admin` has `belongs_to :user, optional: true`.
+
+### Authentication mechanisms
+
+- API requests use token auth via `devise_token_auth`.
+- Internal/admin-only routes and mounted tools use Devise session auth.
+- An admin session does not imply API token authentication.
+- API token headers do not grant access to admin-only browser routes.
+
+### Route boundaries
+
+- `/api/v1/*` is JSON API surface and should use token auth with `current_user`.
+- Admin/internal browser routes and mounted tools are session-protected (in non-development), including:
+	- `/pghero`
+	- `/blazer`
+	- `/jobs`
+	- `/flipper`
+	- `/solid_errors`
+	- `/field_test`
+- API docs (`/docs`, `/openapi.yml`) are browser routes and are not part of the token-authenticated API surface.
+
+### Controller boundaries
+
+- `ApplicationController` should remain browser/session-safe and framework-level.
+- `Api::BaseController` owns API-specific behavior:
+	- Devise Token Auth integration
+	- API authentication helpers and identity (`current_user`, `authenticate_user!`)
+	- API error rendering
+	- Ahoy/Field Test API participant identity wiring
+- `Api::V1::BaseController` owns API v1 request concerns:
+	- pagination
+	- serialization
+	- policy authorization
+	- contract handling
+
+### Auth helper conventions
+
+- API controllers: use `current_user` and `authenticate_user!`.
+- Admin/browser controllers: use `current_admin` and `authenticate_admin!` (or route-level `authenticate :admin` constraints for mounted engines).
+- Current implementation note: `DocsController` uses `user_signed_in? && current_user.admin?` as its admin gate outside development.
+- Keep session helper usage out of API controllers and token helper usage out of admin browser flows.
+
+### Testing strategy
+
+- API tests:
+	- authenticate with token headers from `/auth/sign_in` (for example via `auth_headers_for(user)`).
+	- verify token-authenticated requests can access API endpoints.
+- Admin/browser and mounted tool tests:
+	- authenticate with Devise session helpers (for example `sign_in admin` or the applicable session scope).
+	- verify token-only requests are rejected or redirected for admin/session-only routes.
+- Auth-boundary tests:
+	- explicitly verify that token auth cannot access admin-only tools.
+	- explicitly verify that admin session auth does not replace API token requirements.
+
+### Attribution impact (Ahoy and Field Test)
+
+- Frontend should own page/journey tracking.
+- Backend Ahoy should capture server-confirmed business events.
+- API attribution should rely on `current_user`/Ahoy identity so events and experiments stay consistent. This should largely be within the API domain where field_test is hooked into Ahoy identity and current_user. It can be used elsewhere, but attribution will not be automatic.
+- Field Test participant identity uses Ahoy identity (`ahoy.user`, `ahoy.visitor_token`) so experiment assignment aligns with tracked API activity.
+
 ## Elasticsearch + Searchkick
 
 This app uses Searchkick with Elasticsearch for model search.
@@ -143,7 +210,7 @@ Access behavior:
 
 To access in non-development, sign in through session auth first:
 
-- `GET /users/sign_in`
+- `GET /admins/sign_in`
 
 ## Mission Control Jobs
 
@@ -390,8 +457,8 @@ Route mount:
 
 Main endpoints:
 
-- `GET /users/sign_in`
-- `POST /users/sign_in`
+- `GET /admins/sign_in`
+- `POST /admins/sign_in`
 - `DELETE /users/sign_out`
 
 Use this flow for browser-only/admin-only routes that rely on cookie sessions.
