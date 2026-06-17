@@ -4,42 +4,48 @@ require "test_helper"
 
 class AdminToolsRoutesTest < ActiveSupport::TestCase
   test "pghero route is mounted" do
-    route = Rails.application.routes.routes.find do |r|
-      r.path.spec.to_s.start_with?("/pghero")
-    end
-
-    assert route, "Expected /pghero to be mounted"
+    assert_route_mounted("/pghero")
   end
 
   test "mission control jobs route is mounted" do
-    route = Rails.application.routes.routes.find do |r|
-      r.path.spec.to_s.start_with?("/jobs")
-    end
-
-    assert route, "Expected /jobs to be mounted"
+    assert_route_mounted("/jobs")
   end
 
   test "solid errors route is mounted" do
-    route = Rails.application.routes.routes.find do |r|
-      r.path.spec.to_s.start_with?("/solid_errors")
-    end
-
-    assert route, "Expected /solid_errors to be mounted"
+    assert_route_mounted("/solid_errors")
   end
 
   test "field test route is mounted" do
-    route = Rails.application.routes.routes.find do |r|
-      r.path.spec.to_s.start_with?("/field_test")
-    end
-
-    assert route, "Expected /field_test to be mounted"
+    assert_route_mounted("/field_test")
   end
 
   test "flipper route is mounted" do
-    route = Rails.application.routes.routes.find do |r|
-      r.path.spec.to_s.start_with?("/flipper")
-    end
+    assert_route_mounted("/flipper")
+  end
 
-    assert route, "Expected /flipper to be mounted"
+  test "blazer route is mounted" do
+    assert_route_mounted("/blazer")
+  end
+
+  test "docs route is mounted" do
+    assert_route_mounted("/docs")
+  end
+
+  test "openapi route is mounted" do
+    assert_route_mounted("/openapi.yml")
+  end
+
+  private
+
+  def assert_route_mounted(prefix)
+    assert route_mounted?(prefix), "Expected #{prefix} to be mounted"
+  end
+
+  def route_mounted?(prefix)
+    Rails.application.routes.routes.any? do |route|
+      route.path.spec.to_s.match?(
+        %r{\A#{Regexp.escape(prefix)}(?:/|\(|$)}
+      )
+    end
   end
 end
