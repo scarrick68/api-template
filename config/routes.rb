@@ -1,6 +1,6 @@
 Rails.application.routes.draw do
-  get "api/docs", to: "docs#show"
-  get "api/openapi.yml", to: "docs#openapi"
+  get "docs", to: "docs#show"
+  get "openapi.yml", to: "docs#openapi"
 
   if Rails.env.development?
     mount PgHero::Engine, at: "/pghero"

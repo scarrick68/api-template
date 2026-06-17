@@ -121,12 +121,14 @@ The `/api/` namespace defaults to JSON responses.
 ## API Docs (ReDoc)
 
 This template includes a lightweight ReDoc UI backed by the OpenAPI document.
-These are unprotected in dev environment for easy access and admin auth'ed in production by default.
-
-- ReDoc UI: `GET /api/docs`
-- OpenAPI YAML: `GET /api/openapi.yml`
+Docs endpoints are always mounted, and access is enforced in the controller.
 
 The source OpenAPI file lives at `docs/openapi.yml`.
+
+Access behavior:
+
+- `development`: docs are available without authentication.
+- non-development (`test`/`production`): only authenticated admin Devise session users can access docs; all other requests receive `404 not found`.
 
 ## Database Observability (PgHero)
 

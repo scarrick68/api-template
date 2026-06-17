@@ -1,6 +1,5 @@
 class DocsController < ApplicationController
-  before_action :authenticate_user!, unless: Rails.env.development?
-  before_action :authorize_docs_access!, unless: Rails.env.development?
+  before_action :ensure_docs_available!
 
   def show
     render layout: false
@@ -16,13 +15,10 @@ class DocsController < ApplicationController
 
   private
 
-  def authorize_docs_access!
-    return if current_user&.admin?
+  def ensure_docs_available!
+    return if Rails.env.development?
+    return if user_signed_in? && current_user.admin?
 
-    render_api_error(
-      type: "forbidden",
-      message: "You are not authorized to perform this action",
-      status: :forbidden
-    )
+    head :not_found
   end
 end
