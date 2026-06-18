@@ -11,6 +11,7 @@ Rails.application.routes.draw do
     mount SolidErrors::Engine, at: "/solid_errors"
     mount FieldTest::Engine, at: "field_test"
     mount Flipper::UI.app(Flipper) => "/flipper"
+    mount LetterOpenerWeb::Engine, at: "/letter_opener"
   else
     authenticate :admin do
       mount PgHero::Engine, at: "/pghero"

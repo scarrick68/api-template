@@ -2,12 +2,27 @@ FactoryBot.define do
   factory :user do
     name { "Test User" }
     sequence(:email) { |n| "user#{n}@example.com" }
+    provider { "email" }
+    uid { email }
     password { "password123" }
     password_confirmation { "password123" }
+    admin { false }
+    allow_password_change { false }
+    confirmation_sent_at { 5.minutes.ago }
     confirmed_at { Time.current }
 
     trait :admin do
       admin { true }
+    end
+
+    trait :unconfirmed do
+      confirmed_at { nil }
+      confirmation_sent_at { Time.current }
+      sequence(:confirmation_token) { |n| "confirmation-token-#{n}" }
+    end
+
+    trait :soft_deleted do
+      deleted_at { Time.current }
     end
 
     trait :reindex do
