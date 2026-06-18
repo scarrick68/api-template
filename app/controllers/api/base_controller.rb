@@ -17,6 +17,14 @@ module Api
 
     private
 
+    # for metrics data enrichment with user and visitor context
+    def append_info_to_payload(payload)
+      super
+
+      payload[:user_id] = current_user&.id
+      payload[:visitor_token] = ahoy&.visitor_token
+    end
+
     def render_not_found(exception)
       render_api_error(
         type: "not_found",

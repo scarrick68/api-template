@@ -102,3 +102,5 @@ gem "field_test", "~> 1.0"
 gem "flipper", "~> 1.4"
 gem "flipper-active_record", "~> 1.4"
 gem "flipper-ui", "~> 1.4"
+
+gem "dry-schema", "~> 1.16"
