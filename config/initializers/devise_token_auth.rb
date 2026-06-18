@@ -25,7 +25,7 @@ DeviseTokenAuth.setup do |config|
 
   # Only set this true if User includes :confirmable and the app is ready
   # to send confirmation emails.
-  config.send_confirmation_email = false
+  config.send_confirmation_email = true
 
   # Keep default header names for compatibility with DTA clients/helpers.
   config.headers_names = {

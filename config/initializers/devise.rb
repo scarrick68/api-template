@@ -7,4 +7,7 @@ Devise.setup do |config|
 
   # Keep JSON support for API auth while allowing session-based HTML sign-in flows.
   config.navigational_formats = [ :html, :json ]
+
+  # TODO: remove this placeholder configuration and implement actual email confirmation flows if needed.
+  config.mailer_sender = "no-reply@example.com"
 end
