@@ -106,3 +106,5 @@ gem "flipper-active_record", "~> 1.4"
 gem "flipper-ui", "~> 1.4"
 
 gem "dry-schema", "~> 1.16"
+
+gem "rollups", "~> 0.6.0"
