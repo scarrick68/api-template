@@ -27,8 +27,11 @@ class BlazerDashboardsTaskTest < ActiveSupport::TestCase
     query = Blazer::Query.find_by!(name: "API requests by day - last 30 days")
 
     assert_includes query.statement, "from metrics"
-    assert_includes query.statement, "observability.api.request"
+    assert_includes query.statement, Metrics::ApiRequestMetricNames::API_REQUEST_COUNT
     assert_includes query.statement, "interval '30 days'"
+
+    p95_query = Blazer::Query.find_by!(name: "Slow API endpoints - p95 last 7 days")
+    assert_includes p95_query.statement, Metrics::ApiRequestMetricNames::API_REQUEST_DURATION_MS
   end
 
   test "task is idempotent" do
