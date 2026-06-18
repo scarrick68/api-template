@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_06_17_203819) do
+ActiveRecord::Schema[8.1].define(version: 2026_06_18_102000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -165,18 +165,31 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_17_203819) do
 
   create_table "metrics", force: :cascade do |t|
     t.datetime "created_at", null: false
+    t.jsonb "labels", default: {}, null: false
+    t.string "metric_type", null: false
     t.string "name", null: false
     t.datetime "occurred_at", null: false
     t.jsonb "properties", default: {}, null: false
     t.string "request_id"
     t.datetime "updated_at", null: false
     t.bigint "user_id"
+    t.decimal "value", precision: 20, scale: 6, null: false
     t.string "visitor_token"
+    t.index ["labels"], name: "index_metrics_on_labels", using: :gin
     t.index ["name", "occurred_at"], name: "index_metrics_on_name_and_occurred_at"
     t.index ["name"], name: "index_metrics_on_name"
     t.index ["occurred_at"], name: "index_metrics_on_occurred_at"
     t.index ["request_id"], name: "index_metrics_on_request_id"
     t.index ["user_id"], name: "index_metrics_on_user_id"
+  end
+
+  create_table "rollups", force: :cascade do |t|
+    t.jsonb "dimensions", default: {}, null: false
+    t.string "interval", null: false
+    t.string "name", null: false
+    t.datetime "time", null: false
+    t.float "value"
+    t.index ["name", "interval", "time", "dimensions"], name: "index_rollups_on_name_and_interval_and_time_and_dimensions", unique: true
   end
 
   create_table "solid_cable_messages", force: :cascade do |t|
