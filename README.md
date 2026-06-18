@@ -23,6 +23,13 @@ Things you may want to cover:
 
 * ...
 
+## Documentation Index
+
+Operational and launch documentation lives in `docs/`.
+
+- Documentation index: `docs/README.md`
+- Production email setup: `docs/deploy/production-email-setup.md`
+
 ## Authentication Architecture And Boundaries
 
 This app intentionally separates API identity from internal operator identity.
