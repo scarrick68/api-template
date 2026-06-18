@@ -219,4 +219,40 @@ module AdminToolsAccessTest
       assert_redirected_to "/admins/sign_in"
     end
   end
+
+  class SearchjoyAccessTest < ActionDispatch::IntegrationTest
+    include Devise::Test::IntegrationHelpers
+    include ApiAuthHelpers
+
+    test "anonymous users are redirected to sign in when trying to access searchjoy" do
+      get "/searchjoy"
+
+      assert_redirected_to "/admins/sign_in"
+    end
+
+    test "non-admin users are redirected to sign in when trying to access searchjoy" do
+      sign_in create(:user)
+
+      get "/searchjoy"
+
+      assert_redirected_to "/admins/sign_in"
+    end
+
+    test "admin users pass app-level admin gate for searchjoy" do
+      sign_in create(:user, :admin)
+
+      get "/searchjoy"
+
+      assert_not_equal "/admins/sign_in", response.redirect_url
+      assert_not_equal :not_found, response.status
+    end
+
+    test "token-authenticated admin is still redirected for searchjoy" do
+      admin_user = create(:user, :admin)
+
+      get "/searchjoy", headers: auth_headers_for(admin_user)
+
+      assert_redirected_to "/admins/sign_in"
+    end
+  end
 end

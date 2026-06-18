@@ -27,6 +27,10 @@ class AdminToolsRoutesTest < ActiveSupport::TestCase
     assert_route_mounted("/blazer")
   end
 
+  test "searchjoy route is mounted" do
+    assert_route_mounted("/searchjoy")
+  end
+
   test "docs route is mounted" do
     assert_route_mounted("/docs")
   end
