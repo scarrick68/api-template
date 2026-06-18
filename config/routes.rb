@@ -9,9 +9,10 @@ Rails.application.routes.draw do
     mount Blazer::Engine, at: "/blazer"
     mount MissionControl::Jobs::Engine, at: "/jobs"
     mount SolidErrors::Engine, at: "/solid_errors"
-    mount FieldTest::Engine, at: "field_test"
+    mount FieldTest::Engine, at: "/field_test"
     mount Flipper::UI.app(Flipper) => "/flipper"
     mount LetterOpenerWeb::Engine, at: "/letter_opener"
+    mount Searchjoy::Engine, at: "/searchjoy"
   else
     authenticate :admin do
       mount PgHero::Engine, at: "/pghero"
@@ -20,6 +21,7 @@ Rails.application.routes.draw do
       mount SolidErrors::Engine, at: "/solid_errors"
       mount FieldTest::Engine, at: "/field_test"
       mount Flipper::UI.app(Flipper) => "/flipper"
+      mount Searchjoy::Engine, at: "/searchjoy"
     end
   end
 

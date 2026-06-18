@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_06_18_102000) do
+ActiveRecord::Schema[8.1].define(version: 2026_06_18_201014) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -190,6 +190,29 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_18_102000) do
     t.datetime "time", null: false
     t.float "value"
     t.index ["name", "interval", "time", "dimensions"], name: "index_rollups_on_name_and_interval_and_time_and_dimensions", unique: true
+  end
+
+  create_table "searchjoy_conversions", force: :cascade do |t|
+    t.bigint "convertable_id"
+    t.string "convertable_type"
+    t.datetime "created_at"
+    t.bigint "search_id"
+    t.index ["convertable_type", "convertable_id"], name: "index_searchjoy_conversions_on_convertable"
+    t.index ["search_id"], name: "index_searchjoy_conversions_on_search_id"
+  end
+
+  create_table "searchjoy_searches", force: :cascade do |t|
+    t.datetime "converted_at"
+    t.datetime "created_at"
+    t.string "normalized_query"
+    t.string "query"
+    t.integer "results_count"
+    t.string "search_type"
+    t.bigint "user_id"
+    t.index ["created_at"], name: "index_searchjoy_searches_on_created_at"
+    t.index ["search_type", "created_at"], name: "index_searchjoy_searches_on_search_type_and_created_at"
+    t.index ["search_type", "normalized_query", "created_at"], name: "index_searchjoy_searches_on_search_type_query"
+    t.index ["user_id"], name: "index_searchjoy_searches_on_user_id"
   end
 
   create_table "solid_cable_messages", force: :cascade do |t|

@@ -88,9 +88,11 @@ gem "blazer", "~> 3.4"
 
 gem "ahoy_matey", "~> 5.5"
 
+# Text search
 gem "searchkick", "~> 6.1"
 gem "elasticsearch", "~> 9.4"
-
+gem "searchjoy", "~> 1.5"
+# Perfomance improvements for Searchkick and Searchjoy
 gem "typhoeus", "~> 1.6"
 
 gem "mission_control-jobs", "~> 1.1"
