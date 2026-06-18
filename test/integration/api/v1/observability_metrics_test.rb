@@ -4,27 +4,35 @@ require "support/application_dispatch_test"
 module Api
   module V1
     class UsersMeObservabilityTest < ApplicationDispatchTest
+      include ActiveJob::TestHelper
+
       test "/me captures observability api request event (any api route should work)" do
         user = create(:user, email: "observability-me@example.com")
 
-        assert_difference "Metric.where(name: 'observability.api.request').count", 1 do
-          get "/api/v1/users/me", headers: auth_headers_for(user)
+        perform_enqueued_jobs do
+          assert_difference "Metric.where(name: Metric::API_REQUEST_COUNT).count", 1 do
+            assert_difference "Metric.where(name: Metric::API_REQUEST_DURATION_MS).count", 1 do
+              get "/api/v1/users/me", headers: auth_headers_for(user)
+            end
+          end
         end
 
         assert_response :success
 
-        metric = Metric.where(name: "observability.api.request").last
+        metric = Metric.where(name: Metric::API_REQUEST_COUNT).last
         response_request_id = response.parsed_body["request_id"]
 
         assert_not_nil metric
         assert_equal response_request_id, metric.request_id
 
-        properties = metric.properties.with_indifferent_access
-        assert_equal "GET", properties[:method]
-        assert_equal "/api/v1/users/me", properties[:path]
-        assert_equal "Api::V1::UsersController", properties[:controller]
-        assert_equal "me", properties[:action]
-        assert_equal 200, properties[:status]
+        labels = metric.labels.with_indifferent_access
+        assert_equal "GET", labels[:method]
+        assert_equal "Api::V1::UsersController", labels[:controller]
+        assert_equal "me", labels[:action]
+        assert_equal 200, labels[:status]
+
+        duration_metric = Metric.where(name: Metric::API_REQUEST_DURATION_MS).last
+        assert_equal "/api/v1/users/me", duration_metric.properties["path"]
       end
     end
   end

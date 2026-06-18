@@ -7,9 +7,9 @@ module BlazerDashboards
         statement: <<~SQL
           select
             date_trunc('day', occurred_at) as day,
-            count(*) as requests
+            sum(value) as requests
           from metrics
-          where name = 'observability.api.request'
+          where name = 'observability.api.request.count'
             and occurred_at >= now() - interval '30 days'
           group by 1
           order by 1
@@ -19,11 +19,11 @@ module BlazerDashboards
         name: "API requests by endpoint - last 7 days",
         statement: <<~SQL
           select
-            properties->>'controller' as controller,
-            properties->>'action' as action,
-            count(*) as requests
+            labels->>'controller' as controller,
+            labels->>'action' as action,
+            sum(value) as requests
           from metrics
-          where name = 'observability.api.request'
+          where name = 'observability.api.request.count'
             and occurred_at >= now() - interval '7 days'
           group by 1, 2
           order by requests desc
@@ -32,39 +32,47 @@ module BlazerDashboards
       {
         name: "API error rate by day - last 30 days",
         statement: <<~SQL
+          with totals as (
+            select
+              date_trunc('day', occurred_at) as day,
+              sum(value) as total
+            from metrics
+            where name = 'observability.api.request.count'
+              and occurred_at >= now() - interval '30 days'
+            group by 1
+          ),
+          errors as (
+            select
+              date_trunc('day', occurred_at) as day,
+              sum(value) as errors
+            from metrics
+            where name = 'observability.api.request.error.count'
+              and occurred_at >= now() - interval '30 days'
+            group by 1
+          )
           select
-            date_trunc('day', occurred_at) as day,
-            count(*) filter (
-              where (properties->>'status')::int >= 500
-            ) as errors,
-            count(*) as total,
-            round(
-              100.0 * count(*) filter (
-                where (properties->>'status')::int >= 500
-              ) / nullif(count(*), 0),
-              2
-            ) as error_rate_percent
-          from metrics
-          where name = 'observability.api.request'
-            and occurred_at >= now() - interval '30 days'
-          group by 1
-          order by 1
+            totals.day,
+            coalesce(errors.errors, 0) as errors,
+            totals.total,
+            round(100.0 * coalesce(errors.errors, 0) / nullif(totals.total, 0), 2) as error_rate_percent
+          from totals
+          left join errors on errors.day = totals.day
+          order by totals.day
         SQL
       },
       {
         name: "Slow API endpoints - p95 last 7 days",
         statement: <<~SQL
           select
-            properties->>'controller' as controller,
-            properties->>'action' as action,
+            labels->>'controller' as controller,
+            labels->>'action' as action,
             percentile_cont(0.95) within group (
-              order by (properties->>'duration_ms')::numeric
+              order by value::numeric
             ) as p95_ms,
-            count(*) as requests
+            count(*) as samples
           from metrics
-          where name = 'observability.api.request'
+          where name = 'observability.api.request.duration_ms'
             and occurred_at >= now() - interval '7 days'
-            and properties ? 'duration_ms'
           group by 1, 2
           order by p95_ms desc
         SQL

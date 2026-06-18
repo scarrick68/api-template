@@ -29,6 +29,7 @@ Operational and launch documentation lives in `docs/`.
 
 - Documentation index: `docs/README.md`
 - Production email setup: `docs/deploy/production-email-setup.md`
+- Metrics model and observability pipeline: `docs/metrics-model.md`
 
 ## Authentication Architecture And Boundaries
 
@@ -271,88 +272,9 @@ Test coverage:
 
 ## First-Party Observability (Metrics)
 
-This template includes a built-in first-party observability pipeline based on the app-owned `metrics` table.
+This template includes a built-in first-party observability pipeline based on the app-owned metrics table.
 
-Core pieces:
-
-- Model: `Metric` (`app/models/metric.rb`)
-- Subscriber: `Subscribers::Observability::ApiRequestSubscriber` (`app/services/subscribers/observability/api_request_subscriber.rb`)
-- Notification subscription: `config/initializers/obesrvability_notifications.rb`
-
-### Metric model
-
-`Metric` records structured telemetry with:
-
-- `name` (required, must use a reserved namespace)
-- `occurred_at` (required timestamp)
-- `request_id`
-- `user_id`
-- `visitor_token`
-- `properties` (JSONB payload)
-
-Current reserved namespace:
-
-- `observability.*`
-
-### Default API metric capture
-
-On each Rails controller action notification (`process_action.action_controller`), the subscriber writes one metric for API controllers only:
-
-- metric name: `observability.api.request`
-- source filter: controllers whose class name starts with `Api::`
-- captured properties:
-	- `method`
-	- `path`
-	- `controller`
-	- `action`
-	- `status`
-	- `duration_ms`
-
-This is enabled automatically via the initializer subscription and does not require controller-level instrumentation.
-
-### Blazer default dashboards for observability
-
-This template ships a rake task that installs default Blazer queries and dashboard cards for API observability.
-
-- Task: `blazer:install_dashboards`
-- Source config: `lib/blazer_dashboards/api_observability.rb`
-- Task definition: `lib/tasks/blazer_dashboards.rake`
-
-Run it with:
-
-```bash
-bin/rails blazer:install_dashboards
-```
-
-The task is idempotent for dashboard/query names and can be re-run after updates.
-
-### Setup instructions
-
-1. Ensure DB is migrated (includes `metrics` table):
-
-```bash
-bin/rails db:migrate
-```
-
-2. Ensure Blazer datasource is configured:
-
-- Set `BLAZER_DATABASE_URL` to the database Blazer should query. This app template uses the primary app DB by default.
-
-3. Install default dashboards:
-
-```bash
-bin/rails blazer:install_dashboards
-```
-
-4. Open Blazer and verify dashboard creation:
-
-- `GET /blazer`
-
-5. Generate API traffic and validate metrics:
-
-```bash
-bin/rails runner 'puts Metric.where(name: "observability.api.request").count'
-```
+Detailed documentation for the metrics model, dry-schema contracts, API request fanout behavior, and Blazer dashboards now lives in docs/metrics-model.md.
 
 ## A/B Testing (Field Test)
 

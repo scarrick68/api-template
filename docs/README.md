@@ -5,6 +5,7 @@ This directory contains product and operational documentation for the API templa
 ## Contents
 
 - OpenAPI specification: openapi.yml
+- Metrics model and observability pipeline: metrics-model.md
 - Deployment and launch runbooks: deploy/
 
 ## Deployment And Launch Guides
