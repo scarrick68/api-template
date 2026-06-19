@@ -15,6 +15,12 @@ module Metrics
           window_start: window_start,
           window_end: window_end
         )
+
+        Searchjoy::SearchjoyRollupsJob.perform_now(
+          period: period,
+          window_start: window_start,
+          window_end: window_end
+        )
       end
     end
   end
