@@ -3,6 +3,14 @@ module BlazerDashboards
     name: "API Observability",
     queries: [
       {
+        name: "API requests - current day",
+        statement: BlazerDashboards::Queries::ApiRequestsCurrentDay.sql
+      },
+      {
+        name: "API error rate - current day",
+        statement: BlazerDashboards::Queries::ApiErrorRateCurrentDay.sql
+      },
+      {
         name: "API requests by day - last 30 days",
         statement: BlazerDashboards::Queries::ApiRequestsDaily30Days.sql
       },
