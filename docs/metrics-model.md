@@ -37,6 +37,37 @@ To preserve statistical correctness, one global latency rollup remains:
 
 This avoids incorrectly averaging endpoint p95 values.
 
+## Searchjoy Rollups
+
+Search analytics are rolled up from `searchjoy_searches` via `Searchjoy::SearchjoyRollupsJob`.
+
+Rollup series:
+
+- searchjoy.searches
+- searchjoy.searches.by_query (dimension: query)
+- searchjoy.searches.conversion_rate
+
+Behavior:
+
+- The rollup job supports `hour` and `day` windows.
+- `searchjoy.searches.by_query` groups by `normalized_query` and stores the group in the `query` dimension.
+- `searchjoy.searches.conversion_rate` is computed as the average of `(converted_at IS NOT NULL)::int` for each window.
+
+Rollups are persisted in the shared `rollups` table alongside API rollups.
+
+## Retention Policy
+
+Retention is enforced by `MetricsRetentionJob`.
+
+Current windows:
+
+- Raw API metrics (`metrics` table): 30 days
+- Raw Searchjoy records (`searchjoy_searches` and `searchjoy_conversions`): 30 days
+- Hourly rollups (`rollups.interval = hour`): 90 days
+- Daily rollups (`rollups.interval = day`): 2 years
+
+Because rollup cleanup is interval-based, retention applies to all rollup names, including both API and Searchjoy rollup series.
+
 ## Dashboard Query Strategy
 
 - Current day queries: read raw metrics for highest freshness and hourly detail.
@@ -70,4 +101,5 @@ flowchart LR
 
 - Raw metrics are retained for debugging and accurate recomputation.
 - Endpoint rollups are treated as the primary aggregate layer for volume and error trends.
+- Searchjoy rollups follow the same shared rollup retention lifecycle as API rollups.
 - Blazer dashboard SQL is intentionally simple at read time, with complexity pushed into rollup jobs.
