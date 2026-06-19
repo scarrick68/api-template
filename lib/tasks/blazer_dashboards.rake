@@ -1,8 +1,8 @@
-require Rails.root.join("lib/blazer_dashboards/api_observability")
-
 namespace :blazer do
   desc "Install default Blazer dashboards"
   task install_dashboards: :environment do
+    require Rails.root.join("lib/blazer_dashboards/api_observability")
+
     dashboard_config = BlazerDashboards::ApiObservability
 
     dashboard = Blazer::Dashboard.find_or_create_by!(

@@ -7,18 +7,25 @@ class AdminSessionsTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
-  test "session login succeeds for confirmed admin and can sign out" do
-    admin = create(:admin, email: unique_admin_email)
+  test "session login succeeds for admin and can sign out" do
+    password = "password123"
+
+    admin = create(
+      :admin,
+      email: unique_admin_email,
+      password: password,
+      password_confirmation: password
+    )
 
     post "/admins/sign_in", params: {
       admin: {
         email: admin.email,
-        password: admin.password
+        password: password
       }
     }
 
     assert_response :redirect
-    assert_not_includes response.headers["Location"].to_s, "/admins/sign_in"
+    assert_no_match %r{/admins/sign_in}, response.location.to_s
 
     delete "/admins/sign_out"
 
