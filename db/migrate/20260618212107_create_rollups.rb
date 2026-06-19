@@ -1,7 +1,7 @@
 class CreateRollups < ActiveRecord::Migration[8.1]
   def change
     return if table_exists?(:rollups)
-    
+
     create_table :rollups do |t|
       t.string :name, null: false
       t.string :interval, null: false
@@ -9,6 +9,6 @@ class CreateRollups < ActiveRecord::Migration[8.1]
       t.jsonb :dimensions, null: false, default: {}
       t.float :value
     end
-    add_index :rollups, [:name, :interval, :time, :dimensions], unique: true
+    add_index :rollups, [ :name, :interval, :time, :dimensions ], unique: true
   end
 end
