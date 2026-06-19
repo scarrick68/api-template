@@ -1,7 +1,7 @@
 require "test_helper"
 
 class MetricsRollupJobTest < ActiveJob::TestCase
-  test "delegates to api observability and endpoint rollup jobs" do
+  test "delegates to api observability, endpoint, and searchjoy rollup jobs" do
     window_start = Time.zone.parse("2026-06-18 10:00:00 UTC")
     window_end = window_start + 1.hour
 
@@ -12,6 +12,12 @@ class MetricsRollupJobTest < ActiveJob::TestCase
     )
 
     Metrics::Rollups::ApiEndpointsJob.expects(:perform_now).with(
+      period: "hour",
+      window_start: window_start,
+      window_end: window_end
+    )
+
+    Searchjoy::SearchjoyRollupsJob.expects(:perform_now).with(
       period: "hour",
       window_start: window_start,
       window_end: window_end
@@ -32,6 +38,12 @@ class MetricsRollupJobTest < ActiveJob::TestCase
     )
 
     Metrics::Rollups::ApiEndpointsJob.expects(:perform_now).with(
+      period: "day",
+      window_start: nil,
+      window_end: nil
+    )
+
+    Searchjoy::SearchjoyRollupsJob.expects(:perform_now).with(
       period: "day",
       window_start: nil,
       window_end: nil
