@@ -20,18 +20,24 @@ class ApiRequestMetricsBuilderTest < ActiveSupport::TestCase
     end
   end
 
-  test "builds 4xx client error row" do
+  test "does not emit separate client error metric rows" do
     rows = ApiRequestMetricsBuilder.call(payload_for(status: 404))
 
-    assert_includes rows.map { |row| row[:name] }, Metric::API_REQUEST_CLIENT_ERROR_COUNT
-    refute_includes rows.map { |row| row[:name] }, Metric::API_REQUEST_ERROR_COUNT
+    assert_equal 2, rows.size
+    assert_equal [
+      Metric::API_REQUEST_COUNT,
+      Metric::API_REQUEST_DURATION_MS
+    ].sort, rows.map { |row| row[:name] }.sort
   end
 
-  test "builds 5xx server error row" do
+  test "does not emit separate server error metric rows" do
     rows = ApiRequestMetricsBuilder.call(payload_for(status: 500))
 
-    assert_includes rows.map { |row| row[:name] }, Metric::API_REQUEST_ERROR_COUNT
-    refute_includes rows.map { |row| row[:name] }, Metric::API_REQUEST_CLIENT_ERROR_COUNT
+    assert_equal 2, rows.size
+    assert_equal [
+      Metric::API_REQUEST_COUNT,
+      Metric::API_REQUEST_DURATION_MS
+    ].sort, rows.map { |row| row[:name] }.sort
   end
 
   private

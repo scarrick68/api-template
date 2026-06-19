@@ -37,22 +37,6 @@ class ApiRequestMetricsBuilder
       )
     ]
 
-    if status.between?(400, 499)
-      rows << common.merge(
-        name: Metric::API_REQUEST_CLIENT_ERROR_COUNT,
-        metric_type: "counter",
-        value: 1
-      )
-    end
-
-    if status.between?(500, 599)
-      rows << common.merge(
-        name: Metric::API_REQUEST_ERROR_COUNT,
-        metric_type: "counter",
-        value: 1
-      )
-    end
-
     rows
   end
 end
