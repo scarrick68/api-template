@@ -1,3 +1,4 @@
+# This is the payload that goes into the ApiRequestMetricsJob when an API request event is tracked
 module Schemas
   ApiRequestMetricsPayload = Dry::Schema.Params do
     config.validate_keys = true
