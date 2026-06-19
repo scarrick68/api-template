@@ -1,83 +1,73 @@
 # Metrics Architecture
 
-This application uses a first-party metrics architecture that captures behavior inside the Rails app, stores normalized measurements in the primary database, and powers operational dashboards from that data with Blazer.
+This application uses an endpoint-first observability model for API metrics. We capture request events in Rails, persist normalized raw metrics, produce endpoint rollups, and then build Blazer dashboards from a mix of raw metrics (current day) and rollups (7/30 day views).
 
 ## Design Intent
 
-The metrics system is optimized for three goals:
+The current model is optimized for:
 
-- Reliable request-level telemetry for API endpoints
-- Clear attribution for authenticated and anonymous traffic
-- Fast aggregation for dashboards and incident debugging
+- One source of truth for traffic and error trends at endpoint level
+- Accurate global latency p95 from raw duration data
+- Dashboard performance for 7-day and 30-day windows via rollups
 
-At a high level, this is an event-to-metrics fanout model: one API request can produce multiple metric records (request count, duration, and conditional error counters). This also allows us to capture arbitrary data and move that to background processing for creating potentially multiple metric records, without adding latency to the request path.
+## Data Model
 
-### Compatibility / Portability
+Per API request, the ingestion job writes two raw metrics:
 
-The fanout model allows us to capture single row metrics which reduces coupling and makes any forward compatible migrations easier. The schema was designed to be forward compatible with common dimensional models used in tools like Prometheus and OpenTelemetry, while also supporting rich contextual properties for debugging. The forward compatibility is experimental and as of this writing, unverified with any external systems.
+- observability.api.request.count
+- observability.api.request.duration_ms
 
-## System Flow
+Request status, controller, and action are stored in labels. That allows error metrics to be derived from request count rows instead of writing separate raw error metric names.
+
+## Rollup Model
+
+Endpoint rollups are the main dashboard source:
+
+- observability.api.endpoint.requests
+- observability.api.endpoint.client_errors
+- observability.api.endpoint.server_errors
+- observability.api.endpoint.duration.avg_ms
+- observability.api.endpoint.duration.p95_ms
+
+Global request and error charts are derived in SQL by aggregating endpoint rollups.
+
+To preserve statistical correctness, one global latency rollup remains:
+
+- observability.api.duration.p95_ms
+
+This avoids incorrectly averaging endpoint p95 values.
+
+## Dashboard Query Strategy
+
+- Current day queries: read raw metrics for highest freshness and hourly detail.
+- 7-day and 30-day queries: read rollups for lower query cost and faster dashboards.
+
+## End-To-End Flow
 
 ```mermaid
 flowchart LR
-  A[API Request] --> B[Controller Execution]
-  B --> C[Rails Action Notification]
+  A[API Request] --> B[Controller]
+  B --> C[ActiveSupport Notification]
   C --> D[Observability Subscriber]
-  D --> E[Background Metrics Job]
+  D --> E[ApiRequestMetricsJob]
 
   E --> F[Payload Validation]
-  F --> G[Metric Row Fanout]
-  G --> H[Row Validation]
-  H --> I[(metrics table)]
+  F --> G[ApiRequestMetricsBuilder]
+  G --> H[(metrics table)]
 
-  I --> J[Blazer Dashboards]
-  I --> K[Ad-hoc SQL / Analysis]
+  H --> I[Metrics::Rollups::ApiEndpointsJob]
+  H --> J[Metrics::Rollups::ApiObservabilityJob]
 
-  B --> L[Context Enrichment]
-  L -. user_id, visitor_token .-> D
+  I --> K[(rollups table endpoint series)]
+  J --> L[(rollups table global p95)]
+
+  H --> M[Blazer current day queries]
+  K --> N[Blazer 7/30 day queries]
+  L --> N
 ```
 
-## Architectural Boundaries
+## Operational Notes
 
-- Instrumentation trigger: Rails action notifications
-- Ingestion scope: API controllers only
-- Context ownership: controller layer enriches identity context
-- Processing model: asynchronous job for durability and request-path isolation
-- Data contract: dry-schema validation for ingestion payload and persisted rows
-- Storage model: normalized metric rows with dimensions and contextual properties
-
-## Metric Shape
-
-Each stored record represents one measured fact with:
-
-- A metric name
-- A metric type (counter, histogram, gauge)
-- A numeric value
-- Occurrence timestamp
-- Correlation and attribution context
-- Dimensional labels for aggregation
-- Additional properties for debugging context
-
-This shape is intentionally compatible with dashboarding and export patterns used by systems like Prometheus and OpenTelemetry.
-
-## Fanout Model
-
-For each API request, the system emits:
-
-- Request count
-- Request duration
-- Client error count for 4xx responses
-- Server error count for 5xx responses
-
-This gives both traffic volume and quality signals from the same request event stream.
-
-## Operational View
-
-The metrics table is the canonical source for:
-
-- API traffic trends
-- Endpoint hot spots
-- Error-rate monitoring
-- Latency distribution analysis
-
-Blazer dashboards are generated from these stored metrics, and can be refreshed as dashboard definitions evolve.
+- Raw metrics are retained for debugging and accurate recomputation.
+- Endpoint rollups are treated as the primary aggregate layer for volume and error trends.
+- Blazer dashboard SQL is intentionally simple at read time, with complexity pushed into rollup jobs.
