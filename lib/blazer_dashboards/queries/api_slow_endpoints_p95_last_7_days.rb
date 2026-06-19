@@ -4,15 +4,14 @@ module BlazerDashboards
       def self.sql
         <<~SQL
           select
-            labels->>'controller' as controller,
-            labels->>'action' as action,
-            percentile_cont(0.95) within group (
-              order by value::numeric
-            ) as p95_ms,
+            dimensions->>'controller' as controller,
+            dimensions->>'action' as action,
+            max(value) as p95_ms,
             count(*) as samples
-          from metrics
-          where name = 'observability.api.request.duration_ms'
-            and occurred_at >= now() - interval '7 days'
+          from rollups
+          where name = 'observability.api.endpoint.duration.p95_ms'
+            and interval = 'hour'
+            and time >= now() - interval '7 days'
           group by 1, 2
           order by p95_ms desc
         SQL

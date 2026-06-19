@@ -6,7 +6,7 @@ class ApiRequestMetricsJobTest < ActiveJob::TestCase
 
     payload = api_request_payload(
       user_id: user.id,
-      visitor_token: "visitor-123",
+      visitor_token: SecureRandom.hex(6),
       path: "/api/v1/users/me",
       action: "me",
       status: 200,
@@ -45,13 +45,13 @@ class ApiRequestMetricsJobTest < ActiveJob::TestCase
     )
   end
 
-  test "writes server error counter metric for 5xx errors" do
+  test "writes count and duration metrics for 5xx errors" do
     payload = api_request_payload(
       status: 500,
       duration_ms: 120
     )
 
-    assert_difference "Metric.count", 3 do
+    assert_difference "Metric.count", 2 do
       ApiRequestMetricsJob.perform_now(payload)
     end
 
@@ -59,29 +59,37 @@ class ApiRequestMetricsJobTest < ActiveJob::TestCase
       request_id: payload[:request_id],
       expected_names: [
         Metric::API_REQUEST_COUNT,
-        Metric::API_REQUEST_DURATION_MS,
-        Metric::API_REQUEST_ERROR_COUNT
+        Metric::API_REQUEST_DURATION_MS
       ]
     )
 
-    error_metric = metric_for(payload[:request_id], Metric::API_REQUEST_ERROR_COUNT)
+    count_metric = metric_for(payload[:request_id], Metric::API_REQUEST_COUNT)
+    duration_metric = metric_for(payload[:request_id], Metric::API_REQUEST_DURATION_MS)
 
     assert_metric_row(
-      metric: error_metric,
-      expected_name: Metric::API_REQUEST_ERROR_COUNT,
+      metric: count_metric,
+      expected_name: Metric::API_REQUEST_COUNT,
       expected_metric_type: "counter",
       expected_value: 1,
       expected_payload: payload
     )
+
+    assert_metric_row(
+      metric: duration_metric,
+      expected_name: Metric::API_REQUEST_DURATION_MS,
+      expected_metric_type: "histogram",
+      expected_value: payload[:duration_ms],
+      expected_payload: payload
+    )
   end
 
-  test "writes client error counter metric for 4xx errors" do
+  test "writes count and duration metrics for 4xx errors" do
     payload = api_request_payload(
       status: 404,
       duration_ms: 50
     )
 
-    assert_difference "Metric.count", 3 do
+    assert_difference "Metric.count", 2 do
       ApiRequestMetricsJob.perform_now(payload)
     end
 
@@ -89,18 +97,26 @@ class ApiRequestMetricsJobTest < ActiveJob::TestCase
       request_id: payload[:request_id],
       expected_names: [
         Metric::API_REQUEST_COUNT,
-        Metric::API_REQUEST_DURATION_MS,
-        Metric::API_REQUEST_CLIENT_ERROR_COUNT
+        Metric::API_REQUEST_DURATION_MS
       ]
     )
 
-    client_error_metric = metric_for(payload[:request_id], Metric::API_REQUEST_CLIENT_ERROR_COUNT)
+    count_metric = metric_for(payload[:request_id], Metric::API_REQUEST_COUNT)
+    duration_metric = metric_for(payload[:request_id], Metric::API_REQUEST_DURATION_MS)
 
     assert_metric_row(
-      metric: client_error_metric,
-      expected_name: Metric::API_REQUEST_CLIENT_ERROR_COUNT,
+      metric: count_metric,
+      expected_name: Metric::API_REQUEST_COUNT,
       expected_metric_type: "counter",
       expected_value: 1,
+      expected_payload: payload
+    )
+
+    assert_metric_row(
+      metric: duration_metric,
+      expected_name: Metric::API_REQUEST_DURATION_MS,
+      expected_metric_type: "histogram",
+      expected_value: payload[:duration_ms],
       expected_payload: payload
     )
   end

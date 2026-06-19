@@ -1,3 +1,4 @@
+# This is the schema for the individual metric rows that get written to the MetricRow table by the ApiRequestMetricsJob
 module Schemas
   ApiRequestMetricRow = Dry::Schema.Params do
     config.validate_keys = true

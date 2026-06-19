@@ -62,5 +62,9 @@ module Metrics
     def action_sql
       Arel.sql("labels->>'action'")
     end
+
+    def status_sql
+      "(labels->>'status')::int"
+    end
   end
 end

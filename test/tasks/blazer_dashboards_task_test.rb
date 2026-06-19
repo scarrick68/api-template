@@ -24,14 +24,20 @@ class BlazerDashboardsTaskTest < ActiveSupport::TestCase
 
     assert_equal dashboard_query_names.sort, dashboard.queries.pluck(:name).sort
 
+    current_day_query = Blazer::Query.find_by!(name: "API requests - current day")
+
+    assert_includes current_day_query.statement, "from metrics"
+    assert_includes current_day_query.statement, Metrics::ApiRequestMetricNames::API_REQUEST_COUNT
+    assert_includes current_day_query.statement, "date_trunc('day', now())"
+
     query = Blazer::Query.find_by!(name: "API requests by day - last 30 days")
 
-    assert_includes query.statement, "from metrics"
-    assert_includes query.statement, Metrics::ApiRequestMetricNames::API_REQUEST_COUNT
+    assert_includes query.statement, "from rollups"
+    assert_includes query.statement, "observability.api.endpoint.requests"
     assert_includes query.statement, "interval '30 days'"
 
     p95_query = Blazer::Query.find_by!(name: "Slow API endpoints - p95 last 7 days")
-    assert_includes p95_query.statement, Metrics::ApiRequestMetricNames::API_REQUEST_DURATION_MS
+    assert_includes p95_query.statement, "observability.api.endpoint.duration.p95_ms"
   end
 
   test "task is idempotent" do
@@ -49,6 +55,8 @@ class BlazerDashboardsTaskTest < ActiveSupport::TestCase
 
   def dashboard_query_names
     [
+      "API requests - current day",
+      "API error rate - current day",
       "API requests by day - last 30 days",
       "API requests by endpoint - last 7 days",
       "API error rate by day - last 30 days",
