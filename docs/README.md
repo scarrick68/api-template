@@ -6,12 +6,16 @@ This directory contains product and operational documentation for the API templa
 
 - OpenAPI specification: openapi.yml
 - Metrics model and observability pipeline: metrics-model.md
+- Template features quick reference: template-features.md
 - Architecture decisions: adr/
 - Deployment and launch runbooks: deploy/
 
 ## Architecture Decision Records
 
 - Endpoint-first API metrics modeling: adr/0001-endpoint-first-api-metrics-modeling.md
+- Dual auth boundary for API and admin: adr/0002-dual-auth-boundary-for-api-and-admin.md
+- Admin session protection for internal tools: adr/0003-admin-session-protection-for-internal-tools.md
+- Single-database Solid stack: adr/0004-single-database-solid-stack.md
 
 ## Deployment And Launch Guides
 
