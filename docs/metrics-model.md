@@ -68,6 +68,23 @@ Current windows:
 
 Because rollup cleanup is interval-based, retention applies to all rollup names, including both API and Searchjoy rollup series.
 
+## Rollup And Retention Interaction
+
+`Metrics::Rollups::MetricsRollupJob` builds rollups from raw tables (`metrics` and Searchjoy tables) for a specific time window, while `MetricsRetentionJob` deletes raw records older than 30 days.
+
+Practical implications:
+
+- Rolling up current-day and recent hourly windows is very safe because source rows are well inside raw-data retention.
+- If rollup execution is delayed, you still have a 30-day source-data recovery window for backfilling missed rollups.
+- Manual rollup triggers should target windows newer than 30 days when relying on raw-source recomputation.
+- Backfills older than 30 days cannot be recomputed from raw tables in this default policy and should rely on existing rollups (if present) or external archives (if you have them).
+
+Scheduling guidance:
+
+- Run rollup jobs frequently (for example hourly for `hour` windows, daily for `day` windows).
+- Run retention after rollup jobs on normal schedules to avoid deleting raw rows before expected aggregation has occurred.
+- For one-off/manual backfills, execute rollups before running retention when operating close to the 30-day boundary.
+
 ## Dashboard Query Strategy
 
 - Current day queries: read raw metrics for highest freshness and hourly detail.

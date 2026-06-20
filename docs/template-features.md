@@ -57,7 +57,6 @@ Built-in support includes:
 * Metrics dashboards via Blazer
 * Database monitoring via PgHero
 * Background job observability via Mission Control Jobs
-* Background job traffic control via ActiveJob TrafficControl
 * A/B testing via Field Test
 * Analytics via Ahoy
 * Search analytics via Searchjoy
