@@ -1,5 +1,5 @@
 module Api
-  class BaseController < ApplicationController
+  class BaseController < ActionController::API
     include DeviseTokenAuth::Concerns::SetUserByToken
     include ErrorRenderable
 
