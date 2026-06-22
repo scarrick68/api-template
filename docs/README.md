@@ -16,6 +16,7 @@ This directory contains product and operational documentation for the API templa
 - Dual auth boundary for API and admin: adr/0002-dual-auth-boundary-for-api-and-admin.md
 - Admin session protection for internal tools: adr/0003-admin-session-protection-for-internal-tools.md
 - Single-database Solid stack: adr/0004-single-database-solid-stack.md
+- Separate browser and API base controllers: adr/0005-separate-browser-and-api-base-controllers.md
 
 ## Deployment And Launch Guides
 
