@@ -1,5 +1,4 @@
 require "test_helper"
-require "support/api_auth_helpers"
 
 class AuthTokensTest < ActionDispatch::IntegrationTest
   include ApiAuthHelpers

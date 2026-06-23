@@ -1,5 +1,4 @@
 require "test_helper"
-require "support/application_dispatch_test"
 
 class AhoyTrackingTest < ApplicationDispatchTest
   setup do
