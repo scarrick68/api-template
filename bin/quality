@@ -1,0 +1,8 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+args = ["bundle", "exec", "rubycritic"]
+
+args << "--no-browser" if ENV["CI"] || ARGV.include?("--no-browser")
+
+exec(*args)

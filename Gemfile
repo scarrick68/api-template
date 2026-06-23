@@ -108,3 +108,5 @@ gem "flipper-ui", "~> 1.4"
 gem "dry-schema", "~> 1.16"
 
 gem "rollups", "~> 0.6.0"
+
+gem "rubycritic", "~> 5.0", groups: [ :development, :test ]
