@@ -3,7 +3,7 @@ require "test_helper"
 class AvoAccessTest < ApplicationDispatchTest
   PROTECTED_AVO_PATHS = [
     "/avo",
-    "/avo/resources/users",
+    "/avo/resources/users"
   ].freeze
 
   test "anonymous users are redirected to sign in for avo routes" do
