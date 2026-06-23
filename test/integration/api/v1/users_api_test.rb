@@ -8,6 +8,7 @@ module Api
         get "/api/v1/users"
 
         assert_response :unauthorized
+        assert_conform_response_schema(401)
       end
 
       test "index returns paginated users with metadata" do
@@ -21,6 +22,7 @@ module Api
             headers: auth_headers_for(signed_in_user)
 
         assert_response :success
+        assert_conform_response_schema(200)
         assert_equal true, response.parsed_body["success"]
         assert_equal response.headers["X-Request-Id"], response.parsed_body["request_id"]
 
@@ -52,6 +54,7 @@ module Api
         get "/api/v1/users", headers: auth_headers_for(signed_in_user)
 
         assert_response :forbidden
+        assert_conform_response_schema(403)
         assert_equal false, response.parsed_body["success"]
         assert_equal "forbidden", response.parsed_body["error_type"]
       end
@@ -77,6 +80,7 @@ module Api
         get "/api/v1/users/#{user.id}"
 
         assert_response :unauthorized
+        assert_conform_response_schema(401)
       end
 
       test "show returns user for admin" do
@@ -87,6 +91,7 @@ module Api
         get "/api/v1/users/#{user.id}", headers: auth_headers_for(signed_in_user)
 
         assert_response :success
+        assert_conform_response_schema(200)
         assert_equal true, response.parsed_body["success"]
         assert_equal response.headers["X-Request-Id"], response.parsed_body["request_id"]
         assert_equal user.id, response.parsed_body.dig("data", "id")
@@ -110,6 +115,7 @@ module Api
         get "/api/v1/users/#{other_user.id}", headers: auth_headers_for(signed_in_user)
 
         assert_response :forbidden
+        assert_conform_response_schema(403)
         assert_equal false, response.parsed_body["success"]
         assert_equal "forbidden", response.parsed_body["error_type"]
       end
@@ -141,6 +147,7 @@ module Api
         get "/api/v1/users/me"
 
         assert_response :unauthorized
+        assert_conform_response_schema(401)
       end
 
       test "me returns current authenticated user" do
@@ -149,6 +156,7 @@ module Api
         get "/api/v1/users/me", headers: auth_headers_for(signed_in_user)
 
         assert_response :success
+        assert_conform_response_schema(200)
         assert_equal true, response.parsed_body["success"]
         assert_equal signed_in_user.id, response.parsed_body.dig("data", "id")
         assert_equal "signed-in-me@example.com", response.parsed_body.dig("data", "email")
@@ -174,6 +182,7 @@ module Api
         }
 
         assert_response :created
+        assert_conform_response_schema(201)
         assert_equal true, response.parsed_body["success"]
         assert_equal "new-user@example.com", response.parsed_body.dig("data", "email")
       end
@@ -203,6 +212,7 @@ module Api
         }
 
         assert_response :unprocessable_entity
+        assert_conform_response_schema(422)
         assert_equal false, response.parsed_body["success"]
         assert_equal "unprocessable_entity", response.parsed_body["error_type"]
       end
@@ -259,6 +269,7 @@ module Api
         patch "/api/v1/users/#{user.id}", params: { name: "Updated Name" }
 
         assert_response :unauthorized
+        assert_conform_response_schema(401)
       end
 
       test "update allows admin to update another user" do
@@ -270,6 +281,7 @@ module Api
               headers: auth_headers_for(signed_in_user)
 
         assert_response :success
+        assert_conform_response_schema(200)
         assert_equal true, response.parsed_body["success"]
         assert_equal "After Name", response.parsed_body.dig("data", "name")
         assert_equal "After Name", user.reload.name
@@ -297,6 +309,7 @@ module Api
               headers: auth_headers_for(signed_in_user)
 
         assert_response :forbidden
+        assert_conform_response_schema(403)
         assert_equal false, response.parsed_body["success"]
         assert_equal "forbidden", response.parsed_body["error_type"]
       end
@@ -321,6 +334,7 @@ module Api
               headers: auth_headers_for(signed_in_user)
 
         assert_response :unprocessable_entity
+        assert_conform_response_schema(422)
         assert_equal false, response.parsed_body["success"]
         assert_equal "unprocessable_entity", response.parsed_body["error_type"]
       end
@@ -353,6 +367,7 @@ module Api
         delete "/api/v1/users/#{user.id}"
 
         assert_response :unauthorized
+        assert_conform_response_schema(401)
       end
 
       test "destroy allows admin to delete another user" do
@@ -363,6 +378,7 @@ module Api
                headers: auth_headers_for(signed_in_user)
 
         assert_response :success
+        assert_conform_response_schema(200)
         assert_equal true, response.parsed_body["success"]
         assert_equal target_user.id, response.parsed_body.dig("data", "id")
 
@@ -395,6 +411,7 @@ module Api
                headers: auth_headers_for(signed_in_user)
 
         assert_response :forbidden
+        assert_conform_response_schema(403)
         assert_equal false, response.parsed_body["success"]
         assert_equal "forbidden", response.parsed_body["error_type"]
         assert_not_nil User.find_by(id: target_user.id)

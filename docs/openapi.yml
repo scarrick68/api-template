@@ -5,6 +5,107 @@ info:
 servers:
   - url: /
 paths:
+  /auth:
+    post:
+      summary: Register user account
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthSignUpRequest'
+      responses:
+        '200':
+          description: Registration accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthRegisterSuccessResponse'
+        '422':
+          description: Registration validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthErrorResponse'
+  /auth/sign_in:
+    post:
+      summary: Sign in and issue token headers
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthSignInRequest'
+      responses:
+        '200':
+          description: Login success
+          headers:
+            access-token:
+              schema:
+                type: string
+            client:
+              schema:
+                type: string
+            uid:
+              schema:
+                type: string
+            expiry:
+              schema:
+                type: string
+            token-type:
+              schema:
+                type: string
+                example: Bearer
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthSessionSuccessResponse'
+        '401':
+          description: Bad credentials or unconfirmed account
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthErrorResponse'
+  /auth/sign_out:
+    delete:
+      summary: Sign out and revoke current token client
+      security:
+        - AccessTokenAuth: []
+          ClientAuth: []
+          UidAuth: []
+      responses:
+        '200':
+          description: Logout success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthSignOutSuccessResponse'
+        '404':
+          description: Token/session not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthErrorResponse'
+  /auth/validate_token:
+    get:
+      summary: Validate token headers and return current auth user
+      security:
+        - AccessTokenAuth: []
+          ClientAuth: []
+          UidAuth: []
+      responses:
+        '200':
+          description: Valid token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthSessionSuccessResponse'
+        '401':
+          description: Invalid token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthErrorResponse'
   /api/v1/hello:
     get:
       summary: Hello endpoint
@@ -28,6 +129,44 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
   /api/v1/users:
+    get:
+      summary: List users
+      security:
+        - AccessTokenAuth: []
+          ClientAuth: []
+          UidAuth: []
+      parameters:
+        - in: query
+          name: page
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+        - in: query
+          name: per_page
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+      responses:
+        '200':
+          description: Users list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UsersIndexResponse'
+        '401':
+          description: Missing or invalid auth headers
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthRequiredErrorResponse'
+        '403':
+          description: Not authorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
     post:
       summary: Create user
       requestBody:
@@ -35,21 +174,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                name:
-                  type: string
-                email:
-                  type: string
-                  format: email
-                password:
-                  type: string
-                password_confirmation:
-                  type: string
-              required:
-                - email
-                - password
-                - password_confirmation
+              $ref: '#/components/schemas/CreateUserRequest'
       responses:
         '201':
           description: Created user
@@ -63,9 +188,19 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Not authorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   /api/v1/users/me:
     get:
       summary: Current authenticated user
+      security:
+        - AccessTokenAuth: []
+          ClientAuth: []
+          UidAuth: []
       responses:
         '200':
           description: Current user
@@ -73,7 +208,163 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UserShowResponse'
+        '401':
+          description: Missing or invalid auth headers
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthRequiredErrorResponse'
+        '403':
+          description: Not authorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api/v1/users/{id}:
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: integer
+    get:
+      summary: Fetch user by id
+      security:
+        - AccessTokenAuth: []
+          ClientAuth: []
+          UidAuth: []
+      responses:
+        '200':
+          description: User detail
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserShowResponse'
+        '401':
+          description: Missing or invalid auth headers
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthRequiredErrorResponse'
+        '403':
+          description: Not authorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    put:
+      summary: Update user
+      security:
+        - AccessTokenAuth: []
+          ClientAuth: []
+          UidAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateUserRequest'
+      responses:
+        '200':
+          description: Updated user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserShowResponse'
+        '401':
+          description: Missing or invalid auth headers
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthRequiredErrorResponse'
+        '403':
+          description: Not authorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    patch:
+      summary: Partially update user
+      security:
+        - AccessTokenAuth: []
+          ClientAuth: []
+          UidAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateUserRequest'
+      responses:
+        '200':
+          description: Updated user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserShowResponse'
+        '401':
+          description: Missing or invalid auth headers
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthRequiredErrorResponse'
+        '403':
+          description: Not authorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    delete:
+      summary: Delete user
+      security:
+        - AccessTokenAuth: []
+          ClientAuth: []
+          UidAuth: []
+      responses:
+        '200':
+          description: Deleted user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserShowResponse'
+        '401':
+          description: Missing or invalid auth headers
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthRequiredErrorResponse'
+        '403':
+          description: Not authorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 components:
+  securitySchemes:
+    AccessTokenAuth:
+      type: apiKey
+      in: header
+      name: access-token
+    ClientAuth:
+      type: apiKey
+      in: header
+      name: client
+    UidAuth:
+      type: apiKey
+      in: header
+      name: uid
   schemas:
     BaseSuccess:
       type: object
@@ -104,6 +395,150 @@ components:
           type: string
         request_id:
           type: [string, 'null']
+    AuthErrorResponse:
+      type: object
+      required:
+        - success
+        - errors
+      properties:
+        success:
+          type: boolean
+          const: false
+        errors:
+          type: array
+          items:
+            type: string
+    AuthRequiredErrorResponse:
+      type: object
+      required:
+        - errors
+      properties:
+        errors:
+          type: array
+          items:
+            type: string
+    AuthUser:
+      type: object
+      required:
+        - id
+        - uid
+        - provider
+        - email
+      properties:
+        id:
+          type: integer
+        uid:
+          type: string
+          format: email
+        provider:
+          type: string
+          example: email
+        email:
+          type: string
+          format: email
+        name:
+          type: [string, 'null']
+        nickname:
+          type: [string, 'null']
+        image:
+          type: [string, 'null']
+        allow_password_change:
+          type: [boolean, 'null']
+    AuthSessionSuccessResponse:
+      type: object
+      required:
+        - data
+      properties:
+        data:
+          $ref: '#/components/schemas/AuthUser'
+    AuthRegisterSuccessResponse:
+      type: object
+      required:
+        - status
+        - data
+      properties:
+        status:
+          type: string
+          const: success
+        data:
+          $ref: '#/components/schemas/AuthUser'
+    AuthSignOutSuccessResponse:
+      type: object
+      required:
+        - success
+      properties:
+        success:
+          type: boolean
+          const: true
+    AuthSignUpRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+        password_confirmation:
+          type: string
+        confirm_success_url:
+          type: string
+          format: uri
+      required:
+        - email
+        - password
+        - password_confirmation
+        - confirm_success_url
+    AuthSignInRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+      required:
+        - email
+        - password
+    CreateUserRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+        password_confirmation:
+          type: string
+      required:
+        - email
+        - password
+        - password_confirmation
+    UpdateUserRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+          format: email
+    PaginationMeta:
+      type: object
+      properties:
+        count:
+          type: integer
+        page:
+          type: integer
+        limit:
+          type: integer
+        pages:
+          type: integer
+        prev:
+          type: [integer, 'null']
+        next:
+          type: [integer, 'null']
+      additionalProperties: true
     User:
       type: object
       required:
@@ -137,6 +572,20 @@ components:
           properties:
             data:
               $ref: '#/components/schemas/User'
+    UsersIndexResponse:
+      allOf:
+        - $ref: '#/components/schemas/BaseSuccess'
+        - type: object
+          required:
+            - data
+            - meta
+          properties:
+            data:
+              type: array
+              items:
+                $ref: '#/components/schemas/User'
+            meta:
+              $ref: '#/components/schemas/PaginationMeta'
     HelloResponse:
       allOf:
         - $ref: '#/components/schemas/BaseSuccess'
