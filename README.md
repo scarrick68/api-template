@@ -191,7 +191,7 @@ API endpoints should be added under `/api/v1`.
 
 The `/api/` namespace defaults to JSON responses.
 
-- Canonical hello endpoint: `GET /api/v1/hello`
+- Canonical authenticated user endpoint: `GET /api/v1/users/me`
 
 ## API Docs (ReDoc)
 
@@ -422,7 +422,7 @@ This template uses a service-object layer under `app/services/svc`.
 - Controllers should stay thin and delegate business logic to service objects.
 - Service objects should expose a single entrypoint via `.call`.
 - Place shared behavior in `Svc::Base`.
-- Group services by domain/version (for example `Svc::Api::V1::Hello::Show`).
+- Group services by domain/version (for example `Svc::Api::V1::Users::List`).
 - Service objects in this app are Rails-aware by design.
 
 Rails-awareness:
@@ -440,8 +440,8 @@ Usage conventions:
 
 Example flow:
 
-- Controller: `Api::V1::HelloController#show`
-- Service object: `Svc::Api::V1::Hello::Show`
+- Controller: `Api::V1::UsersController#index`
+- Service object: `Svc::Api::V1::Users::List`
 
 ## API Error Handling
 

@@ -106,28 +106,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/AuthErrorResponse'
-  /api/v1/hello:
-    get:
-      summary: Hello endpoint
-      parameters:
-        - in: query
-          name: name
-          required: false
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Hello response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/HelloResponse'
-        '422':
-          description: Validation error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
   /api/v1/users:
     get:
       summary: List users
@@ -586,15 +564,3 @@ components:
                 $ref: '#/components/schemas/User'
             meta:
               $ref: '#/components/schemas/PaginationMeta'
-    HelloResponse:
-      allOf:
-        - $ref: '#/components/schemas/BaseSuccess'
-        - type: object
-          required:
-            - message
-            - cached
-          properties:
-            message:
-              type: string
-            cached:
-              type: boolean
