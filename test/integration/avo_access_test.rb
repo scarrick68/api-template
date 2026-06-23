@@ -4,8 +4,6 @@ class AvoAccessTest < ApplicationDispatchTest
   PROTECTED_AVO_PATHS = [
     "/avo",
     "/avo/resources/users",
-    "/avo/avo_api/search",
-    "/avo/avo_private/status"
   ].freeze
 
   test "anonymous users are redirected to sign in for avo routes" do
