@@ -3,6 +3,10 @@
 require "test_helper"
 
 class AdminToolsRoutesTest < ActiveSupport::TestCase
+  test "avo route is mounted" do
+    assert_route_mounted("/avo")
+  end
+
   test "pghero route is mounted" do
     assert_route_mounted("/pghero")
   end

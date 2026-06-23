@@ -30,6 +30,10 @@ require "skooma"
 path_to_openapi = Rails.root.join("docs", "openapi.yml")
 ActionDispatch::IntegrationTest.include Skooma::Minitest[path_to_openapi, coverage: :report]
 
+Dir[Rails.root.join("test/support/**/*.rb")].sort.each do |file|
+  require file
+end
+
 module ActiveSupport
   class TestCase
     # Run tests in parallel with specified workers

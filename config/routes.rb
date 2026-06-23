@@ -13,6 +13,7 @@ Rails.application.routes.draw do
     mount Flipper::UI.app(Flipper) => "/flipper"
     mount LetterOpenerWeb::Engine, at: "/letter_opener"
     mount Searchjoy::Engine, at: "/searchjoy"
+    mount_avo
   else
     authenticate :admin do
       mount PgHero::Engine, at: "/pghero"
@@ -22,6 +23,7 @@ Rails.application.routes.draw do
       mount FieldTest::Engine, at: "/field_test"
       mount Flipper::UI.app(Flipper) => "/flipper"
       mount Searchjoy::Engine, at: "/searchjoy"
+      mount_avo
     end
   end
 
