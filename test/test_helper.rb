@@ -1,6 +1,9 @@
 ENV["RAILS_ENV"] ||= "test"
 
 require "simplecov"
+require "fileutils"
+
+FileUtils.mkdir_p(File.expand_path("../tmp", __dir__)) unless File.exist?(File.expand_path("../tmp", __dir__))
 
 SimpleCov.enable_coverage :branch
 SimpleCov.coverage_dir "coverage"
