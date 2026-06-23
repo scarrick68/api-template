@@ -22,7 +22,7 @@ module Api
         assert_match("Not authorized to show?", error.message)
       end
 
-      test "includes pagy method support" do
+      test "includes pagy backend support" do
         controller = build_controller
 
         assert_equal true, controller.respond_to?(:pagy, true)
@@ -46,7 +46,7 @@ module Api
         assert_equal 2, records.size
       end
 
-      test "pagination_meta merges pagy data hash with extras" do
+      test "pagination_meta includes core fields and merges extras" do
         create_list(:user, 2)
         controller = build_controller
         pagy, _records = with_controller_context(controller, action_name: "index") do
@@ -55,8 +55,12 @@ module Api
 
         meta = controller.send(:pagination_meta, pagy, { filter: "active" })
 
+        assert_equal 2, meta[:count]
         assert_equal 1, meta[:page]
         assert_equal 1, meta[:limit]
+        assert_equal 2, meta[:pages]
+        assert_nil meta[:prev]
+        assert_equal 2, meta[:next]
         assert_equal "active", meta[:filter]
       end
 
