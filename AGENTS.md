@@ -17,6 +17,7 @@ Scaffolded with full Rails stack to support internal tooling from gems.
 - Prefer popular, well-maintained gems
 - Prefer Rails-native patterns and conventions over introducing new abstractions.
 - Prefer Rails built-in functionality like ActiveJob, ActiveSupport, and SolidQueue etc...
+- Update openapi.yml when adding or changing API endpoints.
 
 ## Testing
 
@@ -30,6 +31,8 @@ Scaffolded with full Rails stack to support internal tooling from gems.
 - Use Mocha primarily for application services, external dependencies, and failure-path testing.
 - Keep tests compatible with parallel execution. Avoid shared global state.
 - When adding or changing API endpoints, add or update integration tests that exercise the endpoint through a real HTTP request.
+- Assert API responses against the OpenAPI contract when possible to ensure the contract is kept up to date and accurate.
+- Include realistic examples in OpenAPI spec for new endpoints to ensure the contract is useful for consumers.
 
 Run targeted tests with:
 
