@@ -6,6 +6,8 @@ A production-ready Rails 8.1 API template focused on developer velocity, operati
 
 * Rails 8.1 API-first application skeleton with opinionated conventions and sensible defaults.
 * Fast local CI pipeline via `bin/ci` with integrated quality and security checks.
+* RubyCritic code quality metrics integrated via `bin/quality` and included in CI quality checks.
+* App renaming utility via `bin/template_rename` for first-pass project bootstrap naming. Make the project your own with a single command.
 * Full application test suite executes in parallel, enabling complete CI runs in approximately 15 seconds.
 * SimpleCov coverage reporting with enforced thresholds and 98% coverage on template code.
 * Service object architecture under `app/services/svc` for clear business logic boundaries.
@@ -76,6 +78,7 @@ The following operational tools are preconfigured and mounted with administrativ
 * Solid Errors
 * ReDoc API documentation
 * Field Test admin UI
+* RubyCritic code quality report (`tmp/rubycritic/overview.html`)
 
 and other operator-focused tooling as the template evolves.
 

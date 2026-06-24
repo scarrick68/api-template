@@ -7,6 +7,8 @@ This directory contains product and operational documentation for the API templa
 - OpenAPI specification: openapi.yml
 - Metrics model and observability pipeline: metrics-model.md
 - Template features quick reference: template-features.md
+- Ruby code quality metrics (RubyCritic): rubycritic.md
+- Template rename utility guide: template-rename.md
 - Architecture decisions: adr/
 - Deployment and launch runbooks: deploy/
 
@@ -17,6 +19,7 @@ This directory contains product and operational documentation for the API templa
 - Admin session protection for internal tools: adr/0003-admin-session-protection-for-internal-tools.md
 - Single-database Solid stack: adr/0004-single-database-solid-stack.md
 - Separate browser and API base controllers: adr/0005-separate-browser-and-api-base-controllers.md
+- Template rename utility is best-effort: adr/0006-template-rename-utility-is-best-effort.md
 
 ## Deployment And Launch Guides
 
