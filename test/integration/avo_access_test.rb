@@ -1,6 +1,10 @@
 require "test_helper"
 
 class AvoAccessTest < ApplicationDispatchTest
+  setup do
+    Avo::Licensing::HQ.any_instance.stubs(:response).returns({})
+  end
+
   PROTECTED_AVO_PATHS = [
     "/avo",
     "/avo/resources/users"
@@ -15,7 +19,8 @@ class AvoAccessTest < ApplicationDispatchTest
   end
 
   test "non-admin users are redirected to sign in for avo routes" do
-    sign_in create(:user)
+    sign_in create(:user), scope: :user
+
     PROTECTED_AVO_PATHS.each do |path|
       get path
 
@@ -23,16 +28,23 @@ class AvoAccessTest < ApplicationDispatchTest
     end
   end
 
-  test "admin users can access avo" do
-    sign_in create(:admin)
+  test "authenticated admin users can access avo dashboard" do
+    sign_in create(:admin), scope: :admin
+
+    get "/avo"
+
+    assert_redirected_to "/avo/resources/users"
+  end
+
+  test "authenticated admin users can access avo resources" do
+    sign_in create(:admin), scope: :admin
 
     get "/avo/resources/users"
 
-    assert_not_equal "/admins/sign_in", response.redirect_url
-    assert_not_equal :not_found, response.status
+    assert_response :success
   end
 
-  test "token-authenticated app user is still redirected for avo routes" do
+  test "token-authenticated admin user is still redirected to session login for avo routes" do
     api_user = create(:user, :admin)
 
     PROTECTED_AVO_PATHS.each do |path|

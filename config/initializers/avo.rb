@@ -1,5 +1,5 @@
 # For more information regarding these settings check out our docs https://docs.avohq.io
-# The values disaplayed here are the default ones. Uncomment and change them to fit your needs.
+# The values displayed here are the default ones. Uncomment and change them to fit your needs.
 Avo.configure do |config|
   ## == Routing ==
   config.root_path = "/avo"
@@ -10,11 +10,15 @@ Avo.configure do |config|
   # config.home_path = nil
 
   ## == Licensing ==
-  # config.license_key = ENV['AVO_LICENSE_KEY']
+  config.license = ENV.fetch("AVO_LICENSE", "community")
+  config.license_key = ENV["AVO_LICENSE_KEY"]
+  config.display_license_request_timeout_error = false
 
   ## == Set the context ==
   config.set_context do
-    # Return a context object that gets evaluated within Avo::ApplicationController
+    {
+      current_admin: current_admin
+    }
   end
 
   ## == Authentication ==
@@ -65,7 +69,6 @@ Avo.configure do |config|
   ## == Response messages dismiss time ==
   # config.alert_dismiss_time = 5000
 
-
   ## == Number of search results to display ==
   # config.search_results_count = 8
 
@@ -103,15 +106,14 @@ Avo.configure do |config|
 
   ## == Customization ==
   config.click_row_to_view_record = true
-  # config.app_name = 'Avocadelicious'
-  # config.timezone = 'UTC'
-  # config.currency = 'USD'
+  config.app_name = ENV.fetch("APP_NAME", Rails.application.class.module_parent_name.titleize)
+  config.timezone = "UTC"
+  config.currency = "USD"
+  config.full_width_container = false
+  config.full_width_index_view = true
   # config.hide_layout_when_printing = false
-  # config.full_width_container = false
-  # config.full_width_index_view = false
   # config.search_debounce = 300
   # config.view_component_path = "app/components"
-  # config.display_license_request_timeout_error = true
   # config.disabled_features = []
   # config.buttons_on_form_footers = true
   # config.field_wrapper_layout = true
