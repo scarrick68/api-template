@@ -17,6 +17,7 @@ This directory contains product and operational documentation for the API templa
 - Admin session protection for internal tools: adr/0003-admin-session-protection-for-internal-tools.md
 - Single-database Solid stack: adr/0004-single-database-solid-stack.md
 - Separate browser and API base controllers: adr/0005-separate-browser-and-api-base-controllers.md
+- Avo Community admin dashboard: adr/0006-avo-community-admin-dashboard.md
 
 ## Deployment And Launch Guides
 

@@ -56,6 +56,7 @@ This app intentionally separates API identity from internal operator identity.
 	- `/flipper`
 	- `/solid_errors`
 	- `/field_test`
+	- `/avo`
 - API docs (`/docs`, `/openapi.yml`) are browser routes and are not part of the token-authenticated API surface.
 
 ### Controller boundaries
@@ -204,6 +205,32 @@ Access behavior:
 
 - `development`: docs are available without authentication.
 - non-development (`test`/`production`): only authenticated admin Devise session users can access docs; all other requests receive `404 not found`.
+
+## Admin Dashboard (Avo Community)
+
+This template includes an Avo-based admin dashboard mounted at:
+
+- `GET /avo`
+
+Operator UX notes:
+
+- Avo uses a modern Rails-first UI with Hotwire/Turbo interactions for fast page transitions and responsive admin workflows.
+- The dashboard is mobile-friendly, making it practical for small teams to handle basic administration tasks while away from a desktop.
+- This enables lightweight "admin from anywhere" operations without introducing a separate frontend admin project.
+
+Current licensing decision:
+
+- Use Avo Community by default.
+- Set `AVO_LICENSE=community` unless you explicitly adopt a paid Avo tier.
+- Optional paid-tier key support remains configurable through `AVO_LICENSE_KEY` if you would like to purchase one for your application.
+
+Access behavior:
+
+- `development`: route is mounted directly for local debugging. It will still prompt you for admin login bc of Avo internal auth.
+- non-development (`test`/`production`): route is mounted behind admin session auth in routes for extra security.
+- Avo internal auth is also configured to require `current_admin` and `authenticate_admin!`.
+
+This is intentionally defense-in-depth for a sensitive operator surface.
 
 ## Database Observability (PgHero)
 

@@ -74,6 +74,7 @@ The following operational tools are preconfigured and mounted with administrativ
 * Flipper
 * Searchjoy
 * Solid Errors
+* Avo Community admin dashboard (mobile-friendly)
 * ReDoc API documentation
 * Field Test admin UI
 
