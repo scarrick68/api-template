@@ -303,9 +303,12 @@ class TemplateRenameCommandTest < ActiveSupport::TestCase
     Dir.mktmpdir("api-template-module-reference-files") do |tmpdir|
       write_fixture_files(tmpdir)
       FileUtils.mkdir_p(File.join(tmpdir, "lib/sample"))
+      FileUtils.mkdir_p(File.join(tmpdir, "test/lib"))
       FileUtils.mkdir_p(File.join(tmpdir, "app/services"))
       FileUtils.mkdir_p(File.join(tmpdir, "docs"))
       File.write(File.join(tmpdir, "lib/sample/tool.rb"), "module Sample; end\n")
+      File.write(File.join(tmpdir, "lib/template_rename_command.rb"), "module LegacySuite; end\n")
+      File.write(File.join(tmpdir, "test/lib/template_rename_command_test.rb"), "LegacySuite\n")
       File.write(File.join(tmpdir, "app/services/readme.txt"), "ignore\n")
       File.write(File.join(tmpdir, "docs/notes.txt"), "ignore\n")
 
@@ -315,6 +318,8 @@ class TemplateRenameCommandTest < ActiveSupport::TestCase
       assert_includes files, "lib/sample/tool.rb"
       refute_includes files, "docs/notes.txt"
       refute_includes files, "app/services/readme.txt"
+      refute_includes files, "lib/template_rename_command.rb"
+      refute_includes files, "test/lib/template_rename_command_test.rb"
       assert_equal files.sort, files
     end
   end
@@ -341,14 +346,23 @@ class TemplateRenameCommandTest < ActiveSupport::TestCase
       write_fixture_files(tmpdir)
       FileUtils.mkdir_p(File.join(tmpdir, "docs"))
       FileUtils.mkdir_p(File.join(tmpdir, "log"))
+      FileUtils.mkdir_p(File.join(tmpdir, "coverage"))
+      FileUtils.mkdir_p(File.join(tmpdir, "lib"))
+      FileUtils.mkdir_p(File.join(tmpdir, "test/lib"))
       File.write(File.join(tmpdir, "docs/hit.txt"), "LegacySuite\n")
       File.write(File.join(tmpdir, "log/ignored.log"), "LegacySuite\n")
+      File.write(File.join(tmpdir, "coverage/index.html"), "LegacySuite\n")
+      File.write(File.join(tmpdir, "lib/template_rename_command.rb"), "LegacySuite\n")
+      File.write(File.join(tmpdir, "test/lib/template_rename_command_test.rb"), "LegacySuite\n")
 
       command, _stdout, _stderr = build_command(root_path: tmpdir)
       matches = command.send(:remaining_reference_matches, [ "LegacySuite" ])
 
       assert_equal [ "LegacySuite" ], matches["docs/hit.txt"]
       refute_includes matches.keys, "log/ignored.log"
+      refute_includes matches.keys, "coverage/index.html"
+      refute_includes matches.keys, "lib/template_rename_command.rb"
+      refute_includes matches.keys, "test/lib/template_rename_command_test.rb"
     end
   end
 
@@ -357,8 +371,11 @@ class TemplateRenameCommandTest < ActiveSupport::TestCase
 
     assert command.send(:skip_reference_scan_path?, "log/development.log")
     assert command.send(:skip_reference_scan_path?, ".git/config")
+    assert command.send(:skip_reference_scan_path?, "coverage/index.html")
     assert command.send(:skip_reference_scan_path?, "tmp/cache.bin")
     assert command.send(:skip_reference_scan_path?, "storage/blob.bin")
+    assert command.send(:skip_reference_scan_path?, "lib/template_rename_command.rb")
+    assert command.send(:skip_reference_scan_path?, "test/lib/template_rename_command_test.rb")
     refute command.send(:skip_reference_scan_path?, "docs/notes.txt")
   end
 

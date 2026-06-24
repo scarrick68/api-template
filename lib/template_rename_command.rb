@@ -4,6 +4,11 @@ require "active_support/inflector"
 
 # Renames api-template internals to match a new product API app name.
 class TemplateRenameCommand
+  IGNORED_RENAME_PATHS = [
+    "lib/template_rename_command.rb",
+    "test/lib/template_rename_command_test.rb"
+  ].freeze
+
   MODULE_REFERENCE_GLOBS = [
     "app/**/*.rb",
     "app/**/*.erb",
@@ -211,7 +216,10 @@ class TemplateRenameCommand
     end.filter_map do |absolute_path|
       next unless File.file?(absolute_path)
 
-      absolute_path.delete_prefix("#{@root_path}/")
+      relative_path = absolute_path.delete_prefix("#{@root_path}/")
+      next if skip_reference_scan_path?(relative_path)
+
+      relative_path
     end.uniq.sort
   end
 
@@ -225,7 +233,7 @@ class TemplateRenameCommand
     return if matches.empty?
 
     @stderr.puts("WARNING: Found remaining references to previous app names.")
-    @stderr.puts("WARNING: Update these references manually, or run 'git restore .' to undo all local changes.")
+    @stderr.puts("WARNING: Update these references manually, use ai to update references, or run 'git restore .' to undo all local changes.")
     @stderr.puts("WARNING: No guarantees are provided for subsequent renames after changes have been made to original template.")
     matches.each do |path, found_needles|
       @stderr.puts("WARNING: #{path} (#{found_needles.sort.join(', ')})")
@@ -260,8 +268,10 @@ class TemplateRenameCommand
   def skip_reference_scan_path?(relative_path)
     relative_path.start_with?("log/") ||
       relative_path.start_with?(".git/") ||
+      relative_path.start_with?("coverage/") ||
       relative_path.start_with?("tmp/") ||
-      relative_path.start_with?("storage/")
+      relative_path.start_with?("storage/") ||
+      IGNORED_RENAME_PATHS.include?(relative_path)
   end
 
   # Rewrites a file only when content changes and reports updated files.
