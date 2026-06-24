@@ -608,6 +608,11 @@ RAILS_ENV=production bin/rails db:prepare
 RAILS_ENV=production bin/rails db:migrate
 ```
 
+Do not use `RAILS_ENV=production bin/rails db:seed` to create admin access.
+
+- The template's seeded admin account is development-only convenience data.
+- Bootstrap production admin users via a controlled manual process (for example a one-off `rails runner` command executed by an operator).
+
 ### Quick production smoke checks
 
 ```bash

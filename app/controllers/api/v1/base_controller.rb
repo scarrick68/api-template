@@ -1,7 +1,7 @@
 module Api
   module V1
     class BaseController < Api::BaseController
-      include Pagy::Method
+      include Pagy::Backend
 
       rescue_from ApplicationContract::Invalid, with: :render_contract_invalid
       rescue_from ApplicationPolicy::NotAuthorized, with: :render_not_authorized
@@ -20,7 +20,14 @@ module Api
       end
 
       def pagination_meta(pagy, extras = {})
-        pagy.data_hash.merge(extras)
+        {
+          count: pagy.count,
+          page: pagy.page,
+          limit: pagy.limit,
+          pages: pagy.pages,
+          prev: pagy.prev,
+          next: pagy.next
+        }.merge(extras)
       end
 
       def authorize!(record, query = nil)

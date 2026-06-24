@@ -1,7 +1,6 @@
 # test/integration/admin_tools_access_test.rb
 
 require "test_helper"
-require "support/api_auth_helpers"
 
 module AdminToolsAccessTest
   class PgheroAccessTest < ActionDispatch::IntegrationTest
