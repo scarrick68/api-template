@@ -1,35 +1,37 @@
 require "test_helper"
 
 class AuthCsrfTest < ActionDispatch::IntegrationTest
-  setup do
-    ActionController::Base.stubs(:allow_forgery_protection).returns(true)
-  end
-
   test "auth controllers use null-session forgery strategy" do
-    auth_controllers.each do |controller|
-      assert_equal null_session_strategy, controller.forgery_protection_strategy
+    with_forgery_protection_enabled do
+      auth_controllers.each do |controller|
+        assert_equal null_session_strategy, controller.forgery_protection_strategy
+      end
     end
   end
 
   test "registration route is not blocked by missing CSRF token" do
-    assert_difference "User.count", 1 do
-      post "/auth",
-        params: registration_params,
-        headers: json_origin_headers,
-        as: :json
-    end
+    with_forgery_protection_enabled do
+      assert_difference "User.count", 1 do
+        post "/auth",
+          params: registration_params,
+          headers: json_origin_headers,
+          as: :json
+      end
 
-    assert_response :success
-    assert_not_equal 422, response.status
+      assert_response :success
+      assert_not_equal 422, response.status
+    end
   end
 
   test "session route is not blocked by missing CSRF token" do
     user = create_confirmed_user
 
-    post "/auth/sign_in",
-      params: sign_in_params(user),
-      headers: json_origin_headers,
-      as: :json
+    with_forgery_protection_enabled do
+      post "/auth/sign_in",
+        params: sign_in_params(user),
+        headers: json_origin_headers,
+        as: :json
+    end
 
     assert_response :success
     assert_not_equal 422, response.status
@@ -39,20 +41,24 @@ class AuthCsrfTest < ActionDispatch::IntegrationTest
   test "password reset route is not blocked by missing CSRF token" do
     user = create_confirmed_user
 
-    post "/auth/password",
-      params: {
-        email: user.email,
-        redirect_url: "http://localhost:3000/reset-password"
-      },
-      headers: json_origin_headers,
-      as: :json
+    with_forgery_protection_enabled do
+      post "/auth/password",
+        params: {
+          email: user.email,
+          redirect_url: "http://localhost:3000/reset-password"
+        },
+        headers: json_origin_headers,
+        as: :json
+    end
 
     assert_response :success
     assert_not_equal 422, response.status
   end
 
   test "application controller keeps exception forgery strategy for session auth'ed controllers / requests" do
-    assert_equal exception_strategy, ApplicationController.forgery_protection_strategy
+    with_forgery_protection_enabled do
+      assert_equal exception_strategy, ApplicationController.forgery_protection_strategy
+    end
   end
 
   private
@@ -110,5 +116,16 @@ class AuthCsrfTest < ActionDispatch::IntegrationTest
 
   def password
     "password123"
+  end
+
+  # Enables forgery protection for the duration of the block, and restores it to its original state afterward.
+  # Uses whatever forgery protection strategy is configured for the controller
+  def with_forgery_protection_enabled
+    original = ActionController::Base.allow_forgery_protection
+    ActionController::Base.allow_forgery_protection = true
+
+    yield
+  ensure
+    ActionController::Base.allow_forgery_protection = original
   end
 end
