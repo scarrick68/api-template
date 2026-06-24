@@ -30,6 +30,7 @@ Operational and launch documentation lives in `docs/`.
 - Documentation index: `docs/README.md`
 - Production email setup: `docs/deploy/production-email-setup.md`
 - Metrics model and observability pipeline: `docs/metrics-model.md`
+- Ruby code quality metrics: `docs/rubycritic.md`
 
 ## Authentication Architecture And Boundaries
 
