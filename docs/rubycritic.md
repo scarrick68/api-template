@@ -30,3 +30,7 @@ Primary report entrypoint:
 - `tmp/rubycritic/overview.html`
 
 This is a local generated artifact and can be regenerated any time.
+
+## RubyCritic vs SimpleCov
+
+RubyCritic uses SimpleCov coverage reports, but the results are not always consistent with SimpleCov. SimpleCov is more accurate for coverage and should be considered the source of truth for coverage metrics.
