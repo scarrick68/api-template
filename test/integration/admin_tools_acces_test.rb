@@ -1,8 +1,42 @@
-# test/integration/admin_tools_access_test.rb
-
 require "test_helper"
 
 module AdminToolsAccessTest
+  class DashboardAccessTest < ActionDispatch::IntegrationTest
+    include Devise::Test::IntegrationHelpers
+    include ApiAuthHelpers
+
+    test "anonymous users are redirected to sign in when trying to access admin tools dashboard" do
+      get "/admin/tools"
+
+      assert_redirected_to "/admins/sign_in"
+    end
+
+    test "non-admin users are redirected to sign in when trying to access admin tools dashboard" do
+      sign_in create(:user)
+
+      get "/admin/tools"
+
+      assert_redirected_to "/admins/sign_in"
+    end
+
+    test "admin users can access admin tools dashboard" do
+      sign_in create(:admin), scope: :admin
+
+      get "/admin/tools"
+
+      assert_response :success
+      assert_includes response.body, "Admin Dashboard"
+    end
+
+    test "token-authenticated admin is still redirected to login when accessing admin tools dashboard" do
+      admin_user = create(:user, :admin)
+
+      get "/admin/tools", headers: auth_headers_for(admin_user)
+
+      assert_redirected_to "/admins/sign_in"
+    end
+  end
+
   class PgheroAccessTest < ActionDispatch::IntegrationTest
     include Devise::Test::IntegrationHelpers
     include ApiAuthHelpers
@@ -30,7 +64,7 @@ module AdminToolsAccessTest
       assert_not_equal :not_found, response.status
     end
 
-    test "token-authenticated admin is still redirected for pghero" do
+    test "token-authenticated admin is still redirected to login when accessing pghero" do
       admin_user = create(:user, :admin)
 
       get "/pghero", headers: auth_headers_for(admin_user)
@@ -66,7 +100,7 @@ module AdminToolsAccessTest
       assert_not_equal :not_found, response.status
     end
 
-    test "token-authenticated admin is still redirected for blazer" do
+    test "token-authenticated admin is still redirected to login when accessing blazer" do
       admin_user = create(:user, :admin)
 
       get "/blazer", headers: auth_headers_for(admin_user)
@@ -102,7 +136,7 @@ module AdminToolsAccessTest
       assert_not_equal :not_found, response.status
     end
 
-    test "token-authenticated admin is still redirected for mission control jobs" do
+    test "token-authenticated admin is still redirected to login when accessing mission control jobs" do
       admin_user = create(:user, :admin)
 
       get "/jobs", headers: auth_headers_for(admin_user)
@@ -138,7 +172,7 @@ module AdminToolsAccessTest
       assert_not_equal :not_found, response.status
     end
 
-    test "token-authenticated admin is still redirected for solid errors" do
+    test "token-authenticated admin is still redirected to login when accessing solid errors" do
       admin_user = create(:user, :admin)
 
       get "/solid_errors", headers: auth_headers_for(admin_user)
@@ -174,7 +208,7 @@ module AdminToolsAccessTest
       assert_not_equal :not_found, response.status
     end
 
-    test "token-authenticated admin is still redirected for field test" do
+    test "token-authenticated admin is still redirected to login when accessing field test" do
       admin_user = create(:user, :admin)
 
       get "/field_test", headers: auth_headers_for(admin_user)
@@ -210,7 +244,7 @@ module AdminToolsAccessTest
       assert_not_equal :not_found, response.status
     end
 
-    test "token-authenticated admin is still redirected for flipper" do
+    test "token-authenticated admin is still redirected to login when accessing flipper" do
       admin_user = create(:user, :admin)
 
       get "/flipper", headers: auth_headers_for(admin_user)
@@ -246,7 +280,7 @@ module AdminToolsAccessTest
       assert_not_equal :not_found, response.status
     end
 
-    test "token-authenticated admin is still redirected for searchjoy" do
+    test "token-authenticated admin is still redirected to login when accessing searchjoy" do
       admin_user = create(:user, :admin)
 
       get "/searchjoy", headers: auth_headers_for(admin_user)

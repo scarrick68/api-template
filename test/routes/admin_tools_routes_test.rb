@@ -1,8 +1,10 @@
-# test/routes/admin_tools_routes_test.rb
-
 require "test_helper"
 
 class AdminToolsRoutesTest < ActiveSupport::TestCase
+  test "admin tools dashboard route is mounted" do
+    assert_route_mounted("/admin/tools")
+  end
+
   test "avo route is mounted" do
     assert_route_mounted("/avo")
   end

@@ -70,6 +70,8 @@ The metrics system is designed to be forward-compatible with Prometheus and Open
 
 The following operational tools are preconfigured and mounted with administrative protections outside development environments:
 
+* Admin tools index dashboard (`/admin/tools`) that provides a single entrypoint for operator tooling and links to available mounted tools.
+
 * PgHero
 * Mission Control Jobs
 * Blazer
@@ -81,6 +83,15 @@ The following operational tools are preconfigured and mounted with administrativ
 * RubyCritic code quality report (`tmp/rubycritic/overview.html`)
 
 and other operator-focused tooling as the template evolves.
+
+### Admin Tools Index Dashboard
+
+The admin tools index dashboard is an operator-focused landing page that centralizes links for internal tools.
+
+* Route: `/admin/tools`
+* Access: session-authenticated `Admin` users (outside development environments)
+* Purpose: provide one stable navigation surface for internal dashboards and operational tooling
+* Current linked tools are discovered from mounted routes and rendered with friendly names in the dashboard UI
 
 ## Deployment Philosophy
 

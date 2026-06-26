@@ -14,6 +14,7 @@ Rails.application.routes.draw do
     mount LetterOpenerWeb::Engine, at: "/letter_opener"
     mount Searchjoy::Engine, at: "/searchjoy"
     mount_avo
+    get "admin/tools", to: "admin_tools#index", as: :admin_tools_dashboard
   else
     authenticate :admin do
       mount PgHero::Engine, at: "/pghero"
@@ -24,6 +25,7 @@ Rails.application.routes.draw do
       mount Flipper::UI.app(Flipper) => "/flipper"
       mount Searchjoy::Engine, at: "/searchjoy"
       mount_avo
+      get "admin/tools", to: "admin_tools#index", as: :admin_tools_dashboard
     end
   end
 
