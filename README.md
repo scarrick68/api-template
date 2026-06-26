@@ -140,7 +140,8 @@ Configure your production env and creds as needed
 This template enables CORS with `rack-cors`.
 
 - Set `CORS_ALLOWED_ORIGINS` to a comma-separated list of allowed origins.
-- Cors are set in env specific config/environments/*.rb files
+- CORS origin parsing is configured in environment files (`config/environments/*.rb`).
+- Production setup guide: `docs/deploy/production-cors-setup.md`.
 
 ## Basic Rate Limiting (Rack::Attack)
 

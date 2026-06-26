@@ -25,3 +25,4 @@ This directory contains product and operational documentation for the API templa
 ## Deployment And Launch Guides
 
 - Production email setup: deploy/production-email-setup.md
+- Production CORS setup: deploy/production-cors-setup.md
