@@ -36,8 +36,11 @@ class ErrorRenderableTest < ActiveSupport::TestCase
     assert_equal(
       {
         success: false,
-        errors: [ "invalid request", "field is required" ],
-        error_type: "bad_request",
+        error: {
+          type: "bad_request",
+          message: "invalid request",
+          details: [ "field is required" ]
+        },
         request_id: "req-123"
       },
       controller.render_payload
@@ -56,8 +59,9 @@ class ErrorRenderableTest < ActiveSupport::TestCase
 
     assert_equal :internal_server_error, controller.render_status
     assert_equal false, controller.render_payload[:success]
-    assert_equal [ "An unexpected error occurred" ], controller.render_payload[:errors]
-    assert_equal "internal_server_error", controller.render_payload[:error_type]
+    assert_equal "An unexpected error occurred", controller.render_payload.dig(:error, :message)
+    assert_equal [ "An unexpected error occurred" ], controller.render_payload.dig(:error, :details)
+    assert_equal "internal_server_error", controller.render_payload.dig(:error, :type)
     assert_equal "req-456", controller.render_payload[:request_id]
   end
 
@@ -72,13 +76,13 @@ class ErrorRenderableTest < ActiveSupport::TestCase
       details: [ "Email can't be blank", "Password can't be blank" ]
     )
 
-    errors = controller.render_payload[:errors]
+    details = controller.render_payload.dig(:error, :details)
 
     assert_equal :unprocessable_entity, controller.render_status
-    assert_equal "unprocessable_entity", controller.render_payload[:error_type]
+    assert_equal "unprocessable_entity", controller.render_payload.dig(:error, :type)
     assert_equal false, controller.render_payload[:success]
-    assert_equal "Validation failed", errors.first
-    assert_includes errors, "Email can't be blank", "details should be appended into errors"
-    assert_includes errors, "Password can't be blank", "details should be appended into errors"
+    assert_equal "Validation failed", controller.render_payload.dig(:error, :message)
+    assert_includes details, "Email can't be blank", "details should include validation errors"
+    assert_includes details, "Password can't be blank", "details should include validation errors"
   end
 end

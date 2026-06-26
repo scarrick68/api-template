@@ -349,30 +349,43 @@ components:
       required:
         - success
         - request_id
+        - meta
       properties:
         success:
           type: boolean
           const: true
         request_id:
           type: string
+        meta:
+          type: object
+          additionalProperties: true
     ErrorResponse:
       type: object
       required:
         - success
-        - errors
-        - error_type
+        - error
+        - request_id
       properties:
         success:
           type: boolean
           const: false
-        errors:
-          type: array
-          items:
-            type: string
-        error_type:
-          type: string
+        error:
+          type: object
+          required:
+            - type
+            - message
+            - details
+          properties:
+            type:
+              type: string
+            message:
+              type: string
+            details:
+              type: array
+              items:
+                type: string
         request_id:
-          type: [string, 'null']
+          type: string
     AuthErrorResponse:
       type: object
       required:
@@ -517,6 +530,14 @@ components:
         next:
           type: [integer, 'null']
       additionalProperties: true
+    PaginationEnvelope:
+      type: object
+      required:
+        - pagination
+      properties:
+        pagination:
+          $ref: '#/components/schemas/PaginationMeta'
+      additionalProperties: true
     User:
       type: object
       required:
@@ -556,11 +577,10 @@ components:
         - type: object
           required:
             - data
-            - meta
           properties:
             data:
               type: array
               items:
                 $ref: '#/components/schemas/User'
             meta:
-              $ref: '#/components/schemas/PaginationMeta'
+              $ref: '#/components/schemas/PaginationEnvelope'

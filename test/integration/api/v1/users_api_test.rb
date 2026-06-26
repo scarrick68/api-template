@@ -29,8 +29,8 @@ module Api
         meta = response.parsed_body["meta"]
 
         assert_equal 2, data.length
-        assert_equal 1, meta["page"]
-        assert_equal 2, meta["limit"]
+        assert_equal 1, meta.dig("pagination", "page")
+        assert_equal 2, meta.dig("pagination", "limit")
       end
 
       test "index uses default pagination page size when page is omitted" do
@@ -43,8 +43,8 @@ module Api
 
         assert_response :success
         assert_equal 2, response.parsed_body["data"].length
-        assert_equal 1, response.parsed_body["meta"]["page"]
-        assert_equal 2, response.parsed_body["meta"]["limit"]
+        assert_equal 1, response.parsed_body.dig("meta", "pagination", "page")
+        assert_equal 2, response.parsed_body.dig("meta", "pagination", "limit")
       end
 
       test "index is forbidden for non-admin authenticated users" do
@@ -55,7 +55,7 @@ module Api
         assert_response :forbidden
         assert_conform_response_schema(403)
         assert_equal false, response.parsed_body["success"]
-        assert_equal "forbidden", response.parsed_body["error_type"]
+        assert_equal "forbidden", response.parsed_body.dig("error", "type")
       end
 
       test "index excludes soft deleted users" do
@@ -116,7 +116,7 @@ module Api
         assert_response :forbidden
         assert_conform_response_schema(403)
         assert_equal false, response.parsed_body["success"]
-        assert_equal "forbidden", response.parsed_body["error_type"]
+        assert_equal "forbidden", response.parsed_body.dig("error", "type")
       end
 
       test "show returns forbidden for missing user" do
@@ -126,7 +126,7 @@ module Api
 
         assert_response :forbidden
         assert_equal false, response.parsed_body["success"]
-        assert_equal "forbidden", response.parsed_body["error_type"]
+        assert_equal "forbidden", response.parsed_body.dig("error", "type")
       end
 
       test "show returns soft deleted user for admin" do
@@ -213,7 +213,7 @@ module Api
         assert_response :unprocessable_entity
         assert_conform_response_schema(422)
         assert_equal false, response.parsed_body["success"]
-        assert_equal "unprocessable_entity", response.parsed_body["error_type"]
+        assert_equal "unprocessable_entity", response.parsed_body.dig("error", "type")
       end
 
       test "create allows admin to create a user" do
@@ -245,7 +245,7 @@ module Api
 
         assert_response :unprocessable_entity
         assert_equal false, response.parsed_body["success"]
-        assert_equal "unprocessable_entity", response.parsed_body["error_type"]
+        assert_equal "unprocessable_entity", response.parsed_body.dig("error", "type")
       end
 
       test "create invalid payload conforms to OpenAPI 422 response schema" do
@@ -310,7 +310,7 @@ module Api
         assert_response :forbidden
         assert_conform_response_schema(403)
         assert_equal false, response.parsed_body["success"]
-        assert_equal "forbidden", response.parsed_body["error_type"]
+        assert_equal "forbidden", response.parsed_body.dig("error", "type")
       end
 
       test "update returns forbidden for missing user" do
@@ -322,7 +322,7 @@ module Api
 
         assert_response :forbidden
         assert_equal false, response.parsed_body["success"]
-        assert_equal "forbidden", response.parsed_body["error_type"]
+        assert_equal "forbidden", response.parsed_body.dig("error", "type")
       end
 
       test "update returns unprocessable entity for invalid email" do
@@ -335,7 +335,7 @@ module Api
         assert_response :unprocessable_entity
         assert_conform_response_schema(422)
         assert_equal false, response.parsed_body["success"]
-        assert_equal "unprocessable_entity", response.parsed_body["error_type"]
+        assert_equal "unprocessable_entity", response.parsed_body.dig("error", "type")
       end
 
       test "update is idempotent for the same payload" do
@@ -412,7 +412,7 @@ module Api
         assert_response :forbidden
         assert_conform_response_schema(403)
         assert_equal false, response.parsed_body["success"]
-        assert_equal "forbidden", response.parsed_body["error_type"]
+        assert_equal "forbidden", response.parsed_body.dig("error", "type")
         assert_not_nil User.find_by(id: target_user.id)
       end
 
@@ -423,7 +423,7 @@ module Api
 
         assert_response :forbidden
         assert_equal false, response.parsed_body["success"]
-        assert_equal "forbidden", response.parsed_body["error_type"]
+        assert_equal "forbidden", response.parsed_body.dig("error", "type")
       end
     end
   end

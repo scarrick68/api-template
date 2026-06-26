@@ -51,7 +51,7 @@ module Api
           {
             success: true,
             records: records,
-            meta: pagination_meta(pagy)
+            meta: { pagination: pagination_meta(pagy) }
           }
         )
       end

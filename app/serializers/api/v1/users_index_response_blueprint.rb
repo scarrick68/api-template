@@ -4,8 +4,6 @@ module Api
       field :data do |payload|
         UserBlueprint.render_as_hash(payload[:records])
       end
-
-      field :meta
     end
   end
 end
