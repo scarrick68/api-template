@@ -127,13 +127,12 @@ module AdminToolsAccessTest
       assert_redirected_to "/admins/sign_in"
     end
 
-    test "admin users pass app-level admin gate for mission control jobs" do
-      sign_in create(:user, :admin)
+    test "admin users can access mission control jobs" do
+      sign_in create(:admin), scope: :admin
 
       get "/jobs"
 
-      assert_not_equal "/admins/sign_in", response.redirect_url
-      assert_not_equal :not_found, response.status
+      assert_response :success
     end
 
     test "token-authenticated admin is still redirected to login when accessing mission control jobs" do
