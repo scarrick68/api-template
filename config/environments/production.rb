@@ -79,6 +79,13 @@ Rails.application.configure do
   # Only use :id for inspections in production.
   config.active_record.attributes_for_inspect = [ :id ]
 
+  # config/environments/production.rb
+
+  config.allowed_origins =
+    ENV.fetch("CORS_ALLOWED_ORIGINS")
+      .split(",")
+      .map(&:strip)
+
   # Enable DNS rebinding protection and other `Host` header attacks.
   # config.hosts = [
   #   "example.com",     # Allow requests from example.com
