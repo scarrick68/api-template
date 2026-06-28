@@ -1,10 +1,13 @@
 Rails.application.routes.draw do
-  devise_for :admins, only: [ :sessions, :passwords ]
-
-  get "docs", to: "docs#show"
-  get "openapi.yml", to: "docs#openapi"
+  devise_for :admins, only: [ :sessions, :passwords ], controllers: {
+    sessions: "admins/sessions",
+    passwords: "admins/passwords"
+  }
 
   if Rails.env.development?
+    get "docs", to: "docs#show"
+    get "openapi.yml", to: "docs#openapi"
+
     mount PgHero::Engine, at: "/pghero"
     mount Blazer::Engine, at: "/blazer"
     mount MissionControl::Jobs::Engine, at: "/jobs"
@@ -17,6 +20,9 @@ Rails.application.routes.draw do
     get "admin/tools", to: "admin_tools#index", as: :admin_tools_dashboard
   else
     authenticate :admin do
+      get "docs", to: "docs#show"
+      get "openapi.yml", to: "docs#openapi"
+
       mount PgHero::Engine, at: "/pghero"
       mount Blazer::Engine, at: "/blazer"
       mount MissionControl::Jobs::Engine, at: "/jobs"

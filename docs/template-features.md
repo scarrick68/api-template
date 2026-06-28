@@ -36,6 +36,9 @@ A production-ready Rails 8.1 API template focused on developer velocity, operati
 * PgHero for database monitoring and performance analysis.
 * Mission Control Jobs for background job observability and operational control.
 * Searchjoy search analytics integration.
+* Structured JSON request logs in production via Lograge, plus a lightweight `AppEvent` wrapper for application-level events.
+* Lograge is intentionally used as an 80/20 structured-logging baseline right now; full logger-stack replacement was deferred as too heavy for this stage.
+  - Request actor enrichment is isolated by auth surface (User / Admin)
 * "We have Datadog and New Relic at home" philosophy: meaningful observability without mandatory SaaS dependencies.
 * Rack::Attack throttling for authentication endpoints and write-heavy API surfaces.
 

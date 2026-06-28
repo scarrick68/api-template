@@ -10,7 +10,7 @@ CI.run do
   step "Security: Brakeman code analysis", "bin/brakeman --quiet --no-pager --exit-on-warn --exit-on-error"
   step "Tests: Factory Lint", "env RAILS_ENV=test bin/rails runner 'FactoryBot.lint(traits: true)'"
   step "Tests: Validate Openapi YAML", "bin/rails yaml:lint[docs/openapi.yml]"
-  step "Tests: Rails", "bin/rails test"
+  step "Tests: Rails", "COVERAGE=true bin/rails test"
   step "Tests: RubyCritic", "bin/quality --no-browser || true"
 
   # Optional, but I plan to use FactoryBot, not seeds, for now.

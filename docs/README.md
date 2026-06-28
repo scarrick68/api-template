@@ -6,6 +6,7 @@ This directory contains product and operational documentation for the API templa
 
 - OpenAPI specification: openapi.yml
 - Metrics model and observability pipeline: metrics-model.md
+- Structured logging (Lograge + AppEvent): logging.md
 - Template features quick reference: template-features.md
 - Admin tools index dashboard feature: template-features.md#admin-tools-index-dashboard
 - Ruby code quality metrics (RubyCritic): rubycritic.md
