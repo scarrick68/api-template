@@ -11,7 +11,7 @@ module BlazerDashboards
           where name = 'observability.api.endpoint.requests'
             and interval = 'day'
             and time >= now() - interval '7 days'
-          group by 1, 2
+          group by controller, action
           order by requests desc
         SQL
       end

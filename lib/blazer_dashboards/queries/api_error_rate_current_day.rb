@@ -10,7 +10,7 @@ module BlazerDashboards
             from metrics
             where name = 'observability.api.request.count'
               and occurred_at >= date_trunc('day', now())
-            group by 1
+            group by hour
           ),
           errors as (
             select
@@ -20,7 +20,7 @@ module BlazerDashboards
             where name = 'observability.api.request.count'
               and (labels->>'status')::int between 400 and 599
               and occurred_at >= date_trunc('day', now())
-            group by 1
+            group by hour
           )
           select
             totals.hour,

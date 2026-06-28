@@ -17,8 +17,8 @@ module BlazerDashboards
               'observability.api.request.duration.db_ms',
               'observability.api.request.duration.view_ms'
             )
-          group by 1
-          order by 1
+          group by minute
+          order by minute
         SQL
       end
     end

@@ -19,7 +19,7 @@ module BlazerDashboards
                 'observability.api.request.duration.db_ms',
                 'observability.api.request.duration.view_ms'
               )
-            group by 1, 2
+            group by controller, action
           )
           select
             controller,

@@ -11,7 +11,7 @@ module BlazerDashboards
             where name = 'observability.api.endpoint.requests'
               and interval = 'day'
               and time >= now() - interval '30 days'
-            group by 1
+            group by day
           ),
           client_errors as (
             select
@@ -21,7 +21,7 @@ module BlazerDashboards
             where name = 'observability.api.endpoint.client_errors'
               and interval = 'day'
               and time >= now() - interval '30 days'
-            group by 1
+            group by day
           ),
           server_errors as (
             select
@@ -31,7 +31,7 @@ module BlazerDashboards
             where name = 'observability.api.endpoint.server_errors'
               and interval = 'day'
               and time >= now() - interval '30 days'
-            group by 1
+            group by day
           )
           select
             totals.day,

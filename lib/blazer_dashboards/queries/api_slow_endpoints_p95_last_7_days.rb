@@ -12,7 +12,7 @@ module BlazerDashboards
           where name = 'observability.api.endpoint.duration.p95_ms'
             and interval = 'hour'
             and time >= now() - interval '7 days'
-          group by 1, 2
+          group by controller, action
           order by p95_ms desc
         SQL
       end
