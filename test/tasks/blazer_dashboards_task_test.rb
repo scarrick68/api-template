@@ -38,6 +38,16 @@ class BlazerDashboardsTaskTest < ActiveSupport::TestCase
 
     p95_query = Blazer::Query.find_by!(name: "Slow API endpoints - p95 last 7 days")
     assert_includes p95_query.statement, "observability.api.endpoint.duration.p95_ms"
+
+    breakdown_query = Blazer::Query.find_by!(name: "API request duration breakdown - last 6 hours")
+    assert_includes breakdown_query.statement, "observability.api.request.duration.app_compute_ms"
+    assert_includes breakdown_query.statement, "observability.api.request.duration.db_ms"
+    assert_includes breakdown_query.statement, "observability.api.request.duration.view_ms"
+    assert_includes breakdown_query.statement, "observability.api.request.duration_ms"
+
+    db_heavy_query = Blazer::Query.find_by!(name: "DB-heavy API endpoints - last 24 hours")
+    assert_includes db_heavy_query.statement, "db_percent"
+    assert_includes db_heavy_query.statement, "observability.api.request.duration.db_ms"
   end
 
   test "task is idempotent" do
@@ -59,6 +69,9 @@ class BlazerDashboardsTaskTest < ActiveSupport::TestCase
       "API error rate - current day",
       "API requests by day - last 30 days",
       "API requests by endpoint - last 7 days",
+      "API request duration breakdown - last 6 hours",
+      "API endpoint duration breakdown - last 24 hours",
+      "DB-heavy API endpoints - last 24 hours",
       "API error rate by day - last 30 days",
       "Slow API endpoints - p95 last 7 days"
     ]

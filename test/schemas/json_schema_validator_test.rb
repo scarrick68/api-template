@@ -12,7 +12,10 @@ class DrySchemaValidatorTest < ActiveSupport::TestCase
       controller: "Api::V1::UsersController",
       action: "index",
       status: 200,
-      duration_ms: 11
+      duration_ms: 11,
+      db_duration_ms: 3,
+      view_duration_ms: 2,
+      app_compute_duration_ms: 6
     }
 
     assert Schemas::DrySchemaValidator.validate!(Schemas::ApiRequestMetricsPayload, payload)
@@ -27,7 +30,10 @@ class DrySchemaValidatorTest < ActiveSupport::TestCase
       controller: "Api::V1::UsersController",
       action: "index",
       status: 700,
-      duration_ms: 11
+      duration_ms: 11,
+      db_duration_ms: 3,
+      view_duration_ms: 2,
+      app_compute_duration_ms: 6
     }
 
     assert_raises(Schemas::DrySchemaValidator::ValidationError) do

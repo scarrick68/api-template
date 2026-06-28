@@ -10,8 +10,8 @@ module BlazerDashboards
           where name = 'observability.api.endpoint.requests'
             and interval = 'day'
             and time >= now() - interval '30 days'
-          group by 1
-          order by 1
+          group by day
+          order by day
         SQL
       end
     end

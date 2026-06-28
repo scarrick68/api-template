@@ -9,8 +9,8 @@ module BlazerDashboards
           from metrics
           where name = 'observability.api.request.count'
             and occurred_at >= date_trunc('day', now())
-          group by 1
-          order by 1
+          group by hour
+          order by hour
         SQL
       end
     end

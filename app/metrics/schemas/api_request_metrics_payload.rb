@@ -13,5 +13,8 @@ module Schemas
     required(:action).filled(:string)
     required(:status).filled(:integer, gteq?: 100, lteq?: 599)
     required(:duration_ms).filled(:integer, gteq?: 0)
+    required(:db_duration_ms).filled(:integer, gteq?: 0)
+    required(:view_duration_ms).filled(:integer, gteq?: 0)
+    required(:app_compute_duration_ms).filled(:integer, gteq?: 0)
   end
 end
