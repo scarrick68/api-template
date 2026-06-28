@@ -10,7 +10,7 @@ Avo.configure do |config|
   # config.home_path = nil
 
   ## == Licensing ==
-  config.license = ENV.fetch("AVO_LICENSE", "community")
+  # config.license = ENV.fetch("AVO_LICENSE", "community")
   config.license_key = ENV["AVO_LICENSE_KEY"]
   config.display_license_request_timeout_error = false
 
