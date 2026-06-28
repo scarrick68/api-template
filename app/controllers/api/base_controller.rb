@@ -1,4 +1,5 @@
 module Api
+  # Base API controller for token-authenticated JSON endpoints and standardized error handling.
   class BaseController < ActionController::API
     include DeviseTokenAuth::Concerns::SetUserByToken
     include ErrorRenderable

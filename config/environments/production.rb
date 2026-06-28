@@ -101,4 +101,14 @@ Rails.application.configure do
   config.solid_errors.email_to = ""
   config.solid_errors.username = Rails.application.credentials.dig(:solid_errors, :username)
   config.solid_errors.password = Rails.application.credentials.dig(:solid_errors, :password)
+
+  config.lograge.enabled = true
+  config.lograge.formatter = Lograge::Formatters::Json.new
+  config.lograge.base_controller_class = [ "ActionController::Base", "ActionController::API" ]
+  config.lograge.ignore_custom = lambda do |event|
+    Logging::StructuredRequestLog.ignore_event?(event)
+  end
+  config.lograge.custom_options = lambda do |event|
+    Logging::StructuredRequestLog.lograge_custom_options(event)
+  end
 end
