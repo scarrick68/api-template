@@ -36,7 +36,10 @@ module Subscribers
           controller: payload[:controller],
           action: payload[:action],
           status: payload[:status],
-          duration_ms: 1000
+          duration_ms: 1000,
+          db_duration_ms: 2,
+          view_duration_ms: 0,
+          app_compute_duration_ms: 998
         }
 
         ApiRequestMetricsJob.expects(:perform_later).with(expected_payload)
@@ -84,7 +87,10 @@ module Subscribers
           controller: payload[:controller],
           action: payload[:action],
           status: payload[:status],
-          duration_ms: 100
+          duration_ms: 100,
+          db_duration_ms: 0,
+          view_duration_ms: 0,
+          app_compute_duration_ms: 100
         }
 
         ApiRequestMetricsJob.expects(:perform_later).with(expected_payload)

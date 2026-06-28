@@ -11,7 +11,13 @@ module Api
         perform_enqueued_jobs do
           assert_difference "Metric.where(name: Metric::API_REQUEST_COUNT).count", 1 do
             assert_difference "Metric.where(name: Metric::API_REQUEST_DURATION_MS).count", 1 do
-              get "/api/v1/users/me", headers: auth_headers_for(user)
+              assert_difference "Metric.where(name: Metric::API_REQUEST_DB_DURATION_MS).count", 1 do
+                assert_difference "Metric.where(name: Metric::API_REQUEST_VIEW_DURATION_MS).count", 1 do
+                  assert_difference "Metric.where(name: Metric::API_REQUEST_APP_COMPUTE_DURATION_MS).count", 1 do
+                    get "/api/v1/users/me", headers: auth_headers_for(user)
+                  end
+                end
+              end
             end
           end
         end
@@ -32,6 +38,13 @@ module Api
 
         duration_metric = Metric.where(name: Metric::API_REQUEST_DURATION_MS).last
         assert_equal "/api/v1/users/me", duration_metric.properties["path"]
+
+        db_duration_metric = Metric.where(name: Metric::API_REQUEST_DB_DURATION_MS).last
+        view_duration_metric = Metric.where(name: Metric::API_REQUEST_VIEW_DURATION_MS).last
+        app_duration_metric = Metric.where(name: Metric::API_REQUEST_APP_COMPUTE_DURATION_MS).last
+        assert_equal "/api/v1/users/me", db_duration_metric.properties["path"]
+        assert_equal "/api/v1/users/me", view_duration_metric.properties["path"]
+        assert_equal "/api/v1/users/me", app_duration_metric.properties["path"]
       end
     end
   end

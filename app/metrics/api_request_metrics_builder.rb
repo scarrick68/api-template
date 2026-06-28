@@ -34,6 +34,21 @@ class ApiRequestMetricsBuilder
         name: Metric::API_REQUEST_DURATION_MS,
         metric_type: "histogram",
         value: data[:duration_ms]
+      ),
+      common.merge(
+        name: Metric::API_REQUEST_DB_DURATION_MS,
+        metric_type: "histogram",
+        value: data[:db_duration_ms]
+      ),
+      common.merge(
+        name: Metric::API_REQUEST_VIEW_DURATION_MS,
+        metric_type: "histogram",
+        value: data[:view_duration_ms]
+      ),
+      common.merge(
+        name: Metric::API_REQUEST_APP_COMPUTE_DURATION_MS,
+        metric_type: "histogram",
+        value: data[:app_compute_duration_ms]
       )
     ]
 

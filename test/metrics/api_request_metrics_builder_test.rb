@@ -6,10 +6,13 @@ class ApiRequestMetricsBuilderTest < ActiveSupport::TestCase
 
     rows = ApiRequestMetricsBuilder.call(payload)
 
-    assert_equal 2, rows.size
+    assert_equal 5, rows.size
     assert_equal [
       Metric::API_REQUEST_COUNT,
-      Metric::API_REQUEST_DURATION_MS
+      Metric::API_REQUEST_DURATION_MS,
+      Metric::API_REQUEST_DB_DURATION_MS,
+      Metric::API_REQUEST_VIEW_DURATION_MS,
+      Metric::API_REQUEST_APP_COMPUTE_DURATION_MS
     ].sort, rows.map { |row| row[:name] }.sort
 
     rows.each do |row|
@@ -23,20 +26,26 @@ class ApiRequestMetricsBuilderTest < ActiveSupport::TestCase
   test "does not emit separate client error metric rows" do
     rows = ApiRequestMetricsBuilder.call(payload_for(status: 404))
 
-    assert_equal 2, rows.size
+    assert_equal 5, rows.size
     assert_equal [
       Metric::API_REQUEST_COUNT,
-      Metric::API_REQUEST_DURATION_MS
+      Metric::API_REQUEST_DURATION_MS,
+      Metric::API_REQUEST_DB_DURATION_MS,
+      Metric::API_REQUEST_VIEW_DURATION_MS,
+      Metric::API_REQUEST_APP_COMPUTE_DURATION_MS
     ].sort, rows.map { |row| row[:name] }.sort
   end
 
   test "does not emit separate server error metric rows" do
     rows = ApiRequestMetricsBuilder.call(payload_for(status: 500))
 
-    assert_equal 2, rows.size
+    assert_equal 5, rows.size
     assert_equal [
       Metric::API_REQUEST_COUNT,
-      Metric::API_REQUEST_DURATION_MS
+      Metric::API_REQUEST_DURATION_MS,
+      Metric::API_REQUEST_DB_DURATION_MS,
+      Metric::API_REQUEST_VIEW_DURATION_MS,
+      Metric::API_REQUEST_APP_COMPUTE_DURATION_MS
     ].sort, rows.map { |row| row[:name] }.sort
   end
 
@@ -53,7 +62,10 @@ class ApiRequestMetricsBuilderTest < ActiveSupport::TestCase
       controller: "Api::V1::UsersController",
       action: "index",
       status: status,
-      duration_ms: 23
+      duration_ms: 23,
+      db_duration_ms: 8,
+      view_duration_ms: 2,
+      app_compute_duration_ms: 13
     }
   end
 end
