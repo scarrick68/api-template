@@ -5,6 +5,7 @@ This directory contains product and operational documentation for the API templa
 ## Contents
 
 - OpenAPI specification: openapi.yml
+- Authentication model and safety defaults: authentication.md
 - Metrics model and observability pipeline: metrics-model.md
 - Structured logging (Lograge + AppEvent): logging.md
 - Template features quick reference: template-features.md
