@@ -1,8 +1,11 @@
 require "test_helper"
+require "cgi"
+require "uri"
 
 class AuthTokensTest < ActionDispatch::IntegrationTest
   include ApiAuthHelpers
 
+  PASSWORD_RESET_REDIRECT_URL = "http://www.example.com/reset-password".freeze
   TOKEN_HEADERS = [ "access-token", "client", "uid", "expiry", "token-type" ].freeze
 
   setup do
@@ -106,11 +109,56 @@ class AuthTokensTest < ActionDispatch::IntegrationTest
     assert_equal true, response.parsed_body["success"]
   end
 
+  test "signed out token cannot be reused" do
+    user = User.create!(
+      email: unique_email,
+      password: "password123",
+      password_confirmation: "password123",
+      confirmed_at: Time.current
+    )
+
+    stale_headers = auth_headers_for(user).dup
+
+    delete "/auth/sign_out", headers: stale_headers, as: :json
+
+    assert_response :success
+    assert_conform_schema(200)
+
+    travel 6.seconds do
+      get "/auth/validate_token", headers: stale_headers, as: :json
+
+      assert_response :unauthorized
+      assert_conform_schema(401)
+    end
+  end
+
   test "sign out returns not found for invalid token" do
     delete "/auth/sign_out", headers: invalid_auth_headers, as: :json
 
     assert_response :not_found
     assert_conform_schema(404)
+  end
+
+  test "password reset invalidates previously issued auth token headers" do
+    user = create(
+      :user,
+      email: unique_email,
+      password: "password123",
+      password_confirmation: "password123",
+      confirmed_at: Time.current
+    )
+
+    stale_headers = auth_headers_for(user)
+
+    # DTA compares token expiry timestamps; ensure the reset token is newer than the stale token.
+    travel 2.seconds do
+      reset_password_for(user, password: "new-password-123")
+    end
+
+    get "/auth/validate_token", headers: stale_headers, as: :json
+
+    assert_response :unauthorized
+    assert_conform_schema(401)
   end
 
   private
@@ -153,5 +201,63 @@ class AuthTokensTest < ActionDispatch::IntegrationTest
     TOKEN_HEADERS.each do |header|
       assert response.headers[header].blank?, "expected #{header} to be absent"
     end
+  end
+
+  def reset_password_token_from_last_email
+    email = ActionMailer::Base.deliveries.last
+    assert_not_nil email, "expected a password reset email to be sent"
+
+    reset_url = URI.extract(email.body.encoded).find do |url|
+      url.include?("reset_password_token=")
+    end
+
+    assert_not_nil reset_url, "expected reset_password_token URL in password reset email"
+
+    query_params(reset_url).fetch("reset_password_token")
+  end
+
+  def auth_headers_from_url(url)
+    params = query_params(url)
+
+    {
+      "access-token" => params.fetch("access-token"),
+      "client" => params.fetch("client"),
+      "uid" => params.fetch("uid")
+    }
+  end
+
+  def query_params(url)
+    uri = URI.parse(url)
+    Rack::Utils.parse_query(uri.query)
+  end
+
+  def reset_password_for(user, password:)
+    post "/auth/password",
+      params: {
+        email: user.email,
+        redirect_url: PASSWORD_RESET_REDIRECT_URL
+      },
+      as: :json
+
+    assert_response :success
+
+    get "/auth/password/edit",
+      params: {
+        reset_password_token: reset_password_token_from_last_email,
+        redirect_url: PASSWORD_RESET_REDIRECT_URL
+      },
+      as: :json
+
+    assert_response :redirect
+
+    put "/auth/password",
+      params: {
+        password: password,
+        password_confirmation: password
+      },
+      headers: auth_headers_from_url(response.redirect_url),
+      as: :json
+
+    assert_response :success
   end
 end

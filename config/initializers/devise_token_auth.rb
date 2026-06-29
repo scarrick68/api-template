@@ -27,6 +27,8 @@ DeviseTokenAuth.setup do |config|
   # to send confirmation emails.
   config.send_confirmation_email = true
 
+  config.remove_tokens_after_password_reset = true
+
   # Keep default header names for compatibility with DTA clients/helpers.
   config.headers_names = {
     'authorization': "Authorization",
