@@ -14,6 +14,7 @@ A production-ready Rails 8.1 API template focused on developer velocity, operati
 * Contract-based request validation under `app/contracts`.
 * Blueprinter-based API serialization conventions.
 * Lightning-fast, low-memory pagination powered by Pagy.
+* Strong Migrations enabled by default to guide safe schema changes with low friction in early development and increasing safety value as projects grow.
 
 ## API Platform
 
