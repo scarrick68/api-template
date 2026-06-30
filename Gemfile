@@ -27,8 +27,8 @@ gem "tzinfo-data", platforms: %i[ windows jruby ]
 
 # Use the database-backed adapters for Rails.cache, Active Job, and Action Cable
 gem "solid_cache"
-gem "solid_queue"
 gem "solid_cable"
+gem "good_job"
 
 # Reduces boot times through caching; required in config/boot.rb
 gem "bootsnap", require: false
@@ -94,8 +94,6 @@ gem "elasticsearch", "~> 9.4"
 gem "searchjoy", "~> 1.5"
 # Perfomance improvements for Searchkick and Searchjoy
 gem "typhoeus", "~> 1.6"
-
-gem "mission_control-jobs", "~> 1.1"
 
 gem "solid_errors", "~> 0.7.0"
 

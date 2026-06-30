@@ -35,7 +35,7 @@ A production-ready Rails 8.1 API template focused on developer velocity, operati
 * Unified data retention policy: raw metrics/search records are short-lived, rollups are retained longer for historical trend analysis.
 * Searchkick + Elasticsearch integration with health checks included. (Elasticsearch service is included in development env, but not included for any other env. Determine a 3rd party provider or self-hosting strategy based on your needs.)
 * PgHero for database monitoring and performance analysis.
-* Mission Control Jobs for background job observability and operational control.
+* GoodJob dashboard for background job observability and operational control.
 * Searchjoy search analytics integration.
 * Structured JSON request logs in production via Lograge, plus a lightweight `AppEvent` wrapper for application-level events.
 * Lograge is intentionally used as an 80/20 structured-logging baseline right now; full logger-stack replacement was deferred as too heavy for this stage.
@@ -55,14 +55,14 @@ Designed around a practical single-database deployment model to reduce infrastru
 
 Built-in support includes:
 
-* Background jobs via Solid Queue
+* Background jobs via GoodJob
 * Caching via Solid Cache
 * Feature flags via Flipper
 * Error reporting via Solid Errors
 * Metrics collection and rollups
 * Metrics dashboards via Blazer
 * Database monitoring via PgHero
-* Background job observability via Mission Control Jobs
+* Background job observability via GoodJob dashboard
 * A/B testing via Field Test
 * Analytics via Ahoy
 * Search analytics via Searchjoy
@@ -77,7 +77,7 @@ The following operational tools are preconfigured and mounted with administrativ
 * Admin tools index dashboard (`/admin/tools`) that provides a single entrypoint for operator tooling and links to available mounted tools.
 
 * PgHero
-* Mission Control Jobs
+* GoodJob
 * Blazer
 * Flipper
 * Searchjoy

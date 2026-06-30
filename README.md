@@ -53,7 +53,7 @@ This app intentionally separates API identity from internal operator identity.
 - Admin/internal browser routes and mounted tools are session-protected (in non-development), including:
 	- `/pghero`
 	- `/blazer`
-	- `/jobs`
+	- `/good_job`
 	- `/flipper`
 	- `/solid_errors`
 	- `/field_test`
@@ -222,28 +222,18 @@ To access in non-development, sign in through session auth first:
 
 - `GET /admins/sign_in`
 
-## Mission Control Jobs
+## GoodJob Dashboard
 
-Mission Control Jobs is mounted at:
+GoodJob is mounted at:
 
-- `GET /jobs`
+- `GET /good_job`
 
 Access behavior in this app:
 
-- `development`: route is mounted directly.
+- `development`: route is behind admin session auth.
 - non-development (`test`/`production`): route is behind admin session auth via route constraints.
 
-Mission Control Jobs also supports HTTP Basic Auth. Ensure environment-specific basic auth credentials are set and rotated per environment. Do not keep placeholder/default credentials in shared configs.
-
-Future extension:
-
-If you want Mission Control Jobs to use your app's admin controller stack directly, set:
-
-```rb
-MissionControl::Jobs.base_controller_class = "AdminController"
-```
-
-That lets Mission Control inherit auth/authorization behavior from your own admin controllers without needing to set basic auth credentials or use separate session auth.
+Recurring schedules are configured in `config/recurring.yml` using GoodJob cron format and loaded directly in `config/initializers/good_job.rb`.
 
 ## Analytics Tracking (Ahoy)
 
@@ -578,12 +568,12 @@ Then open:
 - Coverage filters exclude `test/`, `config/`, `vendor/`, and `docs/`.
 - In parallel test runs, coverage results are merged via SimpleCov configuration in `test/test_helper.rb`.
 
-## Single-DB Deployment (Solid Queue/Cache/Cable)
+## Single-DB Deployment (GoodJob + Solid Cache/Cable)
 
-This template is configured to run all Solid components on the primary PostgreSQL database in production.
+This template is configured to run GoodJob and Solid components on the primary PostgreSQL database in production.
 
 - `config/database.yml` uses a single `production` connection via `DATABASE_URL`.
-- `config/environments/production.rb` points Solid Queue to `writing: :primary`.
+- `config/application.rb` configures `config.active_job.queue_adapter = :good_job`.
 - `config/cable.yml` points Solid Cable to `writing: primary`.
 - `config/cache.yml` points Solid Cache to `database: primary`.
 
@@ -597,9 +587,7 @@ This template is configured to run all Solid components on the primary PostgreSQ
 Use separate process types in production:
 
 - `web`: Puma app server
-- `job`: `bin/jobs` (Solid Queue worker/supervisor)
-
-`SOLID_QUEUE_IN_PUMA` is set to `false` in deploy defaults to keep job execution isolated from web request latency.
+- `job`: `bin/jobs` (GoodJob worker)
 
 ### First deploy / release flow
 
