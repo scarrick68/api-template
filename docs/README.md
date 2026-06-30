@@ -8,6 +8,7 @@ This directory contains product and operational documentation for the API templa
 - Authentication model and safety defaults: authentication.md
 - Database migration safety defaults: strong-migrations.md
 - Metrics model and observability pipeline: metrics-model.md
+- Data import pipeline and execution flow: data-import-pipeline.md
 - Structured logging (Lograge + AppEvent): logging.md
 - Template features quick reference: template-features.md
 - Rake task command pattern: rake-task-command-pattern.md
