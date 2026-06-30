@@ -6,7 +6,7 @@ class AdminToolsController < ApplicationController
     "/avo" => "Avo",
     "/pghero" => "PgHero",
     "/blazer" => "Blazer",
-    "/jobs" => "Mission Control Jobs",
+    "/good_job" => "GoodJob",
     "/solid_errors" => "Solid Errors",
     "/field_test" => "Field Test",
     "/flipper" => "Flipper",

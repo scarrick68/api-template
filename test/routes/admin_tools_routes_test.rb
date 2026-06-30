@@ -13,8 +13,8 @@ class AdminToolsRoutesTest < ActiveSupport::TestCase
     assert_route_mounted("/pghero")
   end
 
-  test "mission control jobs route is mounted" do
-    assert_route_mounted("/jobs")
+  test "good job route is mounted" do
+    assert_route_mounted("/good_job")
   end
 
   test "solid errors route is mounted" do
