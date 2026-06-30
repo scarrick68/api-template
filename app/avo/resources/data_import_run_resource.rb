@@ -1,4 +1,6 @@
 class Avo::Resources::DataImportRunResource < Avo::BaseResource
+  self.model_class = ::DataImportRun
+
   def fields
     field :id, as: :id
     field :data_artifact, as: :belongs_to

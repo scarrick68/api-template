@@ -10,6 +10,7 @@ This directory contains product and operational documentation for the API templa
 - Metrics model and observability pipeline: metrics-model.md
 - Structured logging (Lograge + AppEvent): logging.md
 - Template features quick reference: template-features.md
+- Rake task command pattern: rake-task-command-pattern.md
 - Admin tools index dashboard feature: template-features.md#admin-tools-index-dashboard
 - Ruby code quality metrics (RubyCritic): rubycritic.md
 - Template rename utility guide: template-rename.md

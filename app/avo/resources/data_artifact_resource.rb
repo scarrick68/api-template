@@ -1,4 +1,10 @@
 class Avo::Resources::DataArtifactResource < Avo::BaseResource
+  self.model_class = ::DataArtifact
+
+  def actions
+    action Avo::Actions::DataArtifacts::UploadArtifact
+  end
+
   def fields
     field :id, as: :id
     field :artifact_id, as: :text
