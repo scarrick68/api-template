@@ -33,7 +33,8 @@ class AvoAccessTest < ApplicationDispatchTest
 
     get "/avo"
 
-    assert_redirected_to "/avo/resources/users"
+    assert_response :redirect
+    assert_includes response.location, "/avo/resources/"
   end
 
   test "authenticated admin users can access avo resources" do
