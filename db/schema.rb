@@ -10,9 +10,23 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_06_18_212107) do
+ActiveRecord::Schema[8.1].define(version: 2026_06_29_103100) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+
+  create_table "active_admin_comments", force: :cascade do |t|
+    t.bigint "author_id"
+    t.string "author_type"
+    t.text "body"
+    t.datetime "created_at", null: false
+    t.string "namespace"
+    t.bigint "resource_id"
+    t.string "resource_type"
+    t.datetime "updated_at", null: false
+    t.index ["author_type", "author_id"], name: "index_active_admin_comments_on_author"
+    t.index ["namespace"], name: "index_active_admin_comments_on_namespace"
+    t.index ["resource_type", "resource_id"], name: "index_active_admin_comments_on_resource"
+  end
 
   create_table "admins", force: :cascade do |t|
     t.datetime "created_at", null: false
@@ -134,6 +148,45 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_18_212107) do
     t.string "status"
     t.datetime "updated_at", null: false
     t.index ["creator_id"], name: "index_blazer_queries_on_creator_id"
+  end
+
+  create_table "data_artifacts", force: :cascade do |t|
+    t.string "artifact_id", null: false
+    t.bigint "byte_size"
+    t.string "checksum"
+    t.string "content_type"
+    t.datetime "created_at", null: false
+    t.jsonb "metadata", default: {}, null: false
+    t.string "schema_name", null: false
+    t.string "schema_version"
+    t.string "source"
+    t.string "status", default: "pending", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "uploaded_by_id"
+    t.index ["artifact_id"], name: "index_data_artifacts_on_artifact_id", unique: true
+    t.index ["schema_name"], name: "index_data_artifacts_on_schema_name"
+    t.index ["status"], name: "index_data_artifacts_on_status"
+    t.index ["uploaded_by_id"], name: "index_data_artifacts_on_uploaded_by_id"
+  end
+
+  create_table "data_import_runs", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.bigint "data_artifact_id", null: false
+    t.jsonb "error_details", default: [], null: false
+    t.datetime "finished_at"
+    t.string "mode"
+    t.jsonb "options", default: {}, null: false
+    t.integer "records_failed", default: 0, null: false
+    t.integer "records_imported", default: 0, null: false
+    t.integer "records_seen", default: 0, null: false
+    t.string "schema_name", null: false
+    t.string "schema_version", null: false
+    t.datetime "started_at"
+    t.string "status", default: "pending", null: false
+    t.datetime "updated_at", null: false
+    t.index ["data_artifact_id"], name: "index_data_import_runs_on_data_artifact_id"
+    t.index ["schema_name", "schema_version"], name: "index_data_import_runs_on_schema_name_and_schema_version"
+    t.index ["status"], name: "index_data_import_runs_on_status"
   end
 
   create_table "field_test_memberships", force: :cascade do |t|
@@ -408,6 +461,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_18_212107) do
   end
 
   add_foreign_key "admins", "users"
+  add_foreign_key "data_import_runs", "data_artifacts"
   add_foreign_key "solid_errors_occurrences", "solid_errors", column: "error_id"
   add_foreign_key "solid_queue_blocked_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
   add_foreign_key "solid_queue_claimed_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
