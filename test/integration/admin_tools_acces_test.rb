@@ -109,36 +109,36 @@ module AdminToolsAccessTest
     end
   end
 
-  class MissionControlJobsAccessTest < ActionDispatch::IntegrationTest
+  class GoodJobAccessTest < ActionDispatch::IntegrationTest
     include Devise::Test::IntegrationHelpers
     include ApiAuthHelpers
 
-    test "anonymous users are redirected to sign in when trying to access mission control jobs" do
-      get "/jobs"
+    test "anonymous users are redirected to sign in when trying to access good job" do
+      get "/good_job"
 
       assert_redirected_to "/admins/sign_in"
     end
 
-    test "non-admin users are redirected to sign in when trying to access mission control jobs" do
+    test "non-admin users are redirected to sign in when trying to access good job" do
       sign_in create(:user)
 
-      get "/jobs"
+      get "/good_job"
 
       assert_redirected_to "/admins/sign_in"
     end
 
-    test "admin users can access mission control jobs" do
+    test "admin users can access good job" do
       sign_in create(:admin), scope: :admin
 
-      get "/jobs"
+      get "/good_job"
 
-      assert_response :success
+      assert_redirected_to "/good_job/jobs?locale=en"
     end
 
-    test "token-authenticated admin is still redirected to login when accessing mission control jobs" do
+    test "token-authenticated admin is still redirected to login when accessing good job" do
       admin_user = create(:user, :admin)
 
-      get "/jobs", headers: auth_headers_for(admin_user)
+      get "/good_job", headers: auth_headers_for(admin_user)
 
       assert_redirected_to "/admins/sign_in"
     end
