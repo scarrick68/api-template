@@ -26,6 +26,8 @@ This directory contains product and operational documentation for the API templa
 - Single-database Solid stack: adr/0004-single-database-solid-stack.md
 - Separate browser and API base controllers: adr/0005-separate-browser-and-api-base-controllers.md
 - Template rename utility is best-effort: adr/0006-template-rename-utility-is-best-effort.md
+- Lograge as the 80/20 structured logging baseline: adr/0007-lograge-80-20-structured-logging.md
+- GoodJob for background processing and batch import orchestration: adr/0008-good-job-for-background-processing-and-batch-import-orchestration.md
 
 ## Deployment And Launch Guides
 
