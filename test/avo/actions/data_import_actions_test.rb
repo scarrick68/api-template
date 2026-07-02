@@ -2,11 +2,7 @@ require "test_helper"
 
 class DataImportActionsTest < ActiveSupport::TestCase
   test "dry run action creates pending dry_run and enqueues job" do
-    artifact = DataArtifact.create!(
-      artifact_id: "artifact-dry-run-1",
-      schema_name: "test_schema_name",
-      schema_version: "v1"
-    )
+    artifact = create(:data_artifact, artifact_id: "artifact-dry-run-1")
 
     action = Avo::Actions::DataArtifacts::DryRunImport.new
 
@@ -27,11 +23,7 @@ class DataImportActionsTest < ActiveSupport::TestCase
   end
 
   test "subsequent dry run actions create separate historical runs and increment attempt" do
-    artifact = DataArtifact.create!(
-      artifact_id: "artifact-dry-run-history-1",
-      schema_name: "test_schema_name",
-      schema_version: "v1"
-    )
+    artifact = create(:data_artifact, artifact_id: "artifact-dry-run-history-1")
 
     action = Avo::Actions::DataArtifacts::DryRunImport.new
 
@@ -50,11 +42,7 @@ class DataImportActionsTest < ActiveSupport::TestCase
   end
 
   test "run import action creates pending import run and enqueues job" do
-    artifact = DataArtifact.create!(
-      artifact_id: "artifact-import-1",
-      schema_name: "test_schema_name",
-      schema_version: "v1"
-    )
+    artifact = create(:data_artifact, artifact_id: "artifact-import-1")
 
     action = Avo::Actions::DataArtifacts::RunImport.new
 
@@ -72,11 +60,7 @@ class DataImportActionsTest < ActiveSupport::TestCase
   end
 
   test "subsequent import actions create separate historical runs and increment attempt" do
-    artifact = DataArtifact.create!(
-      artifact_id: "artifact-import-history-1",
-      schema_name: "test_schema_name",
-      schema_version: "v1"
-    )
+    artifact = create(:data_artifact, artifact_id: "artifact-import-history-1")
 
     action = Avo::Actions::DataArtifacts::RunImport.new
 
@@ -95,11 +79,7 @@ class DataImportActionsTest < ActiveSupport::TestCase
   end
 
   test "dry run followed by import starts each mode attempt at one" do
-    artifact = DataArtifact.create!(
-      artifact_id: "artifact-mixed-modes-1",
-      schema_name: "test_schema_name",
-      schema_version: "v1"
-    )
+    artifact = create(:data_artifact, artifact_id: "artifact-mixed-modes-1")
 
     dry_run_action = Avo::Actions::DataArtifacts::DryRunImport.new
     run_import_action = Avo::Actions::DataArtifacts::RunImport.new
@@ -119,16 +99,10 @@ class DataImportActionsTest < ActiveSupport::TestCase
   end
 
   test "retry action increments attempt for dry_run mode" do
-    artifact = DataArtifact.create!(
-      artifact_id: "artifact-retry-1",
-      schema_name: "test_schema_name",
-      schema_version: "v1"
-    )
+    artifact = create(:data_artifact, artifact_id: "artifact-retry-1")
 
-    previous_data_import_run = DataImportRun.create!(
+    previous_data_import_run = create(:data_import_run,
       data_artifact: artifact,
-      schema_name: "test_schema_name",
-      schema_version: "v1",
       mode: "dry_run",
       status: :failed,
       finished_at: Time.current,
@@ -160,16 +134,10 @@ class DataImportActionsTest < ActiveSupport::TestCase
   end
 
   test "retry action increments attempt for import mode" do
-    artifact = DataArtifact.create!(
-      artifact_id: "artifact-retry-import-1",
-      schema_name: "test_schema_name",
-      schema_version: "v1"
-    )
+    artifact = create(:data_artifact, artifact_id: "artifact-retry-import-1")
 
-    previous_data_import_run = DataImportRun.create!(
+    previous_data_import_run = create(:data_import_run,
       data_artifact: artifact,
-      schema_name: "test_schema_name",
-      schema_version: "v1",
       mode: "import",
       status: :failed,
       finished_at: Time.current,
@@ -197,16 +165,10 @@ class DataImportActionsTest < ActiveSupport::TestCase
   end
 
   test "retry action does not enqueue retry for a run that is still running" do
-    artifact = DataArtifact.create!(
-      artifact_id: "artifact-retry-running-1",
-      schema_name: "test_schema_name",
-      schema_version: "v1"
-    )
+    artifact = create(:data_artifact, artifact_id: "artifact-retry-running-1")
 
-    previous_data_import_run = DataImportRun.create!(
+    previous_data_import_run = create(:data_import_run,
       data_artifact: artifact,
-      schema_name: "test_schema_name",
-      schema_version: "v1",
       mode: "dry_run",
       status: :running,
       started_at: Time.current,
@@ -228,26 +190,18 @@ class DataImportActionsTest < ActiveSupport::TestCase
   end
 
   test "retry action does not enqueue duplicate retry while prior retry is pending" do
-    artifact = DataArtifact.create!(
-      artifact_id: "artifact-retry-duplicate-1",
-      schema_name: "test_schema_name",
-      schema_version: "v1"
-    )
+    artifact = create(:data_artifact, artifact_id: "artifact-retry-duplicate-1")
 
-    previous_data_import_run = DataImportRun.create!(
+    previous_data_import_run = create(:data_import_run,
       data_artifact: artifact,
-      schema_name: "test_schema_name",
-      schema_version: "v1",
       mode: "import",
       status: :failed,
       finished_at: Time.current,
       options: { "attempt" => 1 }
     )
 
-    DataImportRun.create!(
+    create(:data_import_run,
       data_artifact: artifact,
-      schema_name: "test_schema_name",
-      schema_version: "v1",
       mode: "import",
       status: :pending,
       options: { "retry_of_data_import_run_id" => previous_data_import_run.id }

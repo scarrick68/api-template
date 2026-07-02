@@ -16,4 +16,8 @@ class DataArtifact < ApplicationRecord
        validate: true
 
   validates :artifact_id, :schema_name, presence: true
+
+  def ready_for_import?
+    valid? && schema_version.present?
+  end
 end

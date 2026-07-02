@@ -5,7 +5,7 @@ class DataImportJob < ApplicationJob
   queue_as :data_imports
   RETRY_ATTEMPTS = 3
 
-  retry_on StandardError, attempts: RETRY_ATTEMPTS, wait: 0.seconds do |job, error|
+  retry_on StandardError, attempts: RETRY_ATTEMPTS, wait: 5.seconds do |job, error|
     data_import_run_id = job.arguments.first
     DataImportJob.mark_failed!(data_import_run_id, error)
   end
