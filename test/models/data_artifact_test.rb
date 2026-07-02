@@ -24,8 +24,8 @@ class DataArtifactTest < ActiveSupport::TestCase
   test "supports configured statuses" do
     artifact = DataArtifact.create!(artifact_id: "some-model-data-csv", schema_name: "some_model")
 
-    artifact.status_validated!
-    assert artifact.status_validated?
+    artifact.status_valid!
+    assert artifact.status_valid?
 
     artifact.status_invalid!
     assert artifact.status_invalid?

@@ -7,7 +7,7 @@ class DataArtifact < ApplicationRecord
   enum :status,
        {
          pending: "pending",
-         validated: "validated",
+         valid: "valid",
          invalid: "invalid",
          imported: "imported"
        },

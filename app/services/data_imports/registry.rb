@@ -2,9 +2,7 @@
 
 module DataImports
   module Registry
-    IMPORTERS = {
-      [ "restaurants", "v1" ] => "DataImports::Restaurants::V1Importer"
-    }.freeze
+    IMPORTERS = {}.freeze
 
     def self.fetch(schema_name, schema_version)
       key = [ schema_name.to_s, schema_version.to_s ]
