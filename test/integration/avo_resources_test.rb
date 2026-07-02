@@ -6,8 +6,8 @@ class AvoResourcesTest < ApplicationDispatchTest
     sign_in create(:admin), scope: :admin
   end
 
-  test "admin can access data artifacts index and show pages" do
-    artifact = DataArtifact.create!(
+  test "admin can access data artifacts index page" do
+    DataArtifact.create!(
       artifact_id: "artifact-avo-smoke-1",
       schema_name: "test_schema_name",
       schema_version: "v1"
@@ -15,12 +15,20 @@ class AvoResourcesTest < ApplicationDispatchTest
 
     get "/avo/resources/data_artifacts"
     assert_response :success
+  end
+
+  test "admin can access data artifacts show page" do
+    artifact = DataArtifact.create!(
+      artifact_id: "artifact-avo-smoke-show-1",
+      schema_name: "test_schema_name",
+      schema_version: "v1"
+    )
 
     get "/avo/resources/data_artifacts/#{artifact.id}"
     assert_response :success
   end
 
-  test "admin can access data import runs index and show pages" do
+  test "admin can access data import runs index page" do
     artifact = DataArtifact.create!(
       artifact_id: "artifact-avo-smoke-2",
       schema_name: "test_schema_name",
@@ -37,6 +45,22 @@ class AvoResourcesTest < ApplicationDispatchTest
 
     get "/avo/resources/data_import_runs"
     assert_response :success
+  end
+
+  test "admin can access data import runs show page" do
+    artifact = DataArtifact.create!(
+      artifact_id: "artifact-avo-smoke-show-2",
+      schema_name: "test_schema_name",
+      schema_version: "v1"
+    )
+
+    run = DataImportRun.create!(
+      data_artifact: artifact,
+      schema_name: "test_schema_name",
+      schema_version: "v1",
+      mode: "import",
+      status: :pending
+    )
 
     get "/avo/resources/data_import_runs/#{run.id}"
     assert_response :success

@@ -1,4 +1,4 @@
-class Avo::Resources::DataImportRunResource < Avo::BaseResource
+class Avo::Resources::DataImportRun < Avo::BaseResource
   self.model_class = ::DataImportRun
 
   def actions

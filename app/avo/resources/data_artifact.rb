@@ -1,4 +1,4 @@
-class Avo::Resources::DataArtifactResource < Avo::BaseResource
+class Avo::Resources::DataArtifact < Avo::BaseResource
   self.model_class = ::DataArtifact
 
   def actions
