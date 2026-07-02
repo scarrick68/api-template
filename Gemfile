@@ -17,7 +17,7 @@ gem "stimulus-rails"
 # Build JSON APIs with ease [https://github.com/rails/jbuilder]
 gem "jbuilder"
 gem "blueprinter"
-gem "pagy", "~> 9.0"
+gem "pagy", "~> 43.5"
 
 # Use Active Model has_secure_password [https://guides.rubyonrails.org/active_model_basics.html#securepassword]
 # gem "bcrypt", "~> 3.1.7"
@@ -109,7 +109,7 @@ gem "rollups", "~> 0.6.0"
 
 gem "rubycritic", "~> 5.0", groups: [ :development, :test ]
 
-gem "avo", "~> 3.32"
+gem "avo", "~> 4.0"
 
 gem "lograge", "~> 0.14.0"
 
