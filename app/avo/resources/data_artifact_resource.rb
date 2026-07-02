@@ -3,6 +3,8 @@ class Avo::Resources::DataArtifactResource < Avo::BaseResource
 
   def actions
     action Avo::Actions::DataArtifacts::UploadArtifact
+    action Avo::Actions::DataArtifacts::DryRunImport
+    action Avo::Actions::DataArtifacts::RunImport
   end
 
   def fields
