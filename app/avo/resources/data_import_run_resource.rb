@@ -1,6 +1,10 @@
 class Avo::Resources::DataImportRunResource < Avo::BaseResource
   self.model_class = ::DataImportRun
 
+  def actions
+    action Avo::Actions::DataImportRuns::RetryImport
+  end
+
   def fields
     field :id, as: :id
     field :data_artifact, as: :belongs_to
