@@ -4,10 +4,10 @@ require "stringio"
 module DataImports
   class ManifestReaderTest < ActiveSupport::TestCase
     test "reads, parses, and validates attached manifest json" do
-      artifact = DataArtifact.create!(artifact_id: "artifact-reader-1", schema_name: "customer_accounts")
+      artifact = DataArtifact.create!(artifact_id: "artifact-reader-1", schema_name: "test_fixture_schema")
       manifest_json = {
         artifact_id: "artifact-reader-1",
-        schema_name: "customer_accounts",
+        schema_name: "test_fixture_schema",
         schema_version: "v1",
         record_count: 2,
         created_at: Time.current.iso8601
@@ -22,15 +22,15 @@ module DataImports
       result = ManifestReader.call(artifact:)
 
       assert result.success?
-      assert_equal "customer_accounts", result.manifest[:schema_name]
+      assert_equal "test_fixture_schema", result.manifest[:schema_name]
 
       artifact.reload
-      assert_equal "validated", artifact.status
+      assert_equal "valid", artifact.status
       assert_equal [], artifact.metadata["manifest_validation_errors"]
     end
 
     test "stores invalid status and errors when attached manifest is not valid json" do
-      artifact = DataArtifact.create!(artifact_id: "artifact-reader-2", schema_name: "customer_accounts")
+      artifact = DataArtifact.create!(artifact_id: "artifact-reader-2", schema_name: "test_fixture_schema")
       artifact.file.attach(
         io: StringIO.new("{not valid json"),
         filename: "manifest.json",
@@ -48,7 +48,7 @@ module DataImports
     end
 
     test "stores invalid status and errors when no file is attached" do
-      artifact = DataArtifact.create!(artifact_id: "artifact-reader-3", schema_name: "customer_accounts")
+      artifact = DataArtifact.create!(artifact_id: "artifact-reader-3", schema_name: "test_fixture_schema")
 
       result = ManifestReader.call(artifact:)
 

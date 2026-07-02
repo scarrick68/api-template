@@ -3,29 +3,36 @@
 # Dispatches import runs to schema/version-specific importer implementations.
 class DataImportJob < ApplicationJob
   queue_as :data_imports
+  RETRY_ATTEMPTS = 3
 
-  def perform(import_run_id)
-    run = DataImportRun.find(import_run_id)
-    run.update!(status: :running, started_at: Time.current)
+  retry_on StandardError, attempts: RETRY_ATTEMPTS, wait: 0.seconds do |job, error|
+    data_import_run_id = job.arguments.first
+    DataImportJob.mark_failed!(data_import_run_id, error)
+  end
 
-    importer = DataImports::Registry.fetch(run.schema_name, run.schema_version)
-    importer.call(run: run)
+  def perform(data_import_run_id)
+    data_import_run = DataImportRun.find(data_import_run_id)
+    data_import_run.update!(status: :running, started_at: data_import_run.started_at || Time.current)
 
-    run.update!(status: :succeeded, finished_at: Time.current)
-  rescue StandardError => e
-    if run
-      run.update!(
-        status: :failed,
-        finished_at: Time.current,
-        error_details: Array(run.error_details) + [
-          {
-            "class" => e.class.name,
-            "message" => e.message
-          }
-        ]
-      )
-    end
+    importer = DataImports::Registry.fetch(data_import_run.schema_name, data_import_run.schema_version)
+    importer.call(data_import_run: data_import_run)
 
-    raise
+    data_import_run.update!(status: :succeeded, finished_at: Time.current)
+  end
+
+  def self.mark_failed!(data_import_run_id, error)
+    data_import_run = DataImportRun.find_by(id: data_import_run_id)
+    return unless data_import_run
+
+    data_import_run.update!(
+      status: :failed,
+      finished_at: Time.current,
+      error_details: Array(data_import_run.error_details) + [
+        {
+          "class" => error.class.name,
+          "message" => error.message
+        }
+      ]
+    )
   end
 end

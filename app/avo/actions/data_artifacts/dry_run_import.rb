@@ -14,7 +14,7 @@ class Avo::Actions::DataArtifacts::DryRunImport < Avo::BaseAction
         schema_version: artifact.schema_version,
         mode: "dry_run",
         status: :pending,
-        options: {}
+        options: { "attempt" => next_dry_run_attempt_for(artifact) }
       )
 
       DataImportJob.perform_later(run.id)
@@ -28,5 +28,21 @@ class Avo::Actions::DataArtifacts::DryRunImport < Avo::BaseAction
     end
   rescue StandardError => e
     fail "Dry-run import failed: #{e.message}"
+  end
+
+  private
+
+  def next_dry_run_attempt_for(artifact)
+    prior_attempts = DataImportRun
+      .where(
+        data_artifact_id: artifact.id,
+        schema_name: artifact.schema_name,
+        schema_version: artifact.schema_version,
+        mode: "dry_run"
+      )
+      .pluck(:options)
+      .map { |options| Integer(options.to_h["attempt"], exception: false).to_i }
+
+    [ prior_attempts.max.to_i, 0 ].max + 1
   end
 end

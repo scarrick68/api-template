@@ -22,10 +22,10 @@ class DataImportRunTest < ActiveSupport::TestCase
   end
 
   test "defaults status and counters" do
-    artifact = DataArtifact.create!(artifact_id: "artifact-3", schema_name: "restaurants")
+    artifact = DataArtifact.create!(artifact_id: "artifact-3", schema_name: "test_model")
     run = DataImportRun.create!(
       data_artifact: artifact,
-      schema_name: "restaurants",
+      schema_name: "test_model",
       schema_version: "v1"
     )
 
@@ -37,10 +37,10 @@ class DataImportRunTest < ActiveSupport::TestCase
   end
 
   test "supports configured statuses" do
-    artifact = DataArtifact.create!(artifact_id: "artifact-4", schema_name: "restaurants")
+    artifact = DataArtifact.create!(artifact_id: "artifact-4", schema_name: "test_model")
     run = DataImportRun.create!(
       data_artifact: artifact,
-      schema_name: "restaurants",
+      schema_name: "test_model",
       schema_version: "v1"
     )
 
