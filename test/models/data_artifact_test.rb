@@ -33,4 +33,24 @@ class DataArtifactTest < ActiveSupport::TestCase
     artifact.status_imported!
     assert artifact.status_imported?
   end
+
+  test "ready_for_import? is true when record is valid and schema_version is present" do
+    artifact = DataArtifact.new(
+      artifact_id: "some-model-data-csv",
+      schema_name: "some_model",
+      schema_version: "v1"
+    )
+
+    assert_equal true, artifact.ready_for_import?
+  end
+
+  test "ready_for_import? is false when schema_version is missing" do
+    artifact = DataArtifact.new(
+      artifact_id: "some-model-data-csv",
+      schema_name: "some_model",
+      schema_version: nil
+    )
+
+    assert_equal false, artifact.ready_for_import?
+  end
 end
