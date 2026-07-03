@@ -135,6 +135,18 @@ You should see cluster status and version info if it's running and healthy.
 
 Configure your production env and creds as needed
 
+## Local Development Ports
+
+Local development uses fixed ports to stay consistent with workspace orchestration.
+
+- API server default: `http://localhost:5001`
+- Web template dev server: `http://localhost:3000`
+
+Details:
+
+- API server port is driven by `PORT` and defaults to `5001` in `config/puma.rb`.
+- Running `bin/dev` in this repo or from workspace orchestration should keep API on `5001`.
+
 ## CORS
 
 This template enables CORS with `rack-cors`.
