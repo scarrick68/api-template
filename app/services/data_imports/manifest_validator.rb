@@ -34,18 +34,11 @@ module DataImports
     end
 
     def self.persist_valid_artifact_state(artifact, manifest)
-      metadata = (artifact.metadata || {}).dup
-      metadata["manifest"] = manifest
-      metadata["manifest_validation_errors"] = []
-
-      artifact.update!(status: :valid, metadata: metadata)
+      artifact.apply_manifest_valid!(manifest: manifest)
     end
 
     def self.persist_invalid_artifact_state(artifact, errors)
-      metadata = (artifact.metadata || {}).dup
-      metadata["manifest_validation_errors"] = errors
-
-      artifact.update!(status: :invalid, metadata: metadata)
+      artifact.apply_manifest_invalid!(errors: errors)
     end
 
     private_class_method :build_valid_result,

@@ -33,6 +33,7 @@ Scaffolded with full Rails stack to support internal tooling from gems.
 - When adding or changing API endpoints, add or update integration tests that exercise the endpoint through a real HTTP request.
 - Assert API responses against the OpenAPI contract when possible to ensure the contract is kept up to date and accurate.
 - Include realistic examples in OpenAPI spec for new endpoints to ensure the contract is useful for consumers.
+- Prefer using factorybot factories to create test data instead of inline creation of records in tests.
 
 Run targeted tests with:
 

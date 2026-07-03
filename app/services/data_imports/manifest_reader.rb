@@ -27,10 +27,7 @@ module DataImports
     attr_reader :artifact
 
     def failure_with_artifact_update(errors)
-      metadata = (artifact.metadata || {}).dup
-      metadata["manifest_validation_errors"] = errors
-
-      artifact.update!(status: :invalid, metadata: metadata)
+      artifact.apply_manifest_invalid!(errors: errors)
 
       DataImports::ManifestValidator::Result.new(success?: false, manifest: nil, errors: errors)
     end
