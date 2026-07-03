@@ -26,6 +26,7 @@ A production-ready Rails 8.1 API template focused on developer velocity, operati
 * Policy-based authorization with an explicit deny-by-default security posture.
 * OpenAPI source document maintained at `docs/openapi.yml`.
 * ReDoc-powered API documentation with admin-only access outside development environments.
+* Performant, batch-oriented, durable, high-visibility, versioned, dry-run capable, observable, state machine driven, multi-cloud blob store compatible data import pipeline with `DataArtifact` + `DataImportRun`, schema-aware importer registry, GoodJob orchestration, and AASM-driven run/artifact state transitions (see `docs/data-import-pipeline.md`).
 
 ## Observability & Operations
 

@@ -15,12 +15,22 @@ module AppEvent
 
     private
 
+    def parameter_filter
+      @parameter_filter ||= ActiveSupport::ParameterFilter.new(
+        Rails.application.config.filter_parameters
+      )
+    end
+
+    def filtered_payload(payload)
+      parameter_filter.filter(payload)
+    end
+
     def build(name, payload)
       {
         timestamp: Time.current.utc.iso8601(3),
         severity: name.to_s.upcase,
         event: name
-      }.merge(payload)
+      }.merge(filtered_payload(payload))
     end
 
     def emit(level, name, payload)
