@@ -3,11 +3,9 @@
 namespace :data_imports do
   desc "Create and enqueue a DataImportRun for a DataArtifact"
   task :start_run, [ :data_artifact_id, :mode ] => :environment do |_task, args|
-    require_relative "commands/data_imports/start_run_command"
-
     args.with_defaults(mode: "import")
 
-    run = Commands::DataImports::StartRunCommand.call(
+    run = Commands::Tasks::DataImports::StartRunCommand.call(
       data_artifact_id: args[:data_artifact_id],
       mode: args[:mode]
     )

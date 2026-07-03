@@ -11,6 +11,8 @@ if COVERAGE_ENABLED
   SimpleCov.merge_timeout 3600
 
   SimpleCov.start "rails" do
+    track_files "{app,lib}/**/*.rb"
+
     add_filter "/test/"
     add_filter "/config/"
     add_filter "/vendor/"
@@ -20,6 +22,8 @@ if COVERAGE_ENABLED
     add_group "Controllers", "app/controllers"
     add_group "Jobs", "app/jobs"
     add_group "Services", "app/services"
+    add_group "Commands", "app/services/commands"
+    add_group "Tasks", "lib/tasks"
     minimum_coverage line: 80, branch: 80
   end
 end

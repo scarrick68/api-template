@@ -4,7 +4,9 @@ Rake tasks in this project should stay thin and delegate implementation to comma
 
 ## Convention
 
-- Implement rake task logic in a command class under `lib/tasks/commands/`.
+- Implement rake task logic in command classes under `app/services/commands/tasks/**/`.
+- Namespace these classes under `Commands::Tasks::...` so intent is explicit at both path and constant level.
+- Moving these command classes into the autoloaded app path avoids issues with code coverage reporting, makes them easier to reuse throughout the app but also gives an indication that they are primarily for rake tasks. Further usage should consider context and potential refactor.
 - This keeps task code thin, easier to test, easier to evolve and clear that the commands are rake task related.
 - Use explicit rake task arguments (for example `task :name, [:arg1, :arg2]`) instead of reading from `ENV`.
 - Keep argument parsing in the rake task and pass normalized keyword args into the command object.
@@ -32,4 +34,4 @@ Examples:
 - Easier to evolve: changing logic does not require rewriting task DSL code.
 - Easier to reuse: commands can be invoked from other scripts or tasks without duplicating logic.
 
-- See examples in `lib/tasks/data_artifacts.rake` and `lib/tasks/commands/data_artifacts/upload_local_command.rb`.
+- See examples in `lib/tasks/data_artifacts.rake` and `app/services/commands/tasks/data_artifacts/upload_local_command.rb`.
