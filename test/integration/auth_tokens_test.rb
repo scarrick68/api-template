@@ -31,6 +31,27 @@ class AuthTokensTest < ActionDispatch::IntegrationTest
     assert user.confirmation_token.present?
   end
 
+  test "sign up duplicate email conforms to OpenAPI 422 schema" do
+    existing_email = unique_email
+    create(
+      :user,
+      email: existing_email,
+      password: "password123",
+      password_confirmation: "password123",
+      confirmed_at: Time.current
+    )
+
+    post "/auth", params: {
+      email: existing_email,
+      password: "password123",
+      password_confirmation: "password123",
+      confirm_success_url: "http://localhost:3000/confirmed"
+    }, as: :json
+
+    assert_response :unprocessable_entity
+    assert_conform_schema(422)
+  end
+
   test "login is rejected for unconfirmed user" do
     user = User.create!(
       email: unique_email,

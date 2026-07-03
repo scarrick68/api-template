@@ -28,7 +28,7 @@ Notes:
 
 Before first production deploy:
 
-1. Decide the exact frontend origins that will call the API.
+1. Decide the exact frontend origins that will call the API.n
 2. Set `CORS_ALLOWED_ORIGINS` in your production environment.
 3. Deploy/restart app processes so env changes are loaded.
 4. Verify preflight and request behavior from an allowed origin.

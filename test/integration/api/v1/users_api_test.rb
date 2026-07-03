@@ -262,7 +262,7 @@ module Api
     end
 
     class UsersUpdateApiTest < ApplicationDispatchTest
-      test "update requires authentication" do
+      test "PATCH update requires authentication and conforms to OpenAPI 401 schema" do
         user = create(:user)
 
         patch "/api/v1/users/#{user.id}", params: { name: "Updated Name" }
@@ -271,7 +271,16 @@ module Api
         assert_conform_response_schema(401)
       end
 
-      test "update allows admin to update another user" do
+      test "PUT update requires authentication and conforms to OpenAPI 401 schema" do
+        user = create(:user)
+
+        put "/api/v1/users/#{user.id}", params: { name: "Updated Name" }, as: :json
+
+        assert_response :unauthorized
+        assert_conform_response_schema(401)
+      end
+
+      test "PATCH update allows admin to update another user" do
         signed_in_user = create(:user, :admin, email: "signed-in7@example.com")
         user = create(:user, email: "update-target@example.com", name: "Before Name")
 
@@ -284,6 +293,19 @@ module Api
         assert_equal true, response.parsed_body["success"]
         assert_equal "After Name", response.parsed_body.dig("data", "name")
         assert_equal "After Name", user.reload.name
+      end
+
+      test "PUT update conforms to OpenAPI 200 schema" do
+        signed_in_user = create(:user, :admin, email: "signed-in-put-200@example.com")
+        user = create(:user, email: "update-put-200@example.com", name: "Before Name")
+
+        put "/api/v1/users/#{user.id}",
+            params: { name: "After Name" },
+            headers: auth_headers_for(signed_in_user),
+            as: :json
+
+        assert_response :success
+        assert_conform_response_schema(200)
       end
 
       test "update allows non-admin users to update self" do
@@ -299,7 +321,7 @@ module Api
         assert_equal "After Name", signed_in_user.reload.name
       end
 
-      test "update is forbidden for non-admin users updating others" do
+      test "PATCH update is forbidden for non-admin users updating others" do
         signed_in_user = create(:user, email: "signed-in9@example.com")
         other_user = create(:user)
 
@@ -311,6 +333,19 @@ module Api
         assert_conform_response_schema(403)
         assert_equal false, response.parsed_body["success"]
         assert_equal "forbidden", response.parsed_body.dig("error", "type")
+      end
+
+      test "PUT update forbidden response conforms to OpenAPI 403 schema" do
+        signed_in_user = create(:user, email: "signed-in-put-403@example.com")
+        other_user = create(:user)
+
+        put "/api/v1/users/#{other_user.id}",
+            params: { name: "Nope" },
+            headers: auth_headers_for(signed_in_user),
+            as: :json
+
+        assert_response :forbidden
+        assert_conform_response_schema(403)
       end
 
       test "update returns forbidden for missing user" do
@@ -325,7 +360,7 @@ module Api
         assert_equal "forbidden", response.parsed_body.dig("error", "type")
       end
 
-      test "update returns unprocessable entity for invalid email" do
+      test "PATCH update returns unprocessable entity for invalid email" do
         signed_in_user = create(:user, email: "signed-in11@example.com")
 
         patch "/api/v1/users/#{signed_in_user.id}",
@@ -336,6 +371,19 @@ module Api
         assert_conform_response_schema(422)
         assert_equal false, response.parsed_body["success"]
         assert_equal "unprocessable_entity", response.parsed_body.dig("error", "type")
+      end
+
+      test "PUT update invalid payload conforms to OpenAPI 422 schema" do
+        signed_in_user = create(:user, email: "signed-in-put-422@example.com")
+        existing_user = create(:user, email: "already-taken-put-422@example.com")
+
+        put "/api/v1/users/#{signed_in_user.id}",
+            params: { email: existing_user.email },
+            headers: auth_headers_for(signed_in_user),
+            as: :json
+
+        assert_response :unprocessable_entity
+        assert_conform_response_schema(422)
       end
 
       test "update is idempotent for the same payload" do

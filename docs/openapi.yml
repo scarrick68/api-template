@@ -26,7 +26,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AuthErrorResponse'
+                $ref: '#/components/schemas/AuthRegisterErrorResponse'
   /auth/sign_in:
     post:
       summary: Sign in and issue token headers
@@ -166,12 +166,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-        '403':
-          description: Not authorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
   /api/v1/users/me:
     get:
       summary: Current authenticated user
@@ -192,12 +186,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/AuthRequiredErrorResponse'
-        '403':
-          description: Not authorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
   /api/v1/users/{id}:
     parameters:
       - in: path
@@ -453,6 +441,25 @@ components:
           const: success
         data:
           $ref: '#/components/schemas/AuthUser'
+    AuthRegisterErrorResponse:
+      type: object
+      required:
+        - status
+        - data
+        - errors
+      properties:
+        status:
+          type: string
+          const: error
+        data:
+          type: object
+          additionalProperties: true
+        errors:
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              type: string
     AuthSignOutSuccessResponse:
       type: object
       required:
