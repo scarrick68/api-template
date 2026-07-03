@@ -56,4 +56,52 @@ class AppEventTest < ActiveSupport::TestCase
 
     AppEvent.error("payment.failed", order_id: 123)
   end
+
+  test "redacts sensitive top-level payload fields" do
+    Rails.logger.expects(:info).with do |message|
+      payload = JSON.parse(message)
+
+      assert_equal "[FILTERED]", payload["password"]
+      assert_equal "[FILTERED]", payload["access_token"]
+      assert_equal "[FILTERED]", payload["secret"]
+      assert_equal "visible stuff here", payload["note"]
+
+      true
+    end
+
+    AppEvent.info(
+      "security.audit",
+      password: "super-secret",
+      access_token: "abc123",
+      secret: "s3cr3t",
+      note: "visible stuff here"
+    )
+  end
+
+  test "redacts nested sensitive payload fields" do
+    Rails.logger.expects(:warn).with do |message|
+      payload = JSON.parse(message)
+
+      assert_equal "[FILTERED]", payload.dig("credentials", "password")
+      assert_equal "[FILTERED]", payload.dig("credentials", "reset_token")
+      assert_equal "[FILTERED]", payload.dig("actors", 0, "email")
+      assert_equal "[FILTERED]", payload.dig("actors", 0, "otp")
+
+      true
+    end
+
+    AppEvent.warn(
+      "security.audit",
+      credentials: {
+        password: "super-secret",
+        reset_token: "reset-abc"
+      },
+      actors: [
+        {
+          email: "private@example.com",
+          otp: "123456"
+        }
+      ]
+    )
+  end
 end
