@@ -18,6 +18,12 @@ if COVERAGE_ENABLED
     add_filter "/vendor/"
     add_filter "/docs/"
 
+    # These are test / dev artifacts that were only used to validate or test at a time when no
+    # other artifacts were available. They are not part of the app and should be ignored for coverage.
+    add_filter "/app/jobs/hello_world_job.rb"
+    add_filter "/app/policies/hello_world_policy.rb"
+    add_filter "/app/controllers/test_errors_controller.rb"
+
     add_group "Models", "app/models"
     add_group "Controllers", "app/controllers"
     add_group "Jobs", "app/jobs"
