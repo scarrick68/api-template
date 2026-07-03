@@ -44,6 +44,52 @@ Important boundary:
 - Importers decide how rows are validated and persisted.
 - Jobs do not encode persistence details.
 
+## State Machines (AASM)
+
+Pipeline status transitions are event-driven via `AASM` on the models.
+
+### `DataArtifact` states
+
+- `pending`
+- `valid`
+- `invalid`
+- `imported`
+
+Events:
+
+- `validate_manifest` transitions to `valid`
+- `invalidate_manifest` transitions to `invalid`
+- `mark_imported` transitions `valid -> imported`
+
+### `DataImportRun` states
+
+- `pending`
+- `running`
+- `succeeded`
+- `failed`
+- `cancelled`
+
+Events:
+
+- `start_processing` transitions to `running`
+- `mark_succeeded` transitions `running -> succeeded`
+- `mark_failed` transitions to `failed` and records error details
+- `cancel` transitions to `cancelled`
+
+### Inspecting / visualizing transitions
+
+AASM does not ship a built-in diagram rendering command. Use inspection commands to visualize the transition graph in text:
+
+```bash
+bin/rails runner 'puts "DataArtifact transitions:"; DataArtifact.aasm.events.each { |e| puts "- #{e.name}: #{e.transitions.map { |t| "#{Array(t.from).join("/")} -> #{t.to}" }.join(", ")}" }; puts; puts "DataImportRun transitions:"; DataImportRun.aasm.events.each { |e| puts "- #{e.name}: #{e.transitions.map { |t| "#{Array(t.from).join("/")} -> #{t.to}" }.join(", ")}" }'
+```
+
+You can also inspect runtime-permitted transitions for a record:
+
+```bash
+bin/rails runner 'run = DataImportRun.new; pp run.aasm.permitted_transitions'
+```
+
 ## GoodJob Batch Flow
 
 ```mermaid

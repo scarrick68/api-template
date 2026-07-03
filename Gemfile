@@ -114,3 +114,5 @@ gem "avo", "~> 3.32"
 gem "lograge", "~> 0.14.0"
 
 gem "strong_migrations", "~> 2.8"
+
+gem "aasm", "~> 5.5"

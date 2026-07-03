@@ -34,6 +34,26 @@ class DataArtifactTest < ActiveSupport::TestCase
     assert artifact.status_imported?
   end
 
+  test "supports aasm event-driven transitions" do
+    artifact = DataArtifact.create!(artifact_id: "some-model-data-csv", schema_name: "some_model")
+
+    artifact.apply_manifest_valid!(manifest: { "schema_name" => "some_model" })
+    assert artifact.status_valid?
+
+    artifact.apply_manifest_invalid!(errors: [ "bad manifest" ])
+    assert artifact.status_invalid?
+
+    artifact.apply_manifest_valid!(manifest: { "schema_name" => "some_model" })
+    artifact.mark_imported!
+    assert artifact.status_imported?
+  end
+
+  test "raises on invalid aasm transition" do
+    artifact = DataArtifact.create!(artifact_id: "some-model-data-csv", schema_name: "some_model")
+
+    assert_raises(AASM::InvalidTransition) { artifact.mark_imported! }
+  end
+
   test "ready_for_import? is true when record is valid and schema_version is present" do
     artifact = DataArtifact.new(
       artifact_id: "some-model-data-csv",
