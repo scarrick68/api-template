@@ -31,4 +31,26 @@ class CorsTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_nil response.headers["access-control-allow-origin"]
   end
+
+  test "cross-origin sign-in exposes DTA auth headers" do
+    origin = "http://localhost:3000"
+    user = create(:user)
+
+    post "/auth/sign_in",
+      params: {
+        email: user.email,
+        password: user.password
+      },
+      headers: { "Origin" => origin },
+      as: :json
+
+    assert_response :success
+    assert_equal origin, response.headers["access-control-allow-origin"]
+
+    exposed_headers = response.headers["access-control-expose-headers"].to_s.downcase
+    %w[access-token client uid expiry token-type].each do |header_name|
+      assert_includes exposed_headers, header_name
+      assert response.headers[header_name].present?, "expected #{header_name} to be present"
+    end
+  end
 end

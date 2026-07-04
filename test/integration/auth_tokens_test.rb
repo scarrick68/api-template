@@ -23,7 +23,7 @@ class AuthTokensTest < ActionDispatch::IntegrationTest
     }, as: :json
 
     assert_response :success
-    assert_conform_schema(200)
+    assert_conform_response_schema(200)
     assert_token_headers_absent
 
     user = User.find_by!(email: email)
@@ -49,7 +49,7 @@ class AuthTokensTest < ActionDispatch::IntegrationTest
     }, as: :json
 
     assert_response :unprocessable_entity
-    assert_conform_schema(422)
+    assert_conform_response_schema(422)
   end
 
   test "login is rejected for unconfirmed user" do
@@ -65,7 +65,7 @@ class AuthTokensTest < ActionDispatch::IntegrationTest
     }, as: :json
 
     assert_response :unauthorized
-    assert_conform_schema(401)
+    assert_conform_response_schema(401)
     assert_token_headers_absent
     assert_equal false, response.parsed_body["success"]
     assert response.parsed_body["errors"].present?
@@ -85,7 +85,7 @@ class AuthTokensTest < ActionDispatch::IntegrationTest
     }, as: :json
 
     assert_response :success
-    assert_conform_schema(200)
+    assert_conform_response_schema(200)
     assert_auth_token_payload(user_email: user.email)
   end
 
@@ -102,7 +102,7 @@ class AuthTokensTest < ActionDispatch::IntegrationTest
     get "/auth/validate_token", headers: headers, as: :json
 
     assert_response :success
-    assert_conform_schema(200)
+    assert_conform_response_schema(200)
     assert_equal user.email, response.parsed_body.dig("data", "email")
   end
 
@@ -110,7 +110,7 @@ class AuthTokensTest < ActionDispatch::IntegrationTest
     get "/auth/validate_token", headers: invalid_auth_headers, as: :json
 
     assert_response :unauthorized
-    assert_conform_schema(401)
+    assert_conform_response_schema(401)
   end
 
   test "sign out succeeds for active token" do
@@ -126,7 +126,7 @@ class AuthTokensTest < ActionDispatch::IntegrationTest
     delete "/auth/sign_out", headers: headers, as: :json
 
     assert_response :success
-    assert_conform_schema(200)
+    assert_conform_response_schema(200)
     assert_equal true, response.parsed_body["success"]
   end
 
@@ -143,13 +143,13 @@ class AuthTokensTest < ActionDispatch::IntegrationTest
     delete "/auth/sign_out", headers: stale_headers, as: :json
 
     assert_response :success
-    assert_conform_schema(200)
+    assert_conform_response_schema(200)
 
     travel 6.seconds do
       get "/auth/validate_token", headers: stale_headers, as: :json
 
       assert_response :unauthorized
-      assert_conform_schema(401)
+      assert_conform_response_schema(401)
     end
   end
 
@@ -157,7 +157,7 @@ class AuthTokensTest < ActionDispatch::IntegrationTest
     delete "/auth/sign_out", headers: invalid_auth_headers, as: :json
 
     assert_response :not_found
-    assert_conform_schema(404)
+    assert_conform_response_schema(404)
   end
 
   test "password reset invalidates previously issued auth token headers" do
@@ -179,7 +179,7 @@ class AuthTokensTest < ActionDispatch::IntegrationTest
     get "/auth/validate_token", headers: stale_headers, as: :json
 
     assert_response :unauthorized
-    assert_conform_schema(401)
+    assert_conform_response_schema(401)
   end
 
   private

@@ -167,7 +167,7 @@ module Api
         get "/api/v1/users/me", headers: auth_headers_for(signed_in_user)
 
         assert_response :success
-        assert_conform_schema(200)
+        assert_conform_response_schema(200)
       end
     end
 
@@ -197,7 +197,7 @@ module Api
         }, as: :json
 
         assert_response :created
-        assert_conform_schema(201)
+        assert_conform_response_schema(201)
       end
 
       test "create rejects duplicate email for guests" do
