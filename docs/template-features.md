@@ -34,7 +34,7 @@ A production-ready Rails 8.1 API template focused on developer velocity, operati
 * Blazer-powered API observability dashboards built-in, and backed by raw metrics for real-time visibility and rollups for longer-term trend analysis.
 * Searchjoy rollups for daily/hourly search volume, query breakdowns, and conversion rate, stored in the shared `rollups` table.
 * Unified data retention policy: raw metrics/search records are short-lived, rollups are retained longer for historical trend analysis.
-* Searchkick + Elasticsearch integration with health checks included. (Elasticsearch service is included in development env, but not included for any other env. Determine a 3rd party provider or self-hosting strategy based on your needs.)
+* Searchkick + OpenSearch integration with health checks included. (OpenSearch service is included in development env, but not included for any other env. Determine a managed OpenSearch provider or self-hosting strategy based on your needs.)
 * PgHero for database monitoring and performance analysis.
 * GoodJob dashboard for background job observability and operational control.
 * Searchjoy search analytics integration.

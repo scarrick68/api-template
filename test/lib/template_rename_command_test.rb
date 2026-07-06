@@ -30,7 +30,7 @@ class TemplateRenameCommandTest < ActiveSupport::TestCase
 
       assert_includes File.read(File.join(tmpdir, "config/application.rb")), "module MyProductApi"
       assert_includes File.read(File.join(tmpdir, "docs/openapi.yml")), "title: My Product API"
-      assert_includes File.read(File.join(tmpdir, "compose.yml")), "container_name: my-product-api-elasticsearch"
+      assert_includes File.read(File.join(tmpdir, "compose.yml")), "container_name: my-product-api-opensearch"
       assert_includes File.read(File.join(tmpdir, "config/deploy.yml")), "my_product_api"
       assert_includes File.read(File.join(tmpdir, "README.md")), "# My Product API"
       manifest = File.read(File.join(tmpdir, "app/views/pwa/manifest.json.erb"))
@@ -438,8 +438,8 @@ class TemplateRenameCommandTest < ActiveSupport::TestCase
       File.join(tmpdir, "compose.yml"),
       <<~YAML
         services:
-          elasticsearch:
-            container_name: api-template-elasticsearch
+          opensearch:
+            container_name: api-template-opensearch
       YAML
     )
 

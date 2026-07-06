@@ -99,26 +99,26 @@ This app intentionally separates API identity from internal operator identity.
 - API attribution should rely on `current_user`/Ahoy identity so events and experiments stay consistent. This should largely be within the API domain where field_test is hooked into Ahoy identity and current_user. It can be used elsewhere, but attribution will not be automatic.
 - Field Test participant identity uses Ahoy identity (`ahoy.user`, `ahoy.visitor_token`) so experiment assignment aligns with tracked API activity.
 
-## Elasticsearch + Searchkick
+## OpenSearch + Searchkick
 
-This app uses Searchkick with Elasticsearch for model search.
+This app uses Searchkick with OpenSearch for model search.
 
 Current config:
 
 - Default URL: `http://localhost:9200`
-- URL override: `ELASTICSEARCH_URL`
+- URL override: `OPENSEARCH_URL`
 
 ### Local setup
 
-Elasticsearch is defined in `compose.yml` and can be started with:
+OpenSearch is defined in `compose.yml` and can be started with:
 
 ```bash
-docker compose up -d elasticsearch
+docker compose up -d opensearch
 ```
 
-`bin/dev` also starts Elasticsearch before starting the app processes.
+`bin/dev` also starts OpenSearch before starting the app processes.
 
-### Verify Elasticsearch health
+### Verify OpenSearch health
 
 ```bash
 rails searchkick:health

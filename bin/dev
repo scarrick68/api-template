@@ -3,7 +3,7 @@ set -e
 
 # Verify that Docker is installed and compose command is available.
 if ! command -v docker >/dev/null 2>&1; then
-  echo "Docker is required to run Elasticsearch. Version must support 'docker compose' command."
+  echo "Docker is required to run OpenSearch. Version must support 'docker compose' command."
   exit 1
 fi
 
@@ -14,8 +14,8 @@ if ! docker info >/dev/null 2>&1; then
   exit 1
 fi
 
-# Start Elasticsearch
-docker compose up -d elasticsearch
+# Start OpenSearch
+docker compose up -d opensearch
 
 echo "Starting development environment..."
 exec bundle exec foreman start -f Procfile.dev "$@"
