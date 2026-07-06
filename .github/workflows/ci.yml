@@ -78,12 +78,12 @@ jobs:
           - 5432:5432
         options: --health-cmd="pg_isready" --health-interval=10s --health-timeout=5s --health-retries=3
 
-      elasticsearch:
-        image: docker.elastic.co/elasticsearch/elasticsearch:9.4.2
+      opensearch:
+        image: opensearchproject/opensearch:3.3.1
         env:
           discovery.type: single-node
-          xpack.security.enabled: "false"
-          ES_JAVA_OPTS: -Xms512m -Xmx512m
+          DISABLE_SECURITY_PLUGIN: "true"
+          OPENSEARCH_JAVA_OPTS: -Xms512m -Xmx512m
         ports:
           - 9200:9200
 
@@ -105,7 +105,7 @@ jobs:
         with:
           bundler-cache: true
 
-      - name: Wait for Elasticsearch
+      - name: Wait for OpenSearch
         run: |
           for i in {1..30}; do
             if curl -fsS http://localhost:9200/_cluster/health >/dev/null; then
@@ -113,14 +113,14 @@ jobs:
             fi
             sleep 2
           done
-          echo "Elasticsearch did not become ready in time"
+          echo "OpenSearch did not become ready in time"
           exit 1
 
       - name: Run tests
         env:
           RAILS_ENV: test
           DATABASE_URL: postgres://postgres:postgres@localhost:5432
-          ELASTICSEARCH_URL: http://localhost:9200
+          OPENSEARCH_URL: http://localhost:9200
           # RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
           # REDIS_URL: redis://localhost:6379/0
         run: bin/rails db:test:prepare test

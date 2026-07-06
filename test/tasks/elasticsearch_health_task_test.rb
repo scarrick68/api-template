@@ -1,7 +1,7 @@
 require "test_helper"
 require "rake"
 
-class ElasticsearchHealthTaskTest < ActiveSupport::TestCase
+class OpenSearchHealthTaskTest < ActiveSupport::TestCase
   TASK_NAME = "searchkick:health"
 
   setup do
@@ -9,7 +9,7 @@ class ElasticsearchHealthTaskTest < ActiveSupport::TestCase
     task.reenable
   end
 
-  test "prints cluster and version when elasticsearch is healthy" do
+  test "prints cluster and version when opensearch is healthy" do
     Searchkick.client.stubs(:info).returns(
       {
         "cluster_name" => "test-cluster",
@@ -21,7 +21,7 @@ class ElasticsearchHealthTaskTest < ActiveSupport::TestCase
       task.invoke
     end
 
-    assert_includes stdout, "Elasticsearch is healthy"
+    assert_includes stdout, "OpenSearch is healthy"
     assert_includes stdout, "Cluster: test-cluster"
     assert_includes stdout, "Version: 9.4.2"
     assert_empty stderr
@@ -39,7 +39,7 @@ class ElasticsearchHealthTaskTest < ActiveSupport::TestCase
     end
 
     assert_empty stdout
-    assert_includes stderr, "Elasticsearch health check failed"
+    assert_includes stderr, "OpenSearch health check failed"
     assert_includes stderr, "StandardError: connection refused"
   end
 

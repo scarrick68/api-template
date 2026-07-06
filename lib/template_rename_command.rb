@@ -52,7 +52,7 @@ class TemplateRenameCommand
     end
 
     rewrite_file("compose.yml") do |content|
-      content.sub(/^(\s*container_name:\s*).+$/, "\\1#{new_name}-elasticsearch")
+      content.sub(/^(\s*container_name:\s*).+$/, "\\1#{new_name}-opensearch")
     end
 
     rewrite_file("config/deploy.yml") do |content|

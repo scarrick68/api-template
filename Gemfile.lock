@@ -208,15 +208,6 @@ GEM
       dry-logic (~> 1.4)
       zeitwerk (~> 2.6)
     ed25519 (1.4.0)
-    elastic-transport (8.5.2)
-      faraday (< 3)
-      multi_json
-    elasticsearch (9.4.3)
-      elastic-transport (~> 8.3)
-      elasticsearch-api (= 9.4.3)
-    elasticsearch-api (9.4.3)
-      base64
-      multi_json
     erb (6.0.4)
     erubi (1.13.1)
     et-orbi (1.4.0)
@@ -397,6 +388,9 @@ GEM
       racc (~> 1.4)
     nokogiri (1.19.4-x86_64-linux-musl)
       racc (~> 1.4)
+    opensearch-ruby (3.4.0)
+      faraday (>= 1.0, < 3)
+      multi_json (>= 1.0)
     orm_adapter (0.5.0)
     ostruct (0.6.3)
     pagy (9.4.0)
@@ -682,7 +676,6 @@ DEPENDENCIES
   devise (~> 5.0)
   devise_token_auth!
   dry-schema (~> 1.16)
-  elasticsearch (~> 9.4)
   factory_bot_rails
   field_test (~> 1.0)
   flipper (~> 1.4)
@@ -697,6 +690,7 @@ DEPENDENCIES
   letter_opener_web
   lograge (~> 0.14.0)
   mocha
+  opensearch-ruby (~> 3.4)
   pagy (~> 9.0)
   pg (~> 1.1)
   pghero (~> 3.8)
@@ -784,9 +778,6 @@ CHECKSUMS
   dry-schema (1.16.0) sha256=cd3aaeabc0f1af66ec82a29096d4c4fb92a0a58b9dae29a22b1bbceb78985727
   dry-types (1.9.1) sha256=baebeecdb9f8395d6c9d227b62011279440943e3ef2468fe8ccc1ba11467f178
   ed25519 (1.4.0) sha256=16e97f5198689a154247169f3453ef4cfd3f7a47481fde0ae33206cdfdcac506
-  elastic-transport (8.5.2) sha256=5ab56d54aae0584471374368170e04b2c1b5214cad8c9e5d627cb6d07e204fc3
-  elasticsearch (9.4.3) sha256=dc4a6e3b01f1a76933b4a187ac59d9f24e796cd0129f002ffae4d8554390fb42
-  elasticsearch-api (9.4.3) sha256=4618819de729e0436d7b7a0b3d231f1b46d8658e6df6b45f702956aaaeafc992
   erb (6.0.4) sha256=38e3803694be357fe2bfe312487c74beaf9fb4e5beb3e22498952fe1645b95d9
   erubi (1.13.1) sha256=a082103b0885dbc5ecf1172fede897f9ebdb745a4b97a5e8dc63953db1ee4ad9
   et-orbi (1.4.0) sha256=6c7e3c90779821f9e3b324c5e96fda9767f72995d6ae435b96678a4f3e2de8bc
@@ -859,6 +850,7 @@ CHECKSUMS
   nokogiri (1.19.4-arm64-darwin) sha256=a46db9853286e6597b36ebc6953817d15acf3a299583eb3f89fdc6f91dd63527
   nokogiri (1.19.4-x86_64-linux-gnu) sha256=379fae440b28915e3f19d752ce2dcf8465ed2b2fbefd2a7ca0dd497bc981a06a
   nokogiri (1.19.4-x86_64-linux-musl) sha256=17dfb7c1fa194ae02fbf7c51a7afc8d278045ab3fdacfd86f91d02d7b274470b
+  opensearch-ruby (3.4.0) sha256=0a8621686bed3c59b4c23e08cbaef873685a3fe4568e9d2703155ca92b8ca05d
   orm_adapter (0.5.0) sha256=aa5d0be5d540cbb46d3a93e88061f4ece6a25f6e97d6a47122beb84fe595e9b9
   ostruct (0.6.3) sha256=95a2ed4a4bd1d190784e666b47b2d3f078e4a9efda2fccf18f84ddc6538ed912
   pagy (9.4.0) sha256=db3f2e043f684155f18f78be62a81e8d033e39b9f97b1e1a8d12ad38d7bce738
