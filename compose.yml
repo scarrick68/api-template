@@ -1,6 +1,6 @@
 services:
   opensearch:
-    image: opensearchproject/opensearch:3.3.1
+    image: opensearchproject/opensearch:2.19.1
     container_name: api-template-opensearch
     environment:
       discovery.type: single-node

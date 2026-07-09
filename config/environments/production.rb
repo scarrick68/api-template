@@ -78,7 +78,7 @@ Rails.application.configure do
   # config/environments/production.rb
 
   config.allowed_origins =
-    ENV.fetch("CORS_ALLOWED_ORIGINS")
+    ENV.fetch("CORS_ALLOWED_ORIGINS", "")
       .split(",")
       .map(&:strip)
 
