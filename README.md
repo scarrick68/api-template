@@ -107,6 +107,8 @@ Current config:
 
 - Default URL: `http://localhost:9200`
 - URL override: `OPENSEARCH_URL`
+- Local and CI OpenSearch image: `opensearchproject/opensearch:2.19.1`
+- Gem compatibility: `searchkick ~> 6.1` and `opensearch-ruby ~> 3.4` are compatible with OpenSearch 2.x.
 
 ### Local setup
 
