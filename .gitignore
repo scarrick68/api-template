@@ -35,3 +35,7 @@
 
 # Ignore test coverage report
 /coverage/*
+
+# Ignore key files for decrypting credentials and more.
+/config/credentials/*.key
+
