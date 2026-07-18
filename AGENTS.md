@@ -18,6 +18,8 @@ Scaffolded with full Rails stack to support internal tooling from gems.
 - Prefer Rails-native patterns and conventions over introducing new abstractions.
 - Prefer Rails built-in functionality like ActiveJob, ActiveSupport, and SolidQueue etc...
 - Update openapi.yml when adding or changing API endpoints.
+- Do not optimize for hypothetical misuse. Optimize for the current workflow and its established preconditions.
+- Do not always use dependency injection by default. use it when it makes sense, but testing and mocking are not the only reasons to use dependency injection. Those uses can be solved with other techniques like stubbing, mocking, and fixtures.
 
 ## Testing
 
