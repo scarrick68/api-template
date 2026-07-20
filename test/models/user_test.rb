@@ -49,5 +49,4 @@ class UserTest < ActiveSupport::TestCase
 
     assert_includes user.field_test_memberships, membership
   end
-
 end
