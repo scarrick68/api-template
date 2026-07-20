@@ -36,6 +36,10 @@ Scaffolded with full Rails stack to support internal tooling from gems.
 - Assert API responses against the OpenAPI contract when possible to ensure the contract is kept up to date and accurate.
 - Include realistic examples in OpenAPI spec for new endpoints to ensure the contract is useful for consumers.
 - Prefer using factorybot factories to create test data instead of inline creation of records in tests.
+- Prefer FactoryBot factories when testing existing model instances and idempotent behavior
+- Prefer inlining test data setup over helper methods. Seeing the data setup in the test itself is more readable and easier to understand than having to jump to a helper method to see what data is being created.
+- Run tests with `bin/rails test` in local development env for individual files or directories. Use `bin/ci` to run all tests in CI.
+- One data factory per file
 
 Run targeted tests with:
 
