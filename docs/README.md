@@ -5,6 +5,7 @@ This directory contains product and operational documentation for the API templa
 ## Contents
 
 - OpenAPI specification: openapi.yml
+- Local production mode boundaries: local-prod-mode.md
 - Authentication model and safety defaults: authentication.md
 - Database migration safety defaults: strong-migrations.md
 - Metrics model and observability pipeline: metrics-model.md

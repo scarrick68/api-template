@@ -36,16 +36,19 @@ class LocalProdEnvSetupTest < ActiveSupport::TestCase
 
       created = setup.ensure_env_file!
       env_path = File.join(tmpdir, ".env.production.local")
+      user_env_path = File.join(tmpdir, ".env.production.local.user")
       env_contents = File.read(env_path)
 
       assert created
       assert File.exist?(env_path)
+      assert File.exist?(user_env_path)
       assert_includes env_contents, "DATABASE_URL=postgres://dev_user:dev_pass@127.0.0.1:5433/renamed_app_development"
       assert_includes env_contents, "BLAZER_DATABASE_URL=postgres://dev_user:dev_pass@127.0.0.1:5433/renamed_app_development"
       assert_includes env_contents, "CORS_ALLOWED_ORIGINS=http://localhost:3000"
       assert_includes env_contents, "PORT=5001"
       assert_includes env_contents, "APP_HOST=localhost:5001"
       assert_includes stderr.string, "Created .env.production.local with inferred defaults."
+      assert_includes stderr.string, "Created .env.production.local.user for local overrides"
     end
   end
 
@@ -59,6 +62,35 @@ class LocalProdEnvSetupTest < ActiveSupport::TestCase
 
       refute created
       assert_equal "DATABASE_URL=postgres://localhost:5432/custom\nCORS_ALLOWED_ORIGINS=http://localhost:3000\n", File.read(env_path)
+    end
+  end
+
+  test "creates user override file when missing without affecting generated file" do
+    Dir.mktmpdir("local-prod-user-env-create") do |tmpdir|
+      generated_env_path = File.join(tmpdir, ".env.production.local")
+      user_env_path = File.join(tmpdir, ".env.production.local.user")
+      File.write(generated_env_path, "DATABASE_URL=postgres://localhost:5432/custom\nCORS_ALLOWED_ORIGINS=http://localhost:3000\n")
+
+      setup = LocalProd::EnvSetup.new(root_path: tmpdir)
+      created = setup.ensure_env_file!
+
+      refute created
+      assert File.exist?(user_env_path)
+      assert_equal "DATABASE_URL=postgres://localhost:5432/custom\nCORS_ALLOWED_ORIGINS=http://localhost:3000\n", File.read(generated_env_path)
+    end
+  end
+
+  test "does not overwrite existing user override file" do
+    Dir.mktmpdir("local-prod-user-env-preserve") do |tmpdir|
+      generated_env_path = File.join(tmpdir, ".env.production.local")
+      user_env_path = File.join(tmpdir, ".env.production.local.user")
+      File.write(generated_env_path, "DATABASE_URL=postgres://localhost:5432/custom\nCORS_ALLOWED_ORIGINS=http://localhost:3000\n")
+      File.write(user_env_path, "DATABASE_URL=postgres://localhost:5432/override\n")
+
+      setup = LocalProd::EnvSetup.new(root_path: tmpdir)
+      setup.ensure_env_file!
+
+      assert_equal "DATABASE_URL=postgres://localhost:5432/override\n", File.read(user_env_path)
     end
   end
 
@@ -132,7 +164,7 @@ class LocalProdEnvSetupTest < ActiveSupport::TestCase
       end
 
       assert_includes error.message, "Selected development database 'product_api_development' was not found"
-      assert_includes error.message, "Create it or set DATABASE_URL in .env.production.local."
+      assert_includes error.message, "Create it or set DATABASE_URL in .env.production.local.user"
     end
   end
 

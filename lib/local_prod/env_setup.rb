@@ -5,6 +5,7 @@ require "uri"
 module LocalProd
   class EnvSetup
     ENV_FILENAME = ".env.production.local"
+    USER_ENV_FILENAME = ".env.production.local.user"
 
     DEFAULT_PORT = "5001"
     DEFAULT_WEB_ORIGIN = "http://localhost:3000"
@@ -26,21 +27,30 @@ module LocalProd
     end
 
     def ensure_env_file!
+      created_generated = false
+
       if File.exist?(env_file_path)
         ensure_existing_env_defaults!
-        return false
+      else
+        File.write(env_file_path, default_env_contents)
+
+        stderr.puts("Created #{ENV_FILENAME} with inferred defaults.")
+        stderr.puts("Review and adjust the values as needed for your machine.")
+
+        created_generated = true
       end
 
-      File.write(env_file_path, default_env_contents)
+      ensure_user_env_file!
 
-      stderr.puts("Created #{ENV_FILENAME} with inferred defaults.")
-      stderr.puts("Review and adjust the values as needed for your machine.")
-
-      true
+      created_generated
     end
 
     def env_file_path
       File.join(root_path, ENV_FILENAME)
+    end
+
+    def user_env_file_path
+      File.join(root_path, USER_ENV_FILENAME)
     end
 
     def database_diagnostics
@@ -94,6 +104,22 @@ module LocalProd
       File.write(env_file_path, "#{file_contents}#{separator}#{appended_lines.join("\n")}\n")
 
       stderr.puts("Added missing local defaults to #{ENV_FILENAME}: #{missing_defaults.keys.join(", ")}")
+    end
+
+    def ensure_user_env_file!
+      return if File.exist?(user_env_file_path)
+
+      File.write(user_env_file_path, user_env_template)
+      stderr.puts("Created #{USER_ENV_FILENAME} for local overrides (loaded after #{ENV_FILENAME}).")
+    end
+
+    def user_env_template
+      <<~ENVVARS
+        # Local production overrides for your machine.
+        # This file is loaded after #{ENV_FILENAME} and wins on key conflicts.
+        # Example:
+        # DATABASE_URL=postgres://localhost:5432/my_custom_db
+      ENVVARS
     end
 
     def env_key_present?(file_contents, key)
@@ -244,7 +270,7 @@ module LocalProd
 
       raise StandardError,
         "Selected development database '#{selected_database_name}' was not found on this PostgreSQL server. " \
-            "Create it or set DATABASE_URL in #{ENV_FILENAME}."
+            "Create it or set DATABASE_URL in #{USER_ENV_FILENAME} (or #{ENV_FILENAME})."
     end
 
     def inferred_app_name
