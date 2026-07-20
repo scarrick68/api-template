@@ -2,6 +2,16 @@
 
 This template keeps production email setup intentionally simple.
 
+## Inspecting email configuration
+
+Use the built-in doctor checks to inspect resolved Action Mailer config:
+
+- `bin/rails email:doctor`
+- `bin/rails email:doctor:launch_ready`
+
+Normal doctor reports warnings for launch-test defaults (like `:test` delivery).
+Launch-ready doctor fails for incomplete external email setup.
+
 ## Default behavior
 
 The template sets Action Mailer to the non-delivering test adapter in `config/environments/production.rb`:
