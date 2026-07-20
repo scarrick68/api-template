@@ -20,6 +20,7 @@ class LocalProdEnvSetupTest < ActiveSupport::TestCase
       stderr = StringIO.new
       setup = LocalProd::EnvSetup.new(
         root_path: tmpdir,
+        env: {},
         stderr: stderr,
         database_catalog_reader: ->(**_kwargs) { [ "renamed_app_development" ] }
       )
@@ -57,7 +58,7 @@ class LocalProdEnvSetupTest < ActiveSupport::TestCase
       env_path = File.join(tmpdir, ".env.production.local")
       File.write(env_path, "DATABASE_URL=postgres://localhost:5432/custom\nCORS_ALLOWED_ORIGINS=http://localhost:3000\n")
 
-      setup = LocalProd::EnvSetup.new(root_path: tmpdir)
+      setup = LocalProd::EnvSetup.new(root_path: tmpdir, env: {})
       created = setup.ensure_env_file!
 
       refute created
@@ -71,7 +72,7 @@ class LocalProdEnvSetupTest < ActiveSupport::TestCase
       user_env_path = File.join(tmpdir, ".env.production.local.user")
       File.write(generated_env_path, "DATABASE_URL=postgres://localhost:5432/custom\nCORS_ALLOWED_ORIGINS=http://localhost:3000\n")
 
-      setup = LocalProd::EnvSetup.new(root_path: tmpdir)
+      setup = LocalProd::EnvSetup.new(root_path: tmpdir, env: {})
       created = setup.ensure_env_file!
 
       refute created
@@ -87,7 +88,7 @@ class LocalProdEnvSetupTest < ActiveSupport::TestCase
       File.write(generated_env_path, "DATABASE_URL=postgres://localhost:5432/custom\nCORS_ALLOWED_ORIGINS=http://localhost:3000\n")
       File.write(user_env_path, "DATABASE_URL=postgres://localhost:5432/override\n")
 
-      setup = LocalProd::EnvSetup.new(root_path: tmpdir)
+      setup = LocalProd::EnvSetup.new(root_path: tmpdir, env: {})
       setup.ensure_env_file!
 
       assert_equal "DATABASE_URL=postgres://localhost:5432/override\n", File.read(user_env_path)
@@ -100,7 +101,7 @@ class LocalProdEnvSetupTest < ActiveSupport::TestCase
       File.write(env_path, "DATABASE_URL=postgres://localhost:5432/custom\n")
 
       stderr = StringIO.new
-      setup = LocalProd::EnvSetup.new(root_path: tmpdir, stderr: stderr)
+      setup = LocalProd::EnvSetup.new(root_path: tmpdir, env: {}, stderr: stderr)
       created = setup.ensure_env_file!
 
       refute created
@@ -115,6 +116,7 @@ class LocalProdEnvSetupTest < ActiveSupport::TestCase
     Dir.mktmpdir("my-app-template") do |tmpdir|
       setup = LocalProd::EnvSetup.new(
         root_path: tmpdir,
+        env: {},
         database_catalog_reader: ->(**_kwargs) { [] }
       )
       setup.stubs(:database_config_for).with("development").returns({})
@@ -132,6 +134,7 @@ class LocalProdEnvSetupTest < ActiveSupport::TestCase
     Dir.mktmpdir("catalog-derived-development-db") do |tmpdir|
       setup = LocalProd::EnvSetup.new(
         root_path: tmpdir,
+        env: {},
         database_catalog_reader: ->(**_kwargs) { [ "catalog_derived_development", "catalog_derived_production" ] }
       )
       setup.stubs(:database_config_for).with("development").returns(
@@ -154,6 +157,7 @@ class LocalProdEnvSetupTest < ActiveSupport::TestCase
     Dir.mktmpdir("catalog-missing-production-db") do |tmpdir|
       setup = LocalProd::EnvSetup.new(
         root_path: tmpdir,
+        env: {},
         database_catalog_reader: ->(**_kwargs) { [ "postgres" ] }
       )
       setup.stubs(:database_config_for).with("development").returns({ "database" => "product_api_development" })
