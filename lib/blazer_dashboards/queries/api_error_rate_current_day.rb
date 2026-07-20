@@ -6,7 +6,7 @@ module BlazerDashboards
           with totals as (
             select
               date_trunc('hour', occurred_at) as hour,
-              sum(value) as total
+              round(sum(value)::numeric, 2) as total
             from metrics
             where name = 'observability.api.request.count'
               and occurred_at >= date_trunc('day', now())
@@ -15,7 +15,7 @@ module BlazerDashboards
           errors as (
             select
               date_trunc('hour', occurred_at) as hour,
-              sum(value) as errors
+              round(sum(value)::numeric, 2) as errors
             from metrics
             where name = 'observability.api.request.count'
               and (labels->>'status')::int between 400 and 599
@@ -24,7 +24,7 @@ module BlazerDashboards
           )
           select
             totals.hour,
-            coalesce(errors.errors, 0) as errors,
+            round(coalesce(errors.errors, 0)::numeric, 2) as errors,
             totals.total,
             round((100.0 * coalesce(errors.errors, 0) / nullif(totals.total, 0))::numeric, 2) as error_rate_percent
           from totals

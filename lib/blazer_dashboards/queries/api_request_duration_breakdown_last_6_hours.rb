@@ -5,10 +5,10 @@ module BlazerDashboards
         <<~SQL
           select
             date_trunc('minute', occurred_at) as minute,
-            avg(value) filter (where name = 'observability.api.request.duration.app_compute_ms') as app_compute_ms,
-            avg(value) filter (where name = 'observability.api.request.duration.db_ms') as db_ms,
-            avg(value) filter (where name = 'observability.api.request.duration.view_ms') as view_ms,
-            avg(value) filter (where name = 'observability.api.request.duration_ms') as total_ms
+            round((avg(value) filter (where name = 'observability.api.request.duration.app_compute_ms'))::numeric, 2) as app_compute_ms,
+            round((avg(value) filter (where name = 'observability.api.request.duration.db_ms'))::numeric, 2) as db_ms,
+            round((avg(value) filter (where name = 'observability.api.request.duration.view_ms'))::numeric, 2) as view_ms,
+            round((avg(value) filter (where name = 'observability.api.request.duration_ms'))::numeric, 2) as total_ms
           from metrics
           where occurred_at >= now() - interval '6 hours'
             and name in (

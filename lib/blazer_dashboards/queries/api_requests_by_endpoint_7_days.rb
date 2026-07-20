@@ -6,7 +6,7 @@ module BlazerDashboards
           select
             dimensions->>'controller' as controller,
             dimensions->>'action' as action,
-            sum(value) as requests
+            round(sum(value)::numeric, 2) as requests
           from rollups
           where name = 'observability.api.endpoint.requests'
             and interval = 'day'

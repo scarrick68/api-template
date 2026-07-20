@@ -10,21 +10,49 @@ FactoryBot.define do
     labels { {} }
     properties { {} }
 
+    transient do
+      http_method { "GET" }
+      controller_name { "Api::V1::UsersController" }
+      action_name { "show" }
+      http_status { 200 }
+      request_path { "/api/v1/users/me" }
+    end
+
     trait :api_request do
       name { Metric::API_REQUEST_COUNT }
       metric_type { "counter" }
       value { 1 }
       labels do
         {
-          method: "GET",
-          controller: "Api::V1::UsersController",
-          action: "show",
-          status: 200
+          method: http_method,
+          controller: controller_name,
+          action: action_name,
+          status: http_status
         }
       end
       properties do
         {
-          path: "/api/v1/users/me",
+          path: request_path,
+          duration_ms: 12
+        }
+      end
+    end
+
+    trait :api_request_count do
+      name { Metric::API_REQUEST_COUNT }
+      metric_type { "counter" }
+      value { 1 }
+      labels do
+        {
+          method: http_method,
+          controller: controller_name,
+          action: action_name,
+          status: http_status
+        }
+      end
+      properties do
+        {
+          path: request_path,
           duration_ms: 12
         }
       end
@@ -36,13 +64,58 @@ FactoryBot.define do
       value { 12 }
       labels do
         {
-          method: "GET",
-          controller: "Api::V1::UsersController",
-          action: "show",
-          status: 200
+          method: http_method,
+          controller: controller_name,
+          action: action_name,
+          status: http_status
         }
       end
-      properties { { path: "/api/v1/users/me" } }
+      properties { { path: request_path } }
+    end
+
+    trait :api_request_app_compute_duration do
+      name { Metric::API_REQUEST_APP_COMPUTE_DURATION_MS }
+      metric_type { "histogram" }
+      value { 12 }
+      labels do
+        {
+          method: http_method,
+          controller: controller_name,
+          action: action_name,
+          status: http_status
+        }
+      end
+      properties { { path: request_path } }
+    end
+
+    trait :api_request_db_duration do
+      name { Metric::API_REQUEST_DB_DURATION_MS }
+      metric_type { "histogram" }
+      value { 12 }
+      labels do
+        {
+          method: http_method,
+          controller: controller_name,
+          action: action_name,
+          status: http_status
+        }
+      end
+      properties { { path: request_path } }
+    end
+
+    trait :api_request_view_duration do
+      name { Metric::API_REQUEST_VIEW_DURATION_MS }
+      metric_type { "histogram" }
+      value { 12 }
+      labels do
+        {
+          method: http_method,
+          controller: controller_name,
+          action: action_name,
+          status: http_status
+        }
+      end
+      properties { { path: request_path } }
     end
   end
 end
