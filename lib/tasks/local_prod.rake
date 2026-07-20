@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require_relative "../local_prod/env_setup"
-
 namespace :local_prod do
   desc "Create .env.production.local with inferred defaults (no overwrite if it already exists)"
   task setup_env: :environment do
