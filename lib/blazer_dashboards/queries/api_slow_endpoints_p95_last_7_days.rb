@@ -6,8 +6,8 @@ module BlazerDashboards
           select
             dimensions->>'controller' as controller,
             dimensions->>'action' as action,
-            max(value) as p95_ms,
-            count(*) as samples
+            round(max(value)::numeric, 2) as p95_ms,
+            round(count(*)::numeric, 2) as samples
           from rollups
           where name = 'observability.api.endpoint.duration.p95_ms'
             and interval = 'hour'

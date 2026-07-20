@@ -6,7 +6,7 @@ module BlazerDashboards
           with totals as (
             select
               time as day,
-              sum(value) as total
+              round(sum(value)::numeric, 2) as total
             from rollups
             where name = 'observability.api.endpoint.requests'
               and interval = 'day'
@@ -16,7 +16,7 @@ module BlazerDashboards
           client_errors as (
             select
               time as day,
-              sum(value) as client_errors
+              round(sum(value)::numeric, 2) as client_errors
             from rollups
             where name = 'observability.api.endpoint.client_errors'
               and interval = 'day'
@@ -26,7 +26,7 @@ module BlazerDashboards
           server_errors as (
             select
               time as day,
-              sum(value) as server_errors
+              round(sum(value)::numeric, 2) as server_errors
             from rollups
             where name = 'observability.api.endpoint.server_errors'
               and interval = 'day'
@@ -35,7 +35,7 @@ module BlazerDashboards
           )
           select
             totals.day,
-            coalesce(client_errors.client_errors, 0) + coalesce(server_errors.server_errors, 0) as errors,
+            round((coalesce(client_errors.client_errors, 0) + coalesce(server_errors.server_errors, 0))::numeric, 2) as errors,
             totals.total,
             round(
               (

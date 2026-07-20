@@ -5,7 +5,7 @@ module BlazerDashboards
         <<~SQL
           select
             time as day,
-            sum(value) as requests
+            round(sum(value)::numeric, 2) as requests
           from rollups
           where name = 'observability.api.endpoint.requests'
             and interval = 'day'

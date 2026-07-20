@@ -7,10 +7,10 @@ module BlazerDashboards
             select
               labels->>'controller' as controller,
               labels->>'action' as action,
-              avg(value) filter (where name = 'observability.api.request.duration_ms') as total_ms,
-              avg(value) filter (where name = 'observability.api.request.duration.db_ms') as db_ms,
-              avg(value) filter (where name = 'observability.api.request.duration.app_compute_ms') as app_compute_ms,
-              avg(value) filter (where name = 'observability.api.request.duration.view_ms') as view_ms
+              round((avg(value) filter (where name = 'observability.api.request.duration_ms'))::numeric, 2) as total_ms,
+              round((avg(value) filter (where name = 'observability.api.request.duration.db_ms'))::numeric, 2) as db_ms,
+              round((avg(value) filter (where name = 'observability.api.request.duration.app_compute_ms'))::numeric, 2) as app_compute_ms,
+              round((avg(value) filter (where name = 'observability.api.request.duration.view_ms'))::numeric, 2) as view_ms
             from metrics
             where occurred_at >= now() - interval '24 hours'
               and name in (
