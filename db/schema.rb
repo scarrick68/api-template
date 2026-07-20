@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_06_30_233000) do
+ActiveRecord::Schema[8.1].define(version: 2026_07_19_113100) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -176,6 +176,16 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_30_233000) do
     t.string "status"
     t.datetime "updated_at", null: false
     t.index ["creator_id"], name: "index_blazer_queries_on_creator_id"
+  end
+
+  create_table "blazer_query_installations", force: :cascade do |t|
+    t.bigint "blazer_query_id"
+    t.datetime "created_at", null: false
+    t.datetime "installed_at", null: false
+    t.string "query_key", null: false
+    t.integer "query_version", null: false
+    t.datetime "updated_at", null: false
+    t.index ["query_key", "query_version"], name: "idx_on_query_key_query_version_fd5b34ad4d", unique: true
   end
 
   create_table "data_artifacts", force: :cascade do |t|
@@ -470,6 +480,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_30_233000) do
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "admins", "users"
+  add_foreign_key "blazer_query_installations", "blazer_queries", on_delete: :nullify
   add_foreign_key "data_import_runs", "data_artifacts"
   add_foreign_key "solid_errors_occurrences", "solid_errors", column: "error_id"
 end

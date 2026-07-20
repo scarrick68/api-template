@@ -1,108 +1,49 @@
 # Production Email Setup
 
-This guide covers production email decisions, configuration, and launch validation. Follow general Rails email setup instructions as well as those of your ESP. This document is a high level checklist written in preparation for initial launch, but should not be considered exhaustive for all future email needs. Update and expand as your product and email requirements evolve.
+This template keeps production email setup intentionally simple.
 
-## 1) Choose an Email Service Provider
+## Inspecting email configuration
 
-Choose one provider for transactional email delivery.
+Use the built-in doctor checks to inspect resolved Action Mailer config:
 
-Selection criteria:
-- Deliverability and reputation tooling
-- API and SMTP support
-- Webhooks for delivery and bounce events
-- Cost and regional coverage
+- `bin/rails email:doctor`
+- `bin/rails email:doctor:launch_ready`
 
-Examples:
-- Postmark
-- Resend
-- SendGrid
-- Amazon SES
+Normal doctor reports warnings for launch-test defaults (like `:test` delivery).
+Launch-ready doctor fails for incomplete external email setup.
 
-## 2) Define Required Environment Variables
+## Default behavior
 
-Set these values in your production environment.
+The template sets Action Mailer to the non-delivering test adapter in `config/environments/production.rb`:
 
-Core host values:
-- APP_HOST
-- FRONTEND_URL
-- API_URL
+- `config.action_mailer.delivery_method = :test`
+- `config.action_mailer.perform_deliveries = true`
+- `config.action_mailer.raise_delivery_errors = false`
 
-Mailer credentials:
-- SMTP or API credentials from your ESP
+This allows signup and other mail-triggering flows to complete without SMTP infrastructure.
 
-Recommended sender values:
-- MAILER_SENDER
+## What works in default mode
 
-## 3) Configure Action Mailer Host
+- No SMTP connection attempts are made.
+- Mailer rendering still happens.
+- `deliver_now` and `deliver_later` calls do not fail due to missing ESP credentials.
+- Operators can manually confirm users through Avo during launch testing.
 
-Set default URL options in production config so links in emails point to your deployed host.
+## Limitations in default mode
 
-Example:
+- No email is delivered to recipients.
+- Confirmation, reset, and other outbound-user email flows are not externally functional.
 
-    config.action_mailer.default_url_options = {
-      host: ENV.fetch("APP_HOST")
-    }
+## Moving to a real provider
 
-Also ensure mail delivery is enabled in production and configured for your chosen transport.
+When you are ready for real delivery, replace the test-delivery block in `config/environments/production.rb` with your provider's normal Rails setup.
 
-## 4) Set Sender Identity And Domain Authentication
+Typical steps:
 
-Replace Devise placeholder sender with a real domain sender in the Devise initializer.
+1. Choose an ESP.
+2. Add any required gem.
+3. Configure Action Mailer delivery method/settings in production config and/or an initializer.
+4. Add secrets/environment variables required by that provider.
+5. Verify sender/domain setup (SPF, DKIM, DMARC) per provider docs.
 
-Example:
-
-    config.mailer_sender = "no-reply@yourdomain.com"
-
-Complete sender domain setup:
-- SPF
-- DKIM
-- DMARC
-
-Do not go live until domain authentication is passing in your ESP dashboard.
-
-## 5) Decide Which Emails Are Enabled At Launch
-
-Minimum recommended launch scope:
-- Admin password reset
-- User password reset
-- User confirmation
-
-Optional, based on product readiness:
-- Transactional product emails
-
-Document owners for each email type and expected triggers.
-
-## 6) Add Production Smoke Test Runbook
-
-After deploy, run this checklist:
-
-1. Trigger user password reset.
-2. Confirm message delivery in app mailbox and ESP activity logs.
-3. Validate links resolve to production host.
-4. Check spam placement across at least two providers.
-5. Trigger admin password reset and confirm delivery.
-6. Confirm user confirmation email delivery for a new account.
-
-## 7) Monitoring And Failure Handling
-
-Add monitoring before launch:
-- Track mail delivery failures and timeouts.
-- Monitor bounce and complaint rates.
-- Alert on sustained delivery failures.
-
-Recommended implementation notes:
-- Subscribe to ESP webhook events.
-- Log mailer message IDs for traceability.
-- Define an escalation path for incident response.
-
-## 8) Launch Readiness Checklist
-
-Mark each item complete before production launch:
-- ESP selected and credentials configured
-- APP_HOST, FRONTEND_URL, API_URL set
-- Action Mailer default host configured
-- Devise mailer sender updated
-- SPF, DKIM, DMARC validated
-- Required email types enabled
-- Smoke test runbook executed successfully
-- Monitoring and alerts enabled
+The template does not manage provider-specific integrations.

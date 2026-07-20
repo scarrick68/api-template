@@ -26,7 +26,7 @@ module BlazerDashboards
             totals.hour,
             coalesce(errors.errors, 0) as errors,
             totals.total,
-            round(100.0 * coalesce(errors.errors, 0) / nullif(totals.total, 0), 2) as error_rate_percent
+            round((100.0 * coalesce(errors.errors, 0) / nullif(totals.total, 0))::numeric, 2) as error_rate_percent
           from totals
           left join errors on errors.hour = totals.hour
           order by totals.hour

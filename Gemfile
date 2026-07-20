@@ -116,3 +116,5 @@ gem "lograge", "~> 0.14.0"
 gem "strong_migrations", "~> 2.8"
 
 gem "aasm", "~> 5.5"
+
+gem "pastel", "~> 0.8.0", require: false

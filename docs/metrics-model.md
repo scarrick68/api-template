@@ -120,3 +120,16 @@ flowchart LR
 - Endpoint rollups are treated as the primary aggregate layer for volume and error trends.
 - Searchjoy rollups follow the same shared rollup retention lifecycle as API rollups.
 - Blazer dashboard SQL is intentionally simple at read time, with complexity pushed into rollup jobs.
+
+## Installing Default Blazer Content
+
+To bootstrap the bundled queries and dashboard entries:
+
+1. `bin/rails blazer:default_queries:install`
+2. `bin/rails blazer:install_dashboards`
+
+Notes:
+
+- The default-queries task installs versioned query records with idempotent installation markers.
+- The dashboard task wires those queries into the API Observability dashboard.
+- Both tasks are safe to rerun.
