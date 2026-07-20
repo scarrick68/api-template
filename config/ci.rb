@@ -14,6 +14,9 @@ CI.run do
   step "Services: Postgres", "ruby", "-r./system/support/local_ci/services", "-e", "LocalCi::Services.wait_for_postgres!"
   step "Services: OpenSearch", "ruby", "-r./system/support/local_ci/services", "-e", "LocalCi::Services.wait_for_opensearch!"
 
+  # Informational check: validate local production boot path without blocking local CI.
+  step "Smoke: Prod mode launch (non-blocking)", "bundle exec rails local_ci:prod_local_smoke || true"
+
   step "Tests: Factory Lint", "env RAILS_ENV=test bin/rails runner 'FactoryBot.lint(traits: true)'"
   step "Tests: Validate Openapi YAML", "bin/rails yaml:lint[docs/openapi.yml]"
   step "Tests: Rails", "COVERAGE=true bin/rails test"
