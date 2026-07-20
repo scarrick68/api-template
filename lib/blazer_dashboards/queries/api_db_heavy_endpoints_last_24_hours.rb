@@ -28,7 +28,7 @@ module BlazerDashboards
             db_ms,
             app_compute_ms,
             view_ms,
-            round(100.0 * db_ms / nullif(total_ms, 0), 2) as db_percent
+            round((100.0 * db_ms / nullif(total_ms, 0))::numeric, 2) as db_percent
           from endpoint_avgs
           where total_ms is not null and total_ms > 0
           order by db_percent desc nulls last, total_ms desc nulls last

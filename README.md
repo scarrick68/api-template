@@ -236,6 +236,28 @@ To access in non-development, sign in through session auth first:
 
 - `GET /admins/sign_in`
 
+## Blazer Default Dashboard Installation
+
+`bin/setup` now runs Blazer default query and dashboard installation automatically for local bootstrap.
+
+Use these tasks to install the bundled Blazer content in a local or production database.
+
+Run in this order:
+
+1. `bin/rails blazer:default_queries:install`
+2. `bin/rails blazer:install_dashboards`
+
+What each task does:
+
+- `blazer:default_queries:install` installs versioned default queries and records installation markers so reruns are safe.
+- `blazer:install_dashboards` creates/updates the API Observability dashboard and links dashboard entries to queries.
+
+Expected behavior:
+
+- Safe to rerun.
+- Existing installed query markers are skipped.
+- Operators can still edit or delete query names/statements directly in Blazer after install.
+
 ## GoodJob Dashboard
 
 GoodJob is mounted at:

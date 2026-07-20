@@ -38,8 +38,10 @@ module BlazerDashboards
             coalesce(client_errors.client_errors, 0) + coalesce(server_errors.server_errors, 0) as errors,
             totals.total,
             round(
-              100.0 * (coalesce(client_errors.client_errors, 0) + coalesce(server_errors.server_errors, 0))
-              / nullif(totals.total, 0),
+              (
+                100.0 * (coalesce(client_errors.client_errors, 0) + coalesce(server_errors.server_errors, 0))
+                / nullif(totals.total, 0)
+              )::numeric,
               2
             ) as error_rate_percent
           from totals
