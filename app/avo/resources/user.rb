@@ -18,7 +18,6 @@ class Avo::Resources::User < Avo::BaseResource
     field :name, as: :text
     field :nickname, as: :text
     field :provider, as: :text
-    field :tokens, as: :code
     field :uid, as: :text
     field :unconfirmed_email, as: :text
     field :field_test_memberships, as: :has_many
