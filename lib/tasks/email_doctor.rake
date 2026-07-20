@@ -1,5 +1,5 @@
-require Rails.root.join("lib/cli/colors")
 
+# bundle exec rails email:doctor
 namespace :email do
   def print_email_doctor_output(result)
     puts Cli::Colors.heading("Email delivery")

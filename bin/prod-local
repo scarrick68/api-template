@@ -1,0 +1,41 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require "bundler/setup"
+require "dotenv"
+
+ROOT_PATH = File.expand_path("..", __dir__)
+ENV_FILE = File.join(ROOT_PATH, ".env.production.local")
+USER_ENV_FILE = File.join(ROOT_PATH, ".env.production.local.user")
+DEFAULT_PORT = "5001"
+
+def run
+	exit(1) unless system("bundle", "exec", "rails", "local_prod:setup_env")
+
+	Dotenv.load(ENV_FILE)
+	Dotenv.overload(USER_ENV_FILE) if File.exist?(USER_ENV_FILE)
+
+	required = %w[DATABASE_URL SECRET_KEY_BASE APP_HOST]
+	missing = required.reject { |key| ENV[key].to_s.strip != "" }
+
+	unless missing.empty?
+		warn("Missing local production variables: #{missing.join(', ')}")
+		warn("Update .env.production.local.user (or .env.production.local) and retry.")
+		exit(1)
+	end
+
+	exec(
+		{
+			"RAILS_ENV" => "production",
+			"RACK_ENV" => "production"
+		},
+		"bundle",
+		"exec",
+		"rails",
+		"server",
+		"-p",
+		ENV.fetch("PORT", DEFAULT_PORT)
+	)
+end
+
+run

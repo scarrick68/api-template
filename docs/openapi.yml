@@ -40,6 +40,10 @@ paths:
         '200':
           description: Login success
           headers:
+            Authorization:
+              schema:
+                type: string
+                example: Bearer eyJhbGciOi...
             access-token:
               schema:
                 type: string
@@ -73,6 +77,7 @@ paths:
         - AccessTokenAuth: []
           ClientAuth: []
           UidAuth: []
+        - BearerAuth: []
       responses:
         '200':
           description: Logout success
@@ -93,6 +98,7 @@ paths:
         - AccessTokenAuth: []
           ClientAuth: []
           UidAuth: []
+        - BearerAuth: []
       responses:
         '200':
           description: Valid token
@@ -113,6 +119,7 @@ paths:
         - AccessTokenAuth: []
           ClientAuth: []
           UidAuth: []
+        - BearerAuth: []
       parameters:
         - in: query
           name: page
@@ -173,6 +180,7 @@ paths:
         - AccessTokenAuth: []
           ClientAuth: []
           UidAuth: []
+        - BearerAuth: []
       responses:
         '200':
           description: Current user
@@ -199,6 +207,7 @@ paths:
         - AccessTokenAuth: []
           ClientAuth: []
           UidAuth: []
+        - BearerAuth: []
       responses:
         '200':
           description: User detail
@@ -224,6 +233,7 @@ paths:
         - AccessTokenAuth: []
           ClientAuth: []
           UidAuth: []
+        - BearerAuth: []
       requestBody:
         required: true
         content:
@@ -261,6 +271,7 @@ paths:
         - AccessTokenAuth: []
           ClientAuth: []
           UidAuth: []
+        - BearerAuth: []
       requestBody:
         required: true
         content:
@@ -319,6 +330,9 @@ paths:
                 $ref: '#/components/schemas/ErrorResponse'
 components:
   securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
     AccessTokenAuth:
       type: apiKey
       in: header

@@ -28,6 +28,7 @@ Things you may want to cover:
 Operational and launch documentation lives in `docs/`.
 
 - Documentation index: `docs/README.md`
+- Local production mode boundaries: `docs/local-prod-mode.md`
 - Production email setup: `docs/deploy/production-email-setup.md`
 - Metrics model and observability pipeline: `docs/metrics-model.md`
 - Ruby code quality metrics: `docs/rubycritic.md`
