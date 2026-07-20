@@ -1,6 +1,8 @@
 require "test_helper"
 
 class CorsTest < ActionDispatch::IntegrationTest
+  EXPOSED_AUTH_HEADERS = [ "authorization", "access-token", "client", "uid", "expiry", "token-type" ].freeze
+
   test "preflight request returns CORS headers for allowed origin" do
     origin = "http://localhost:3000"
 
@@ -30,5 +32,18 @@ class CorsTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_nil response.headers["access-control-allow-origin"]
+  end
+
+  test "allowed origin responses expose auth headers used by browser clients" do
+    origin = "http://localhost:3000"
+
+    get "/up", headers: { "Origin" => origin }
+
+    assert_response :success
+    exposed = response.headers["access-control-expose-headers"].to_s.downcase.split(/\s*,\s*/)
+
+    EXPOSED_AUTH_HEADERS.each do |header|
+      assert_includes exposed, header
+    end
   end
 end
