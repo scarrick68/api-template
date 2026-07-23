@@ -24,8 +24,8 @@ module BlazerDashboards
           )
           select
             totals.hour,
-            round(coalesce(errors.errors, 0)::numeric, 2) as errors,
             totals.total,
+            round(coalesce(errors.errors, 0)::numeric, 2) as errors,
             round((100.0 * coalesce(errors.errors, 0) / nullif(totals.total, 0))::numeric, 2) as error_rate_percent
           from totals
           left join errors on errors.hour = totals.hour
