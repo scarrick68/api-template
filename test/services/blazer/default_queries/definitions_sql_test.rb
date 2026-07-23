@@ -1,11 +1,6 @@
 require "test_helper"
 
 class BlazerDefaultQueriesDefinitionsSqlTest < ActiveSupport::TestCase
-  setup do
-    Metric.delete_all
-    Rollup.delete_all
-  end
-
   test "all default query sql statements are valid" do
     definitions = Blazer::DefaultQueries::Definitions.all
 
@@ -41,7 +36,7 @@ class BlazerDefaultQueriesDefinitionsSqlTest < ActiveSupport::TestCase
     create(
       :metric,
       :api_request_count,
-      occurred_at: 1.hour.ago,
+      occurred_at: Time.current.noon,
       value: 7,
       http_method: "GET",
       controller_name: "Api::V1::UsersController",
@@ -56,10 +51,12 @@ class BlazerDefaultQueriesDefinitionsSqlTest < ActiveSupport::TestCase
   end
 
   test "api_error_rate_current_day computes expected percentage" do
+    occurred_at = Time.current.noon
+
     create(
       :metric,
       :api_request_count,
-      occurred_at: 1.hour.ago,
+      occurred_at: occurred_at,
       value: 8,
       http_method: "GET",
       controller_name: "Api::V1::UsersController",
@@ -69,7 +66,7 @@ class BlazerDefaultQueriesDefinitionsSqlTest < ActiveSupport::TestCase
     create(
       :metric,
       :api_request_count,
-      occurred_at: 1.hour.ago,
+      occurred_at: occurred_at,
       value: 2,
       http_method: "GET",
       controller_name: "Api::V1::UsersController",
