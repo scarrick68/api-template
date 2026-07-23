@@ -53,3 +53,7 @@ Before completing substantial changes:
 bin/ci
 ```
 
+## General
+
+- Keep descriptions of the work you have done brief and to the point. Overload of descriptive text adds too much noise to read and review.
+- Include a brief summary of the work you have just completed, which file or files to start reviewing through the diff (an app code entrypoint is preferred), and any upcoming next steps or follow-up work that will be done in the chunk of work.
