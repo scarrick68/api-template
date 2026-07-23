@@ -15,6 +15,7 @@ A production-ready Rails 8.1 API template focused on developer velocity, operati
 * Blueprinter-based API serialization conventions.
 * Lightning-fast, low-memory pagination powered by Pagy.
 * Strong Migrations enabled by default to guide safe schema changes with low friction in early development and increasing safety value as projects grow.
+* prod-local script for local production-mode boot. Debug and triage production issues locally without needing to deploy to a live environment. (See [`docs/local-prod-mode.md`](./local-prod-mode.md) for uses and limitations)
 
 ## API Platform
 
