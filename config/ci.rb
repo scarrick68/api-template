@@ -24,7 +24,7 @@ CI.run do
   # Informational check: validate local production boot path without blocking local CI.
   run_step.call "Smoke: Prod mode launch (non-blocking)", "bundle exec rails local_ci:prod_local_smoke || true"
 
-  run_step.call "Tests: Factory Lint", "env RAILS_ENV=test bin/rails runner 'FactoryBot.lint(traits: true)'"
+  run_step.call "Tests: Factory Lint", "env RAILS_ENV=test bin/rails factory_bot:lint"
   run_step.call "Tests: Validate Openapi YAML", "bin/rails yaml:lint[docs/openapi.yml]"
   run_step.call "Tests: Rails", "COVERAGE=true bin/rails test"
   run_step.call "Tests: RubyCritic", "bin/quality --no-browser || true"
