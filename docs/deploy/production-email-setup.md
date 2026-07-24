@@ -1,6 +1,6 @@
 # Production Email Setup
 
-This template keeps production email setup intentionally simple.
+Production uses SMTP delivery for outbound email.
 
 ## Inspecting email configuration
 
@@ -9,40 +9,41 @@ Use the built-in doctor checks to inspect resolved Action Mailer config:
 - `bin/rails email:doctor`
 - `bin/rails email:doctor:launch_ready`
 
-Normal doctor reports warnings for launch-test defaults (like `:test` delivery).
+Normal doctor reports warnings for risky settings.
 Launch-ready doctor fails for incomplete external email setup.
 
-## Default behavior
+## Production behavior
 
-The template sets Action Mailer to the non-delivering test adapter in `config/environments/production.rb`:
+The template uses SMTP in `config/environments/production.rb`:
 
-- `config.action_mailer.delivery_method = :test`
+- `config.action_mailer.delivery_method = :smtp`
 - `config.action_mailer.perform_deliveries = true`
-- `config.action_mailer.raise_delivery_errors = false`
+- `config.action_mailer.raise_delivery_errors = true`
+- `config.action_mailer.smtp_settings` from env vars when present:
+	- `SMTP_ADDRESS`
+	- `SMTP_PORT`
+	- `SMTP_USERNAME`
+	- `SMTP_PASSWORD`
+	- optional: `SMTP_AUTHENTICATION` (default `plain`)
+	- optional: `SMTP_ENABLE_STARTTLS_AUTO` (default `true`)
 
-This allows signup and other mail-triggering flows to complete without SMTP infrastructure.
+If SMTP settings are missing or invalid, boot can still succeed, but mail-triggering flows will raise when delivery is attempted.
 
-## What works in default mode
+Find the errors in the admin panel SolidErrors ui at the /solid_errors path
 
-- No SMTP connection attempts are made.
-- Mailer rendering still happens.
-- `deliver_now` and `deliver_later` calls do not fail due to missing ESP credentials.
-- Operators can manually confirm users through Avo during launch testing.
+## Expected behavior
 
-## Limitations in default mode
-
-- No email is delivered to recipients.
-- Confirmation, reset, and other outbound-user email flows are not externally functional.
+- Mail-triggering flows rely on real provider credentials.
+- Delivery failures raise errors (`raise_delivery_errors = true`).
+- Misconfigured SMTP settings fail explicitly instead of silently dropping email.
 
 ## Moving to a real provider
 
-When you are ready for real delivery, replace the test-delivery block in `config/environments/production.rb` with your provider's normal Rails setup.
-
-Typical steps:
+Typical provider setup steps:
 
 1. Choose an ESP.
 2. Add any required gem.
-3. Configure Action Mailer delivery method/settings in production config and/or an initializer.
+3. Configure Action Mailer delivery method/settings for your provider.
 4. Add secrets/environment variables required by that provider.
 5. Verify sender/domain setup (SPF, DKIM, DMARC) per provider docs.
 

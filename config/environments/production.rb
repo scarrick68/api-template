@@ -54,11 +54,20 @@ Rails.application.configure do
     protocol: ENV.fetch("APP_PROTOCOL", "https")
   }
 
-  # Email delivery is intentionally disabled for the initial deployment.
-  # Replace this configuration when adding a production email provider.
-  config.action_mailer.delivery_method = :test
+  # Production uses SMTP delivery.
+  # Missing/invalid SMTP settings should surface when an email flow runs.
+  config.action_mailer.delivery_method = :smtp
   config.action_mailer.perform_deliveries = true
-  config.action_mailer.raise_delivery_errors = false
+  config.action_mailer.raise_delivery_errors = true
+  smtp_port = ENV["SMTP_PORT"]
+  config.action_mailer.smtp_settings = {
+    address: ENV["SMTP_ADDRESS"],
+    port: smtp_port && !smtp_port.empty? ? smtp_port.to_i : nil,
+    user_name: ENV["SMTP_USERNAME"],
+    password: ENV["SMTP_PASSWORD"],
+    authentication: ENV.fetch("SMTP_AUTHENTICATION", "plain").to_sym,
+    enable_starttls_auto: ENV.fetch("SMTP_ENABLE_STARTTLS_AUTO", "true") == "true"
+  }.compact
 
   # Enable locale fallbacks for I18n (makes lookups for any locale fall back to
   # the I18n.default_locale when a translation cannot be found).
