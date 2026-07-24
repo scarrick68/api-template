@@ -142,13 +142,13 @@ Configure your production env and creds as needed
 
 Local development uses fixed ports to stay consistent with workspace orchestration.
 
-- API server default: `http://localhost:5001`
+- API server default: `http://localhost:50001`
 - Web template dev server: `http://localhost:3000`
 
 Details:
 
-- API server port is driven by `PORT` and defaults to `5001` in `config/puma.rb`.
-- Running `bin/dev` in this repo or from workspace orchestration should keep API on `5001`.
+- `bin/dev` launches Rails on `50001` via `Procfile.dev`.
+- If you run Rails directly (without `bin/dev`), `config/puma.rb` still uses `PORT` with default `5001`.
 
 ## CORS
 
