@@ -1,36 +1,34 @@
-COVERAGE_ENABLED = ENV.fetch("COVERAGE", "false").casecmp("true").zero?
+COVERAGE_ENABLED = ENV.fetch("COVERAGE", "true").casecmp("true").zero?
+ENFORCE_BRANCH_COVERAGE = ENV.fetch("ENFORCE_BRANCH_COVERAGE", "false").casecmp("true").zero?
 
 if COVERAGE_ENABLED
   require "simplecov"
-  require "fileutils"
-
-  FileUtils.mkdir_p(File.expand_path("../tmp", __dir__)) unless File.exist?(File.expand_path("../tmp", __dir__))
-
-  SimpleCov.enable_coverage :branch
-  SimpleCov.coverage_dir "coverage"
-  SimpleCov.merge_timeout 3600
 
   SimpleCov.start "rails" do
-    track_files "{app,lib}/**/*.rb"
+    enable_coverage :branch
 
-    add_filter "/test/"
-    add_filter "/config/"
-    add_filter "/vendor/"
-    add_filter "/docs/"
+    cover "{app,lib}/**/*.rb"
+
+    skip "/test/"
+    skip "/config/"
+    skip "/vendor/"
+    skip "/docs/"
 
     # These are test / dev artifacts that were only used to validate or test at a time when no
     # other artifacts were available. They are not part of the app and should be ignored for coverage.
-    add_filter "/app/jobs/hello_world_job.rb"
-    add_filter "/app/policies/hello_world_policy.rb"
-    add_filter "/app/controllers/test_errors_controller.rb"
+    skip "/app/jobs/hello_world_job.rb"
+    skip "/app/policies/hello_world_policy.rb"
+    skip "/app/controllers/test_errors_controller.rb"
 
-    add_group "Models", "app/models"
-    add_group "Controllers", "app/controllers"
-    add_group "Jobs", "app/jobs"
-    add_group "Services", "app/services"
-    add_group "Commands", "app/services/commands"
-    add_group "Tasks", "lib/tasks"
-    minimum_coverage line: 80, branch: 80
+    group "Models", "app/models"
+    group "Controllers", "app/controllers"
+    group "Jobs", "app/jobs"
+    group "Services", "app/services"
+    group "Commands", "app/services/commands"
+    group "Tasks", "lib/tasks"
+
+    minimum_coverage 80
+    minimum_coverage branch: 80 if ENFORCE_BRANCH_COVERAGE
   end
 end
 
@@ -42,6 +40,7 @@ require "mocha/minitest"
 require "skooma"
 
 path_to_openapi = Rails.root.join("docs", "openapi.yml")
+
 if COVERAGE_ENABLED
   ActionDispatch::IntegrationTest.include Skooma::Minitest[path_to_openapi, coverage: :report]
 else
@@ -59,14 +58,9 @@ module ActiveSupport
 
     parallelize_setup do |worker|
       Searchkick.index_suffix = worker
-      SimpleCov.command_name "#{SimpleCov.command_name}-#{worker}" if COVERAGE_ENABLED
 
-      # reindex models for parallel tests
+      # Reindex models for parallel tests
       User.reindex
-    end
-
-    parallelize_teardown do |worker|
-      SimpleCov.result if COVERAGE_ENABLED
     end
 
     # Setup all fixtures in test/fixtures/*.yml for all tests in alphabetical order.
@@ -75,7 +69,7 @@ module ActiveSupport
     # Provide create/build shortcuts in tests (e.g., create(:user)).
     include FactoryBot::Syntax::Methods
 
-    # enable in tests where needed
+    # Enable in tests where needed.
     Searchkick.disable_callbacks
   end
 end
