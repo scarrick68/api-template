@@ -50,6 +50,7 @@ A production-ready Rails 8.1 API template focused on developer velocity, operati
 * First-party feature flags powered by Flipper with ActiveRecord-backed storage and administrative UI.
 * Field Test A/B testing framework integrated with Ahoy user identification.
 * Ahoy server-side analytics scaffolding for product usage tracking and experimentation.
+* Noticed-backed notification foundation with immediate in-app persistence and provider-ready extension points for push, SMS, web notifications, and email.
 
 ## Single-Database Architecture
 

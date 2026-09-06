@@ -49,4 +49,11 @@ class UserTest < ActiveSupport::TestCase
 
     assert_includes user.field_test_memberships, membership
   end
+
+  test "has noticed notifications association" do
+    user = create(:user)
+
+    assert_respond_to user, :notifications
+    assert_equal "Noticed::Notification", user.notifications.klass.name
+  end
 end

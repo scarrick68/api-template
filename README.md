@@ -158,6 +158,34 @@ This template enables CORS with `rack-cors`.
 - CORS origin parsing is configured in environment files (`config/environments/*.rb`).
 - Production setup guide: `docs/deploy/production-cors-setup.md`.
 
+## Notifications (Noticed)
+
+Noticed is installed by default for in-app notifications backed by the database.
+
+Basic usage:
+
+```ruby
+SomeNotifier.with(message: "Hello").deliver(user)
+```
+
+Defaults and conventions:
+
+- Database notifications work immediately without extra provider configuration.
+- Additional delivery channels are opt-in at the notifier level such as email or push notifications.
+- Notification-ready foundation supports future push, SMS, web notifications, and email delivery integration.
+- Add provider gems/credentials only when a notifier needs that provider.
+- Missing external provider credentials should not affect normal app boot.
+
+Provider extension pattern:
+
+```ruby
+class CommentNotifier < ApplicationNotifier
+	deliver_by :email do |config|
+		# provider-specific configuration
+	end
+end
+```
+
 ## Basic Rate Limiting (Rack::Attack)
 
 This template uses `rack-attack` to throttle sensitive and write-heavy endpoints.
