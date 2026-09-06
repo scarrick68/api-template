@@ -20,6 +20,16 @@ Scaffolded with full Rails stack to support internal tooling from gems.
 - Update openapi.yml when adding or changing API endpoints.
 - Do not optimize for hypothetical misuse. Optimize for the current workflow and its established preconditions.
 - Do not always use dependency injection by default. use it when it makes sense, but testing and mocking are not the only reasons to use dependency injection. Those uses can be solved with other techniques like stubbing, mocking, and fixtures.
+- Establish invariants at system boundaries. Inside the engine, assume canonical data and trusted inputs rather than repeatedly validating or normalizing them,
+- Do not introduce abstraction, configuration layers, or fallback behavior until there is a concrete caller or use case requiring them. Prefer the simplest implementation that satisfies current requirements.
+- Use symbol keys for in-memory domain hashes. Normalize JSON or database payloads to symbol keys once when they enter application logic, and let serialization handle conversion when persisted.
+- Prefer built-in Rails and Ruby functionality before writing custom implementations. Do not reimplement framework features that already exist and are well supported.
+- Prefer mature, actively maintained, widely adopted gems over custom implementations when they solve a problem well and are compatible with Rails 8+. Avoid niche, abandoned, or lightly maintained dependencies.
+- Follow standard Rails conventions first. Use framework abstractions where they fit naturally, introducing service objects only for reusable business logic, orchestration, or complex workflows.
+- Keep mountable engines self-contained. Engine-specific models, controllers, routes, services, views, assets, migrations, and configuration belong inside the engine; host applications should primarily provide authentication, authorization, configuration, and integration.
+- Keep migrations focused on a single cohesive schema change. Name migrations after the change they perform, and avoid combining unrelated features or data migrations with structural changes.
+- Keep FactoryBot definitions organized with one factory per file named after the model, following standard Rails project structure.
+- Prefer simple, idiomatic Rails solutions over defensive abstractions. Avoid introducing generic frameworks, indirection, or extensibility until there is a demonstrated requirement.
 
 ## Testing
 
@@ -57,3 +67,4 @@ bin/ci
 
 - Keep descriptions of the work you have done brief and to the point. Overload of descriptive text adds too much noise to read and review.
 - Include a brief summary of the work you have just completed, which file or files to start reviewing through the diff (an app code entrypoint is preferred), and any upcoming next steps or follow-up work that will be done in the chunk of work.
+- Name migrations for the schema change they perform, keep each migration focused on one cohesive domain change, and group related tables, indexes, foreign keys, and constraints together. Avoid mixing unrelated features or application data backfills with structural changes unless deployment safety requires separate staged migrations.
