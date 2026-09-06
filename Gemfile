@@ -119,3 +119,5 @@ gem "strong_migrations", "~> 2.8"
 gem "aasm", "~> 5.5"
 
 gem "pastel", "~> 0.8.0", require: false
+
+gem "noticed", "~> 3.0"
