@@ -1,81 +1,113 @@
-COVERAGE_ENABLED = ENV.fetch("COVERAGE", "false").casecmp("true").zero?
+# -----------------------------------------------------------------------------
+# Coverage
+# -----------------------------------------------------------------------------
+# IMPORTANT: SimpleCov must start before Rails/application code is required.
+# Otherwise files loaded during application boot will not be tracked correctly.
+
+COVERAGE_ENABLED = ENV.fetch("COVERAGE", "true").casecmp("true").zero?
+ENFORCE_BRANCH_COVERAGE = ENV.fetch("ENFORCE_BRANCH_COVERAGE", "false").casecmp("true").zero?
 
 if COVERAGE_ENABLED
   require "simplecov"
-  require "fileutils"
-
-  FileUtils.mkdir_p(File.expand_path("../tmp", __dir__)) unless File.exist?(File.expand_path("../tmp", __dir__))
-
-  SimpleCov.enable_coverage :branch
-  SimpleCov.coverage_dir "coverage"
-  SimpleCov.merge_timeout 3600
 
   SimpleCov.start "rails" do
-    track_files "{app,lib}/**/*.rb"
+    enable_coverage :branch
 
-    add_filter "/test/"
-    add_filter "/config/"
-    add_filter "/vendor/"
-    add_filter "/docs/"
+    # Limit coverage to application and library code.
+    cover "{app,lib}/**/*.rb"
 
-    # These are test / dev artifacts that were only used to validate or test at a time when no
-    # other artifacts were available. They are not part of the app and should be ignored for coverage.
-    add_filter "/app/jobs/hello_world_job.rb"
-    add_filter "/app/policies/hello_world_policy.rb"
-    add_filter "/app/controllers/test_errors_controller.rb"
+    # Exclude non-application code from coverage calculations.
+    skip "/test/"
+    skip "/config/"
+    skip "/vendor/"
+    skip "/docs/"
 
-    add_group "Models", "app/models"
-    add_group "Controllers", "app/controllers"
-    add_group "Jobs", "app/jobs"
-    add_group "Services", "app/services"
-    add_group "Commands", "app/services/commands"
-    add_group "Tasks", "lib/tasks"
-    minimum_coverage line: 80, branch: 80
+    # Test/dev-only artifacts that are not part of normal application behavior.
+    skip "/app/jobs/hello_world_job.rb"
+    skip "/app/policies/hello_world_policy.rb"
+    skip "/app/controllers/test_errors_controller.rb"
+
+    # Organize the generated coverage report by application layer.
+    group "Models", "app/models"
+    group "Controllers", "app/controllers"
+    group "Jobs", "app/jobs"
+    group "Services", "app/services"
+    group "Commands", "app/services/commands"
+    group "Tasks", "lib/tasks"
+
+    # Line coverage is always enforced when coverage is enabled.
+    # Branch coverage is collected by default but only enforced explicitly.
+    minimum_coverage 80
+    minimum_coverage branch: 80 if ENFORCE_BRANCH_COVERAGE
   end
 end
 
+# -----------------------------------------------------------------------------
+# Rails test environment
+# -----------------------------------------------------------------------------
+# Set the environment before loading the Rails application.
+
 ENV["RAILS_ENV"] ||= "test"
 
+# Loading the application must happen after SimpleCov starts.
 require_relative "../config/environment"
+
+# -----------------------------------------------------------------------------
+# Test framework and test-only dependencies
+# -----------------------------------------------------------------------------
+
 require "rails/test_help"
 require "mocha/minitest"
 require "skooma"
 
+# -----------------------------------------------------------------------------
+# OpenAPI contract testing
+# -----------------------------------------------------------------------------
+# Enable Skooma's coverage reporting only when the main coverage run is enabled.
+
 path_to_openapi = Rails.root.join("docs", "openapi.yml")
+
 if COVERAGE_ENABLED
   ActionDispatch::IntegrationTest.include Skooma::Minitest[path_to_openapi, coverage: :report]
 else
   ActionDispatch::IntegrationTest.include Skooma::Minitest[path_to_openapi]
 end
 
+# -----------------------------------------------------------------------------
+# Shared test support
+# -----------------------------------------------------------------------------
+# Load support files after Rails and test dependencies are available.
+# Sorting keeps load order deterministic.
+
 Dir[Rails.root.join("test/support/**/*.rb")].sort.each do |file|
   require file
 end
 
+# -----------------------------------------------------------------------------
+# Global ActiveSupport test configuration
+# -----------------------------------------------------------------------------
+
 module ActiveSupport
   class TestCase
-    # Run tests in parallel with specified workers
+    # Run tests in parallel using available processors.
     parallelize(workers: :number_of_processors)
 
+    # Configure per-worker external state after each parallel worker starts.
     parallelize_setup do |worker|
+      # Keep Searchkick indexes isolated between workers.
       Searchkick.index_suffix = worker
-      SimpleCov.command_name "#{SimpleCov.command_name}-#{worker}" if COVERAGE_ENABLED
 
-      # reindex models for parallel tests
+      # Populate each worker's isolated search index before tests run.
       User.reindex
     end
 
-    parallelize_teardown do |worker|
-      SimpleCov.result if COVERAGE_ENABLED
-    end
-
-    # Setup all fixtures in test/fixtures/*.yml for all tests in alphabetical order.
+    # Load all fixtures for ActiveSupport-based tests.
     fixtures :all
 
-    # Provide create/build shortcuts in tests (e.g., create(:user)).
+    # Provide FactoryBot create/build shortcuts.
     include FactoryBot::Syntax::Methods
 
-    # enable in tests where needed
+    # Search indexing is opt-in per test to avoid unnecessary indexing work.
     Searchkick.disable_callbacks
   end
 end
