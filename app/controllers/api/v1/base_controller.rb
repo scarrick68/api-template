@@ -1,7 +1,7 @@
 module Api
   module V1
     class BaseController < Api::BaseController
-      include Pagy::Backend
+      include Pagy::Method
 
       rescue_from ApplicationContract::Invalid, with: :render_contract_invalid
       rescue_from ApplicationPolicy::NotAuthorized, with: :render_not_authorized
@@ -16,7 +16,7 @@ module Api
       end
 
       def paginate_scope(scope, page:, per_page:)
-        pagy(scope, page: page, limit: per_page)
+        pagy(:offset, scope, page: page, limit: per_page)
       end
 
       def pagination_meta(pagy, extras = {})
@@ -25,7 +25,7 @@ module Api
           page: pagy.page,
           limit: pagy.limit,
           pages: pagy.pages,
-          prev: pagy.prev,
+          prev: pagy.previous,
           next: pagy.next
         }.merge(extras)
       end

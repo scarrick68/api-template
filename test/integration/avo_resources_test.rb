@@ -2,7 +2,6 @@ require "test_helper"
 
 class AvoResourcesTest < ApplicationDispatchTest
   setup do
-    Avo::Licensing::HQ.any_instance.stubs(:response).returns({})
     sign_in create(:admin), scope: :admin
   end
 
