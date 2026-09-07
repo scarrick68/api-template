@@ -1,13 +1,15 @@
 require "test_helper"
 
 class AdminSessionsTest < ActionDispatch::IntegrationTest
+  include Devise::Test::IntegrationHelpers
+
   test "renders admin sign in page" do
     get "/admins/sign_in"
 
     assert_response :success
   end
 
-  test "session login succeeds for admin and can sign out" do
+  test "admin can sign in with valid credentials" do
     password = "password123"
 
     admin = create(
@@ -26,10 +28,6 @@ class AdminSessionsTest < ActionDispatch::IntegrationTest
 
     assert_response :redirect
     assert_no_match %r{/admins/sign_in}, response.location.to_s
-
-    delete "/admins/sign_out"
-
-    assert_response :redirect
   end
 
   test "session login is rejected for invalid credentials" do
@@ -44,6 +42,15 @@ class AdminSessionsTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_includes response.body, "sign_in"
+  end
+
+  test "signed in admin can sign out" do
+    admin = create(:admin)
+    sign_in admin, scope: :admin
+
+    delete "/admins/sign_out"
+
+    assert_response :redirect
   end
 
   private

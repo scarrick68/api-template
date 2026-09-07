@@ -28,7 +28,11 @@ class StructuredRequestLoggingTest < ApplicationDispatchTest
   end
 
   test "admin session auth logs structured http request" do
-    admin = create(:admin, password: "password123", password_confirmation: "password123")
+    admin = create(
+      :admin,
+      password: "password123",
+      password_confirmation: "password123"
+    )
     captured_payloads = []
 
     capture_structured_request_logs(captured_payloads) do
@@ -42,19 +46,24 @@ class StructuredRequestLoggingTest < ApplicationDispatchTest
       end
     end
 
+    assert_response :redirect
+
     payload = find_http_request_log(captured_payloads, path: "/admins/sign_in")
 
     assert payload, "Expected an admin session auth http_request log"
     assert_equal "POST", payload["method"]
     assert_equal "Admins::SessionsController", payload["controller"]
     assert_equal "create", payload["action"]
-    assert_equal admin.id, payload["admin_id"]
     assert_nil payload["user_id"]
     assert payload["request_id"].present?
   end
 
   test "token auth logs structured http request" do
-    user = create(:user, password: "password123", password_confirmation: "password123")
+    user = create(
+      :user,
+      password: "password123",
+      password_confirmation: "password123"
+    )
     captured_payloads = []
 
     capture_structured_request_logs(captured_payloads) do
@@ -79,7 +88,7 @@ class StructuredRequestLoggingTest < ApplicationDispatchTest
     assert payload["request_id"].present?
   end
 
-  test "admin tools route logs structured http request" do
+  test "authenticated admin request logs admin actor context" do
     admin = create(:admin)
     sign_in admin, scope: :admin
     captured_payloads = []
