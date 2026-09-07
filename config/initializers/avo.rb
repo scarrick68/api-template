@@ -10,7 +10,6 @@ Avo.configure do |config|
   # config.home_path = nil
 
   ## == Licensing ==
-  # config.license = ENV.fetch("AVO_LICENSE", "community")
   config.license_key = ENV["AVO_LICENSE_KEY"]
   config.display_license_request_timeout_error = false
 
@@ -23,6 +22,7 @@ Avo.configure do |config|
 
   ## == Authentication ==
   config.current_user_method = :current_admin
+
   config.authenticate_with do
     authenticate_admin!
   end
@@ -31,21 +31,21 @@ Avo.configure do |config|
   # config.is_admin_method = :is_admin
   # config.is_developer_method = :is_developer
   # config.authorization_methods = {
-  #   index: 'index?',
-  #   show: 'show?',
-  #   edit: 'edit?',
-  #   new: 'new?',
-  #   update: 'update?',
-  #   create: 'create?',
-  #   destroy: 'destroy?',
-  #   search: 'search?',
+  #   index: "index?",
+  #   show: "show?",
+  #   edit: "edit?",
+  #   new: "new?",
+  #   update: "update?",
+  #   create: "create?",
+  #   destroy: "destroy?",
+  #   search: "search?"
   # }
   # config.raise_error_on_missing_policy = false
   config.authorization_client = nil
   config.explicit_authorization = true
 
   ## == Localization ==
-  # config.locale = 'en-US'
+  # config.locale = "en-US"
 
   ## == Resource options ==
   # config.resource_row_controls_config = {
@@ -62,7 +62,7 @@ Avo.configure do |config|
   # config.pagination = -> do
   #   {
   #     type: :default,
-  #     size: 9, # `[1, 2, 2, 1]` for pagy < 9.0
+  #     size: 9
   #   }
   # end
 
@@ -76,8 +76,6 @@ Avo.configure do |config|
   # config.associations_lookup_list_limit = 1000
 
   ## == Cache options ==
-  ## Provide a lambda to customize the cache store used by Avo.
-  ## We compute the cache store by default, this is NOT the default, just an example.
   # config.cache_store = -> {
   #   ActiveSupport::Cache.lookup_store(:solid_cache_store)
   # }
@@ -109,8 +107,15 @@ Avo.configure do |config|
   config.app_name = ENV.fetch("APP_NAME", Rails.application.class.module_parent_name.titleize)
   config.timezone = "UTC"
   config.currency = "USD"
-  config.full_width_container = false
-  config.full_width_index_view = true
+
+  # Avo 3:
+  #   full_width_container = false
+  #   full_width_index_view = true
+  #
+  # Avo 4 equivalent: keep normal constrained single-record views
+  # and make index views full width.
+  config.container_width = { index: :full }
+
   # config.hide_layout_when_printing = false
   # config.search_debounce = 300
   # config.view_component_path = "app/components"
@@ -118,30 +123,25 @@ Avo.configure do |config|
   # config.buttons_on_form_footers = true
   # config.field_wrapper_layout = true
   # config.resource_parent_controller = "Avo::ResourcesController"
-  # config.first_sorting_option = :desc # :desc or :asc
+  # config.first_sorting_option = :desc
   # config.exclude_from_status = []
   # config.model_generator_hook = true
 
-  ## == Branding ==
-  # config.branding = {
-  #   colors: {
-  #     background: "248 246 242",
-  #     100 => "#CEE7F8",
-  #     400 => "#399EE5",
-  #     500 => "#0886DE",
-  #     600 => "#066BB2",
-  #   },
-  #   chart_colors: ["#0B8AE2", "#34C683", "#2AB1EE", "#34C6A8"],
-  #   logo: "/avo-assets/logo.png",
-  #   logomark: "/avo-assets/logomark.png",
-  #   placeholder: "/avo-assets/placeholder.svg",
-  #   favicon: "/avo-assets/favicon.ico"
+  ## == Appearance ==
+  # `branding` was renamed to `appearance` in Avo 4.
+  #
+  # config.appearance = {
+  #   logo: "avo-assets/logo.png",
+  #   logomark: "avo-assets/logomark.png",
+  #   placeholder: "avo-assets/placeholder.svg",
+  #   favicon: "avo-assets/favicon.ico",
+  #   chart_colors: ["#0B8AE2", "#34C683", "#2AB1EE", "#34C6A8"]
   # }
 
   ## == Breadcrumbs ==
   # config.display_breadcrumbs = true
   # config.set_initial_breadcrumbs do
-  #   add_breadcrumb "Home", '/avo'
+  #   add_breadcrumb "Home", "/avo"
   # end
 
   ## == Menus ==
@@ -149,15 +149,16 @@ Avo.configure do |config|
   #   section "Dashboards", icon: "avo/dashboards" do
   #     all_dashboards
   #   end
-
+  #
   #   section "Resources", icon: "avo/resources" do
   #     all_resources
   #   end
-
+  #
   #   section "Tools", icon: "avo/tools" do
   #     all_tools
   #   end
   # }
+
   # config.profile_menu = -> {
   #   link "Profile", path: "/avo/profile", icon: "heroicons/outline/user-circle"
   # }

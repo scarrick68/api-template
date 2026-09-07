@@ -1,10 +1,6 @@
 require "test_helper"
 
 class AvoAccessTest < ApplicationDispatchTest
-  setup do
-    Avo::Licensing::HQ.any_instance.stubs(:response).returns({})
-  end
-
   PROTECTED_AVO_PATHS = [
     "/avo",
     "/avo/resources/users"
