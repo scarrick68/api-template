@@ -194,6 +194,27 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/AuthRequiredErrorResponse'
+  /api/v1/features:
+    get:
+      summary: Effective feature flags for current authenticated user
+      security:
+        - AccessTokenAuth: []
+          ClientAuth: []
+          UidAuth: []
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Feature flag states for the current actor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FeatureFlagsResponse'
+        '401':
+          description: Missing or invalid auth headers
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthRequiredErrorResponse'
   /api/v1/users/{id}:
     parameters:
       - in: path
@@ -605,3 +626,14 @@ components:
                 $ref: '#/components/schemas/User'
             meta:
               $ref: '#/components/schemas/PaginationEnvelope'
+    FeatureFlagsResponse:
+      allOf:
+        - $ref: '#/components/schemas/BaseSuccess'
+        - type: object
+          required:
+            - data
+          properties:
+            data:
+              type: object
+              additionalProperties:
+                type: boolean
