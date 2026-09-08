@@ -41,6 +41,8 @@ env:
   secret:
     - RAILS_MASTER_KEY
   clear:
+    APP_PROTOCOL: https
+
     # Set number of worker processes for job execution (default: 1).
     # JOB_CONCURRENCY: 3
 

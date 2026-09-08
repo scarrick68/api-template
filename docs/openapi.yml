@@ -215,6 +215,28 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/AuthRequiredErrorResponse'
+  /api/v1/errors:
+    post:
+      summary: Report client-side web/mobile JavaScript errors
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClientErrorReportRequest'
+      responses:
+        '202':
+          description: Error report accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseSuccess'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   /api/v1/users/{id}:
     parameters:
       - in: path
@@ -637,3 +659,36 @@ components:
               type: object
               additionalProperties:
                 type: boolean
+    ClientErrorReportRequest:
+      type: object
+      required:
+        - error
+      properties:
+        client:
+          type: string
+          description: Optional client type. Known values are mobile and web; omitted or unrecognized values are normalized to unknown server-side.
+          example: mobile
+        origin:
+          type: string
+          description: Client-reported origin/category (for example application, uncaught_exception, react_error_boundary).
+          example: application
+        handled:
+          type: boolean
+          default: true
+        error:
+          $ref: '#/components/schemas/ClientErrorPayload'
+        context:
+          type: object
+          additionalProperties: true
+    ClientErrorPayload:
+      type: object
+      required:
+        - message
+      properties:
+        name:
+          type: string
+          example: TypeError
+        message:
+          type: string
+        stack:
+          type: string
