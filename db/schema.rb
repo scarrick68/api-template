@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_06_174450) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_08_120000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -398,6 +398,21 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_06_174450) do
     t.index ["recipient_type", "recipient_id"], name: "index_noticed_notifications_on_recipient"
   end
 
+  create_table "push_devices", force: :cascade do |t|
+    t.boolean "active", default: true, null: false
+    t.string "app_version"
+    t.string "build_version"
+    t.datetime "created_at", null: false
+    t.datetime "last_registered_at", null: false
+    t.string "platform", null: false
+    t.string "push_token", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["push_token"], name: "index_push_devices_on_push_token", unique: true
+    t.index ["user_id", "active"], name: "index_push_devices_on_user_id_and_active"
+    t.index ["user_id"], name: "index_push_devices_on_user_id"
+  end
+
   create_table "rollups", force: :cascade do |t|
     t.jsonb "dimensions", default: {}, null: false
     t.string "interval", null: false
@@ -506,5 +521,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_06_174450) do
   add_foreign_key "admins", "users"
   add_foreign_key "blazer_query_installations", "blazer_queries", on_delete: :nullify
   add_foreign_key "data_import_runs", "data_artifacts"
+  add_foreign_key "push_devices", "users"
   add_foreign_key "solid_errors_occurrences", "solid_errors", column: "error_id"
 end
