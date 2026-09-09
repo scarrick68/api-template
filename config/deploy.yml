@@ -1,8 +1,8 @@
 # Name of your application. Used to uniquely configure containers.
-service: api_template
+service: better_macros_v3_api
 
 # Name of the container image (use your-user/app-name on external registries).
-image: api_template
+image: better_macros_v3_api
 
 # Deploy to these servers.
 servers:
@@ -50,7 +50,7 @@ env:
     # WEB_CONCURRENCY: 2
 
     # Match this to any external database server to configure Active Record correctly
-    # Use api_template-db for a db accessory server on same machine via local kamal docker network.
+    # Use better_macros_v3_api-db for a db accessory server on same machine via local kamal docker network.
     # DB_HOST: 192.168.0.2
 
     # Log everything from Rails
@@ -67,7 +67,7 @@ aliases:
 # Use a persistent storage volume for sqlite database files and local Active Storage files.
 # Recommended to change this to a mounted volume path that is backed up off server.
 volumes:
-  - "api_template_storage:/rails/storage"
+  - "better_macros_v3_api_storage:/rails/storage"
 
 # Bridge fingerprinted assets, like JS and CSS, between versions to avoid
 # hitting 404 on in-flight requests. Combines all files from new and old
