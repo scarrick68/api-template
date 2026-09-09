@@ -1,6 +1,6 @@
 openapi: 3.1.0
 info:
-  title: API Template
+  title: Better Macros V3 API
   version: 1.0.0
 servers:
   - url: /
@@ -545,6 +545,20 @@ components:
           format: email
         name:
           type: [string, 'null']
+        age:
+          type: [integer, 'null']
+        height_ft:
+          type: [integer, 'null']
+        height_inches:
+          type: [integer, 'null']
+        weight_lbs:
+          type: [number, 'null']
+        activity_level:
+          type: [integer, 'null']
+        goal:
+          type: [string, 'null']
+        time_zone:
+          type: [string, 'null']
         nickname:
           type: [string, 'null']
         image:
@@ -599,6 +613,8 @@ components:
     AuthSignUpRequest:
       type: object
       properties:
+        name:
+          type: string
         email:
           type: string
           format: email
@@ -609,6 +625,20 @@ components:
         confirm_success_url:
           type: string
           format: uri
+        age:
+          type: integer
+        height_ft:
+          type: integer
+        height_inches:
+          type: integer
+        weight_lbs:
+          type: number
+        activity_level:
+          type: integer
+        goal:
+          type: string
+        time_zone:
+          type: string
       required:
         - email
         - password
@@ -637,6 +667,20 @@ components:
           type: string
         password_confirmation:
           type: string
+        age:
+          type: integer
+        height_ft:
+          type: integer
+        height_inches:
+          type: integer
+        weight_lbs:
+          type: number
+        activity_level:
+          type: integer
+        goal:
+          type: string
+        time_zone:
+          type: string
       required:
         - email
         - password
@@ -649,6 +693,20 @@ components:
         email:
           type: string
           format: email
+        age:
+          type: integer
+        height_ft:
+          type: integer
+        height_inches:
+          type: integer
+        weight_lbs:
+          type: number
+        activity_level:
+          type: integer
+        goal:
+          type: string
+        time_zone:
+          type: string
     PaginationMeta:
       type: object
       properties:
@@ -688,6 +746,20 @@ components:
           type: string
           format: email
         name:
+          type: [string, 'null']
+        age:
+          type: [integer, 'null']
+        height_ft:
+          type: [integer, 'null']
+        height_inches:
+          type: [integer, 'null']
+        weight_lbs:
+          type: [number, 'null']
+        activity_level:
+          type: [integer, 'null']
+        goal:
+          type: [string, 'null']
+        time_zone:
           type: [string, 'null']
         admin:
           type: boolean

@@ -3,8 +3,24 @@ module Api
     class UsersController < BaseController
       before_action :authenticate_user!, except: [ :create ]
 
+      USER_MUTABLE_PARAMS = %i[
+        name
+        email
+        age
+        height_ft
+        height_inches
+        weight_lbs
+        activity_level
+        goal
+        time_zone
+      ].freeze
+
       def create
-        permitted_params = params.permit(:name, :email, :password, :password_confirmation).to_h
+        permitted_params = params.permit(
+          *USER_MUTABLE_PARAMS,
+          :password,
+          :password_confirmation
+        ).to_h
 
         contract = Api::V1::Users::CreateContract.new(
           permitted_params
@@ -17,7 +33,14 @@ module Api
             name: contract.name,
             email: contract.email,
             password: contract.password,
-            password_confirmation: contract.password_confirmation
+            password_confirmation: contract.password_confirmation,
+            age: contract.age,
+            height_ft: contract.height_ft,
+            height_inches: contract.height_inches,
+            weight_lbs: contract.weight_lbs,
+            activity_level: contract.activity_level,
+            goal: contract.goal,
+            time_zone: contract.time_zone
           }
         )
 
@@ -98,7 +121,7 @@ module Api
       end
 
       def update
-        permitted_params = params.permit(:id, :name, :email).to_h
+        permitted_params = params.permit(:id, *USER_MUTABLE_PARAMS).to_h
 
         contract = Api::V1::Users::UpdateContract.new(
           permitted_params
@@ -121,7 +144,7 @@ module Api
 
         updated_record = Svc::Api::V1::Users::Update.call(
           user: user_record,
-          attributes: permitted_params.slice("name", "email")
+          attributes: permitted_params.slice(*USER_MUTABLE_PARAMS.map(&:to_s))
         )
 
         render_serialized(
