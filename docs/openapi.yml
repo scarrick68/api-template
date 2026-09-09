@@ -237,6 +237,77 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+  /api/v1/push_devices:
+    post:
+      summary: Register or update current user's push device
+      security:
+        - AccessTokenAuth: []
+          ClientAuth: []
+          UidAuth: []
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PushDeviceRegistrationRequest'
+      responses:
+        '202':
+          description: Push registration accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseSuccess'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Missing or invalid auth headers
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthRequiredErrorResponse'
+    delete:
+      summary: Deactivate current user's push registration
+      security:
+        - AccessTokenAuth: []
+          ClientAuth: []
+          UidAuth: []
+        - BearerAuth: []
+      parameters:
+        - in: query
+          name: push_token
+          required: true
+          schema:
+            type: string
+      responses:
+        '202':
+          description: Push registration deactivation accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseSuccess'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Push token is not owned by current user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Missing or invalid auth headers
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthRequiredErrorResponse'
   /api/v1/users/{id}:
     parameters:
       - in: path
@@ -692,3 +763,21 @@ components:
           type: string
         stack:
           type: string
+    PushDeviceRegistrationRequest:
+      type: object
+      required:
+        - push_token
+      properties:
+        push_token:
+          type: string
+          example: ExponentPushToken[xxxxxxxxxxxxxxxxxxxxxx]
+        platform:
+          type: string
+          description: Optional client platform value normalized server-side.
+          example: ios
+        app_version:
+          type: string
+          example: 1.4.0
+        build_version:
+          type: string
+          example: '42'

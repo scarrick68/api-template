@@ -50,6 +50,8 @@ Rails.application.routes.draw do
     namespace :v1 do
       resources :errors, only: [ :create ]
       resources :features, only: [ :index ]
+      resources :push_devices, only: [ :create ]
+      delete "push_devices", to: "push_devices#destroy"
 
       resources :users, only: [ :index, :show, :create, :update, :destroy ] do
         collection do
