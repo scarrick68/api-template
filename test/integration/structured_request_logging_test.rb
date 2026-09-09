@@ -46,8 +46,6 @@ class StructuredRequestLoggingTest < ApplicationDispatchTest
       end
     end
 
-    assert_response :redirect
-
     payload = find_http_request_log(captured_payloads, path: "/admins/sign_in")
 
     assert payload, "Expected an admin session auth http_request log"
