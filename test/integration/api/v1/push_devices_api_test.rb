@@ -71,6 +71,32 @@ module Api
         assert_equal true, record.active
       end
 
+      test "create partial upsert preserves optional fields when omitted" do
+        user = create(:user)
+        record = create(
+          :push_device,
+          user: user,
+          push_token: "ExponentPushToken[token-preserve]",
+          platform: "ios",
+          app_version: "1.4.0",
+          build_version: "42",
+          active: false
+        )
+
+        post "/api/v1/push_devices", params: {
+          push_token: record.push_token,
+          platform: "android"
+        }, headers: auth_headers_for(user), as: :json
+
+        assert_response :accepted
+        assert_conform_response_schema(202)
+
+        record.reload
+        assert_equal "android", record.platform
+        assert_equal "1.4.0", record.app_version
+        assert_equal "42", record.build_version
+      end
+
       test "create returns bad request when token missing" do
         user = create(:user)
 
@@ -87,6 +113,24 @@ module Api
 
         assert_response :unauthorized
         assert_conform_response_schema(401)
+      end
+
+      test "destroy returns bad request when token missing" do
+        user = create(:user)
+
+        delete "/api/v1/push_devices", headers: auth_headers_for(user), as: :json
+
+        assert_response :bad_request
+        assert_conform_response_schema(400)
+      end
+
+      test "destroy returns bad request when token blank" do
+        user = create(:user)
+
+        delete "/api/v1/push_devices", params: { push_token: "   " }, headers: auth_headers_for(user), as: :json
+
+        assert_response :bad_request
+        assert_conform_response_schema(400)
       end
 
       test "destroy deactivates only current user token" do

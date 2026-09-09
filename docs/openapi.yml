@@ -280,7 +280,7 @@ paths:
       parameters:
         - in: query
           name: push_token
-          required: false
+          required: true
           schema:
             type: string
       responses:
@@ -290,6 +290,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/BaseSuccess'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
         '403':
           description: Push token is not owned by current user
           content:
