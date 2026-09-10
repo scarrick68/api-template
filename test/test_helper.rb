@@ -6,6 +6,7 @@
 
 COVERAGE_ENABLED = ENV.fetch("COVERAGE", "true").casecmp("true").zero?
 ENFORCE_BRANCH_COVERAGE = ENV.fetch("ENFORCE_BRANCH_COVERAGE", "false").casecmp("true").zero?
+SKOOMA_COVERAGE_REPORT_ENABLED = ENV.fetch("SKOOMA_COVERAGE_REPORT", "false").casecmp("true").zero?
 
 if COVERAGE_ENABLED
   require "simplecov"
@@ -63,11 +64,12 @@ require "skooma"
 # -----------------------------------------------------------------------------
 # OpenAPI contract testing
 # -----------------------------------------------------------------------------
-# Enable Skooma's coverage reporting only when the main coverage run is enabled.
+# Enable Skooma schema validation for integration tests.
+# Coverage report output is opt-in to keep routine test output compact.
 
 path_to_openapi = Rails.root.join("docs", "openapi.yml")
 
-if COVERAGE_ENABLED
+if COVERAGE_ENABLED && SKOOMA_COVERAGE_REPORT_ENABLED
   ActionDispatch::IntegrationTest.include Skooma::Minitest[path_to_openapi, coverage: :report]
 else
   ActionDispatch::IntegrationTest.include Skooma::Minitest[path_to_openapi]

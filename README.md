@@ -93,6 +93,20 @@ This app intentionally separates API identity from internal operator identity.
 	- explicitly verify that token auth cannot access admin-only tools.
 	- explicitly verify that admin session auth does not replace API token requirements.
 
+#### Flaky Admin Session Check
+
+- Use `bin/test-flaky-admin-sign-in` to repeatedly run the admin sign-in integration test.
+- Default run count is 15.
+- Test subprocesses run with coverage env flags scoped per invocation to keep output compact.
+
+Examples:
+
+```bash
+bin/test-flaky-admin-sign-in
+bin/test-flaky-admin-sign-in --runs 30
+bin/test-flaky-admin-sign-in --filter '/admin can sign in with valid credentials/'
+```
+
 ### Attribution impact (Ahoy and Field Test)
 
 - Frontend should own page/journey tracking.
