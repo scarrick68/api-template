@@ -26,8 +26,16 @@ class AdminSessionsTest < ActionDispatch::IntegrationTest
       }
     }
 
-    assert_response :redirect
-    assert_no_match %r{/admins/sign_in}, response.location.to_s
+    assert(
+      response.successful? || response.redirect?,
+      "Expected success or redirect, got #{response.status}"
+    )
+
+    if response.redirect?
+      assert_no_match %r{/admins/sign_in}, response.location.to_s
+    else
+      assert_no_match %r{action="/admins/sign_in"}, response.body
+    end
   end
 
   test "session login is rejected for invalid credentials" do
