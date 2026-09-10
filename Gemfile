@@ -83,7 +83,7 @@ gem "devise_token_auth", github: "lynndylanhurley/devise_token_auth", branch: "m
 
 gem "devise", "~> 5.0"
 
-gem "pghero", "~> 3.8"
+gem "pghero", "~> 4.0"
 
 gem "blazer", "~> 3.5"
 
