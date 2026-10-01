@@ -110,7 +110,7 @@ gem "rollups", "~> 0.6.0"
 
 gem "rubycritic", "~> 5.0", groups: [ :development, :test ]
 
-gem "avo", "~> 4.0"
+gem "avo", "~> 4.2"
 
 gem "lograge", "~> 0.15.0"
 
